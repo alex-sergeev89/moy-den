@@ -4,6 +4,7 @@
  * Нужен потому, что API Яндекса не принимает запросы напрямую из веб-страницы.
  *
  * Среда выполнения: Node.js 18 или новее. Точка входа: index.handler
+ * Рядом должен лежать package.json: при сохранении версии Яндекс сам установит библиотеку imapflow для чтения почты.
  * Переменные окружения:
  *   APP_SECRET — код доступа, который вы придумали (тот же вводится в приложении)
  *   MODEL      — необязательно, по умолчанию aliceai-llm
@@ -48,6 +49,48 @@ function calendar(q) {
   return { statusCode: 200, headers: { 'Content-Type': 'text/calendar; charset=utf-8', 'Content-Disposition': 'inline; filename="moy-den.ics"' }, body: lines.join('\r\n') };
 }
 
+// POST {secret, mail: {provider, user, pass, days, limit, all}} — новые письма для Робота Секретаря.
+// Ящик открывается только для чтения: письма не помечаются прочитанными и не удаляются.
+async function mail(m) {
+  const hosts = { gmail: 'imap.gmail.com', yandex: 'imap.yandex.ru', mailru: 'imap.mail.ru' };
+  const host = hosts[m.provider];
+  if (!host || !m.user || !m.pass) return reply(400, { error: 'Mail settings are incomplete' });
+  let ImapFlow;
+  try { ImapFlow = require('imapflow').ImapFlow; } catch (e) { return reply(500, { error: 'imapflow is not installed: ' + e.message }); }
+  const client = new ImapFlow({ host, port: 993, secure: true, auth: { user: String(m.user), pass: String(m.pass) }, logger: false, socketTimeout: 30000 });
+  try { await client.connect(); } catch (e) { return reply(401, { error: 'Mail login failed: ' + (e.responseText || e.message) }); }
+  const out = [];
+  try {
+    const lock = await client.getMailboxLock('INBOX', { readOnly: true });
+    try {
+      const since = new Date(Date.now() - Math.min(Number(m.days) || 2, 14) * 86400000);
+      const found = await client.search(m.all ? { since } : { since, seen: false }, { uid: true });
+      const uids = (found || []).slice(-Math.min(Number(m.limit) || 15, 30));
+      const list = uids.length ? await client.fetchAll(uids, { uid: true, envelope: true, bodyStructure: true, flags: true }, { uid: true }) : [];
+      for (const msg of list) {
+        const env = msg.envelope || {};
+        const from = (env.from && env.from[0]) || {};
+        const item = { uid: msg.uid, from: ((from.name || '') + ' <' + (from.address || '') + '>').trim(), subject: env.subject || '',
+          date: env.date ? new Date(env.date).toISOString() : '', unread: !(msg.flags && msg.flags.has('\\Seen')), text: '' };
+        try {
+          const stack = [msg.bodyStructure];
+          let part = null;
+          while (stack.length && !part) { const n = stack.shift(); if (!n) continue; if (n.type === 'text/plain') part = n.part || '1'; else (n.childNodes || []).forEach(c => stack.push(c)); }
+          if (part) {
+            const dl = await client.download(String(msg.uid), part, { uid: true, maxBytes: 4000 });
+            const chunks = [];
+            for await (const c of dl.content) chunks.push(c);
+            item.text = Buffer.concat(chunks).toString('utf8').replace(/\s+/g, ' ').slice(0, 500);
+          }
+        } catch (e) { /* письмо без текстовой части — оставляем только тему */ }
+        out.push(item);
+      }
+    } finally { lock.release(); }
+  } catch (e) { try { await client.logout(); } catch (x) {} return reply(502, { error: 'Mail read failed: ' + e.message }); }
+  try { await client.logout(); } catch (x) {}
+  return reply(200, { ok: true, messages: out });
+}
+
 module.exports.handler = async function (event, context) {
   if (event.httpMethod === 'OPTIONS') return { statusCode: 204, headers: CORS, body: '' };
   if (event.httpMethod === 'GET') return calendar(event.queryStringParameters || {});
@@ -65,6 +108,7 @@ module.exports.handler = async function (event, context) {
   }
   if (!req || req.secret !== secret) return reply(401, { error: 'Неверный код доступа' });
   if (req.ping) return reply(200, { ok: true });   // проверка кода из настроек приложения, без обращения к Алисе
+  if (req.mail) return mail(req.mail);
   if (!Array.isArray(req.messages) || !req.messages.length) return reply(400, { error: 'Нет сообщений' });
   if (JSON.stringify(req.messages).length > 200000) return reply(400, { error: 'Слишком длинный запрос' });
 
