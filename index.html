@@ -11,8 +11,8 @@
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="apple-mobile-web-app-title" content="Мой день">
-<link rel="apple-touch-icon" sizes="180x180" href="icons/apple-touch-icon.png?v=8">
-<link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png?v=8">
+<link rel="apple-touch-icon" sizes="180x180" href="icons/apple-touch-icon.png?v=9">
+<link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png?v=9">
 <script>window.MOYDEN_STANDALONE = true;</script>
 <style>html{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)} img{max-width:100%} [hidden]{display:none!important}</style>
 </head>
@@ -603,9 +603,11 @@ textarea.notes{padding:8px 14px 14px;min-height:84px}
 
       <section class="panel actions" id="backupPanel">
         <div class="panel-h" style="padding:0 0 4px"><h2>Резервная копия</h2></div>
-        <button class="btn" type="button" id="exportBtn">Скачать копию данных</button>
-        <label class="btn" style="text-align:center;cursor:pointer">Восстановить из файла<input type="file" id="importFile" accept="application/json,.json" hidden></label>
-        <div class="hint">Файл содержит все дни, настройки и параметры. Сохраните его в «Файлы» или iCloud Drive. Ключ API в копию не попадает.</div>
+        <button class="btn primary" type="button" id="exportBtn">Сохранить копию в «Файлы»</button>
+        <button class="btn" type="button" id="copyBtn">Скопировать копию</button>
+        <label class="btn" style="text-align:center;cursor:pointer">Восстановить из файла<input type="file" id="importFile" accept=".json,.txt,application/json,text/plain" hidden></label>
+        <button class="btn" type="button" id="pasteBtn">Вставить скопированную копию</button>
+        <div class="hint">В копии все дни, настройки, программа и журнал. «Сохранить» открывает меню «Поделиться»: выберите «Сохранить в Файлы». «Скопировать» кладёт копию в буфер обмена, её можно вставить в другом приложении «Мой день» или в «Заметки». Коды доступа ИИ в копию не попадают.</div>
       </section>
     </aside>
   </div>
@@ -882,7 +884,7 @@ textarea.notes{padding:8px 14px 14px;min-height:84px}
     state.mode = m;
     const st = $('#status'), txt = $('#statusText');
     st.className = 'status ok';
-    txt.textContent = 'Данные хранятся на этом устройстве. Раз в неделю сохраняйте резервную копию. Версия 8.';
+    txt.textContent = 'Данные хранятся на этом устройстве. Раз в неделю сохраняйте резервную копию. Версия 9.';
   }
 
   function openDay(k){
@@ -2225,36 +2227,83 @@ textarea.notes{padding:8px 14px 14px;min-height:84px}
   setTimeout(tick, 4000);
 
   $('#aiSetup').onclick = openAiSetup;
-  $('#exportBtn').onclick = () => {
+  function makeDump(){
     const dump = {app: 'moy-den', version: 1, exported: new Date().toISOString(), days: [], settings: null};
-    try {
-      for (let i = 0; i < localStorage.length; i++){ const k = localStorage.key(i); if (k && k.indexOf('day:') === 0){ try { dump.days.push(JSON.parse(localStorage.getItem(k))); } catch(e){} } }
-      dump.settings = JSON.parse(localStorage.getItem('settings') || 'null');
-    } catch(e){ toast('Хранилище недоступно'); return; }
-    const blob = new Blob([JSON.stringify(dump, null, 1)], {type: 'application/json'});
-    const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = 'moy-den-'+keyOf(new Date())+'.json';
-    document.body.appendChild(a); a.click(); setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 2000);
-    toast('Копия: '+dump.days.length+' '+plural(dump.days.length,'день','дня','дней'));
+    for (let i = 0; i < localStorage.length; i++){ const k = localStorage.key(i); if (k && k.indexOf('day:') === 0){ try { dump.days.push(JSON.parse(localStorage.getItem(k))); } catch(e){} } }
+    dump.settings = JSON.parse(localStorage.getItem('settings') || 'null');
+    return dump;
+  }
+  function textSheet(title, hint, text, onOk, okLabel){
+    const ed = $('#editor');
+    ed.innerHTML = '<div class="overlay" id="ovl"><div class="sheet"><h3>' + esc(title) + '</h3><div class="hint">' + esc(hint) + '</div>'
+      + '<textarea id="sheetText" style="width:100%;min-height:150px;padding:10px;border:1px solid var(--line);border-radius:8px;background:var(--bg);font-size:12px" spellcheck="false">' + esc(text) + '</textarea>'
+      + '<div class="hint" id="sheetMsg" hidden style="color:var(--hi);font-size:14px"></div>'
+      + '<div class="foot"><span></span><div><button type="button" class="btn" id="sheetCancel">Закрыть</button><button type="button" class="btn primary" id="sheetOk">' + esc(okLabel) + '</button></div></div></div></div>';
+    ed.hidden = false;
+    $('#sheetCancel').onclick = closeEditor;
+    $('#sheetOk').onclick = () => onOk($('#sheetText'), t => { const m = $('#sheetMsg'); m.textContent = t; m.hidden = !t; });
+  }
+  function showDumpText(text){
+    textSheet('Копия данных', 'Нажмите «Скопировать», затем вставьте текст в «Заметки» или в другое приложение «Мой день» через «Вставить скопированную копию».', text, (ta, msg) => {
+      ta.focus(); ta.select();
+      const done = () => { closeEditor(); toast('Копия скопирована'); };
+      if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(text).then(done).catch(() => msg('Не получилось скопировать автоматически. Текст выделен: нажмите на него и выберите «Скопировать».'));
+      else msg('Текст выделен: нажмите на него и выберите «Скопировать».');
+    }, 'Скопировать');
+  }
+  function applyDump(dump, done){
+    if (!dump || dump.app !== 'moy-den' || !Array.isArray(dump.days)){ toast('Это не похоже на копию «Мой день»'); return; }
+    const ed = $('#editor');
+    ed.innerHTML = '<div class="overlay" id="ovl"><div class="sheet"><h3>Восстановить данные?</h3><div class="hint">В копии ' + dump.days.length + ' ' + plural(dump.days.length, 'день', 'дня', 'дней') + (dump.exported ? ', сохранена ' + esc(String(dump.exported).slice(0, 10)) : '') + '. Дни из копии заменят одноимённые дни на этом устройстве, настройки и программа тоже возьмутся из копии.</div>'
+      + '<div class="foot"><span></span><div><button type="button" class="btn" id="impCancel">Отмена</button><button type="button" class="btn primary" id="impOk">Восстановить</button></div></div></div></div>';
+    ed.hidden = false;
+    $('#impCancel').onclick = closeEditor;
+    $('#impOk').onclick = () => {
+      try {
+        dump.days.forEach(d => { const n = normalize(String(d && d.date || ''), d); if (/^\d{4}-\d{2}-\d{2}$/.test(n.date)) localStorage.setItem('day:' + n.date, JSON.stringify(n)); });
+        if (dump.settings) localStorage.setItem('settings', JSON.stringify(dump.settings));
+      } catch(err){ toast('Не удалось записать данные'); return; }
+      closeEditor(); toast('Данные восстановлены'); setTimeout(() => location.reload(), 600);
+    };
+  }
+  $('#exportBtn').onclick = async () => {
+    let dump; try { dump = makeDump(); } catch(e){ toast('Хранилище недоступно'); return; }
+    const text = JSON.stringify(dump, null, 1), name = 'moy-den-' + keyOf(new Date());
+    // На iPhone файл сохраняется через системное меню «Поделиться»
+    for (const [ext, type] of [['.json', 'application/json'], ['.txt', 'text/plain']]){
+      try {
+        const file = new File([text], name + ext, {type});
+        if (navigator.canShare && navigator.canShare({files: [file]})){
+          try { await navigator.share({files: [file], title: 'Копия «Мой день»'}); toast('Выберите «Сохранить в Файлы», если ещё не сохранили'); }
+          catch(err){ if (!err || err.name !== 'AbortError') showDumpText(text); }
+          return;
+        }
+      } catch(e){}
+    }
+    if (!/iPhone|iPad|iPod/.test(navigator.userAgent)){
+      const blob = new Blob([text], {type: 'application/json'}), a = document.createElement('a');
+      a.href = URL.createObjectURL(blob); a.download = name + '.json'; document.body.appendChild(a); a.click(); setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 2000);
+      toast('Копия: ' + dump.days.length + ' ' + plural(dump.days.length, 'день', 'дня', 'дней')); return;
+    }
+    showDumpText(text);
+  };
+  $('#copyBtn').onclick = () => {
+    let text; try { text = JSON.stringify(makeDump()); } catch(e){ toast('Хранилище недоступно'); return; }
+    if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(text).then(() => toast('Копия скопирована. Откройте новое приложение и нажмите «Вставить скопированную копию».')).catch(() => showDumpText(text));
+    else showDumpText(text);
+  };
+  $('#pasteBtn').onclick = () => {
+    textSheet('Вставить копию', 'Нажмите на поле ниже, выберите «Вставить», затем «Восстановить».', '', (ta, msg) => {
+      let dump; try { dump = JSON.parse(ta.value.trim()); } catch(e){ msg('Текст не похож на копию. Скопируйте её заново целиком.'); return; }
+      if (!dump || dump.app !== 'moy-den'){ msg('Это не копия «Мой день».'); return; }
+      applyDump(dump);
+    }, 'Восстановить');
+    setTimeout(() => { const ta = $('#sheetText'); if (ta) ta.focus(); }, 50);
   };
   $('#importFile').addEventListener('change', e => {
     const f = e.target.files && e.target.files[0]; if (!f) return;
     const rd = new FileReader();
-    rd.onload = () => {
-      let dump; try { dump = JSON.parse(String(rd.result)); } catch(err){ toast('Файл не похож на резервную копию'); return; }
-      if (!dump || dump.app !== 'moy-den' || !Array.isArray(dump.days)){ toast('Файл не похож на резервную копию'); return; }
-      const ed = $('#editor');
-      ed.innerHTML = '<div class="overlay" id="ovl"><div class="sheet"><h3>Восстановить данные?</h3><div class="hint">В копии '+dump.days.length+' '+plural(dump.days.length,'день','дня','дней')+(dump.exported ? ', сохранена '+String(dump.exported).slice(0,10) : '')+'. Дни из файла заменят одноимённые дни на этом устройстве, остальные останутся.</div>'
-        + '<div class="foot"><span></span><div><button type="button" class="btn" id="impCancel">Отмена</button><button type="button" class="btn primary" id="impOk">Восстановить</button></div></div></div></div>';
-      ed.hidden = false;
-      $('#impCancel').onclick = closeEditor;
-      $('#impOk').onclick = () => {
-        try {
-          dump.days.forEach(d => { const n = normalize(String(d && d.date || ''), d); if (/^\d{4}-\d{2}-\d{2}$/.test(n.date)) localStorage.setItem('day:'+n.date, JSON.stringify(n)); });
-          if (dump.settings) localStorage.setItem('settings', JSON.stringify(dump.settings));
-        } catch(err){ toast('Не удалось записать данные'); return; }
-        closeEditor(); toast('Данные восстановлены'); setTimeout(() => location.reload(), 600);
-      };
-    };
+    rd.onload = () => { let dump; try { dump = JSON.parse(String(rd.result)); } catch(err){ toast('Файл не похож на резервную копию'); return; } applyDump(dump); };
     rd.readAsText(f); e.target.value = '';
   });
 
