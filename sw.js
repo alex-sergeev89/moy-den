@@ -1,6 +1,6 @@
-/* Мой день — service worker.
+/* Моя жиза — service worker.
  * С интернетом всегда отдаёт свежую версию приложения, без интернета — сохранённую. */
-const VERSION = 'moy-den-v12';
+const VERSION = 'moy-den-v13';
 const SHELL = ['./', './index.html', './manifest.webmanifest'];
 
 self.addEventListener('install', e => {

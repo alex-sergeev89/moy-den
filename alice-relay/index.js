@@ -1,5 +1,5 @@
 /*
- * Посредник для приложения «Мой день».
+ * Посредник для приложения «Моя жиза».
  * Принимает запрос ИИ-тренера с телефона и передаёт его в Alice AI (Yandex AI Studio).
  * Нужен потому, что API Яндекса не принимает запросы напрямую из веб-страницы.
  *
@@ -36,7 +36,7 @@ function calendar(q) {
   String(q.w || '').split(',').filter(ok).slice(0, 24).forEach(t => { lines = lines.concat(ev('w' + t, t, 'Выпить стакан воды')); });
   String(q.m || '').split(',').slice(0, 4).forEach((t, i) => { if (ok(t)) lines = lines.concat(ev('m' + i, t, kinds[i] + ': время поесть')); });
   if (ok(String(q.s || ''))) lines = lines.concat(ev('s', q.s, 'Пора готовиться ко сну'));
-  if (ok(String(q.r || ''))) lines = lines.concat(ev('r', q.r, 'Мой день: анализ дня'));
+  if (ok(String(q.r || ''))) lines = lines.concat(ev('r', q.r, 'Моя жиза: анализ дня'));
   // e=ГГГГММДДЧЧММ~длительность~за_сколько_минут_напомнить~название;… — разовые дела с напоминанием
   String(q.e || '').split(';').slice(0, 30).forEach((x, i) => {
     const p = x.split('~');

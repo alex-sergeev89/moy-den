@@ -3,16 +3,16 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Мой день</title>
+<title>Моя жиза</title>
 <meta name="theme-color" content="#0d6d8c" media="(prefers-color-scheme: light)">
 <meta name="theme-color" content="#0d1419" media="(prefers-color-scheme: dark)">
 <link rel="manifest" href="manifest.webmanifest">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
-<meta name="apple-mobile-web-app-title" content="Мой день">
-<link rel="apple-touch-icon" sizes="180x180" href="icons/apple-touch-icon.png?v=12">
-<link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png?v=12">
+<meta name="apple-mobile-web-app-title" content="Моя жиза">
+<link rel="apple-touch-icon" sizes="180x180" href="icons/apple-touch-icon.png?v=13">
+<link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png?v=13">
 <script>window.MOYDEN_STANDALONE = true;</script>
 <style>html{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)} img{max-width:100%} [hidden]{display:none!important}</style>
 </head>
@@ -338,7 +338,7 @@ table.jr td.n{white-space:nowrap}
 :root{--hour:48px}
 .app{max-width:720px;padding-block:10px calc(84px + env(safe-area-inset-bottom,0px))}
 .top{align-items:center;gap:8px 12px;margin-bottom:10px}
-.brand{display:none}
+.brand{font-size:11px;letter-spacing:.1em}
 .date-title{font-size:clamp(20px,5vw,24px);margin:0}
 .date-sub{margin-top:2px;font-size:13px}
 .nav button{padding:7px 11px}
@@ -409,7 +409,7 @@ textarea.notes{padding:8px 14px 14px;min-height:84px}
 <div class="app">
   <header class="top">
     <div>
-      <div class="brand">Мой день</div>
+      <div class="brand">Моя жиза</div>
       <h1 class="date-title" id="dateTitle">—</h1>
       <div class="date-sub" id="dateSub"></div>
     </div>
@@ -679,7 +679,7 @@ textarea.notes{padding:8px 14px 14px;min-height:84px}
         <button class="btn" type="button" id="copyBtn">Скопировать копию</button>
         <label class="btn" style="text-align:center;cursor:pointer">Восстановить из файла<input type="file" id="importFile" accept=".json,.txt,application/json,text/plain" hidden></label>
         <button class="btn" type="button" id="pasteBtn">Вставить скопированную копию</button>
-        <div class="hint">В копии все дни, настройки, программа и журнал. «Сохранить» открывает меню «Поделиться»: выберите «Сохранить в Файлы». «Скопировать» кладёт копию в буфер обмена, её можно вставить в другом приложении «Мой день» или в «Заметки». Коды доступа ИИ в копию не попадают.</div>
+        <div class="hint">В копии все дни, настройки, программа и журнал. «Сохранить» открывает меню «Поделиться»: выберите «Сохранить в Файлы». «Скопировать» кладёт копию в буфер обмена, её можно вставить в другом приложении «Моя жиза» или в «Заметки». Коды доступа ИИ в копию не попадают.</div>
       </section>
     </aside>
   </div>
@@ -967,7 +967,7 @@ textarea.notes{padding:8px 14px 14px;min-height:84px}
     state.mode = m;
     const st = $('#status'), txt = $('#statusText');
     st.className = 'status ok';
-    txt.textContent = 'Данные хранятся на этом устройстве. Раз в неделю сохраняйте резервную копию. Версия 12.';
+    txt.textContent = 'Данные хранятся на этом устройстве. Раз в неделю сохраняйте резервную копию. Версия 13.';
   }
 
   function openDay(k){
@@ -1496,7 +1496,7 @@ textarea.notes{padding:8px 14px 14px;min-height:84px}
 
   // ---------- Coach (AI) ----------
   let sampleFn = null, coachReady = false, coachToolsOk = false, coachTurns = [], coachCtl = null;
-  const COACH_RULES = 'Ты — «Робот Тренер», персональный тренер и помощник по режиму дня внутри приложения-планировщика «Мой день». Отвечай только по-русски, коротко и по делу: обычно 4–10 строк, без markdown-заголовков, жирного текста и таблиц; короткие списки с тире допустимы. Опирайся на данные пользователя ниже: расписание дня, регулярные тренировки (ММА, зал), время подъёма, воду и питание. Давай конкретные рекомендации: разминка, нагрузка и её объём, восстановление и сон, вода, что и когда поесть до и после тренировки. Не ставь диагнозы и не назначай лекарства; при боли или травме советуй обратиться к врачу. Ты контролируешь сон: сверяй его с целью, при недосыпе снижай интенсивность тренировки и подсказывай, как лечь вовремя. Ты контролируешь выполнение программы тренировок по журналу: если тренировка пропущена или выполнена частично, скажи об этом прямо и предложи, как наверстать без перегруза. Ты также контролируешь питание по параметрам тела: сверяй съеденное с дневной нормой калорий и белка, говори, сколько осталось или на сколько перебор, предлагай конкретные блюда и порции, чтобы добрать норму или не выйти за неё, следи за динамикой веса и мягко корректируй. Если пользователь просит запланировать дело или записать еду, используй инструменты addTask или addMeal и коротко подтверди, что добавлено. Если пользователь называет съеденное блюдо, оцени его калорийность и белок сам и передай их в addMeal.';
+  const COACH_RULES = 'Ты — «Робот Тренер», персональный тренер и помощник по режиму дня внутри приложения-планировщика «Моя жиза». Отвечай только по-русски, коротко и по делу: обычно 4–10 строк, без markdown-заголовков, жирного текста и таблиц; короткие списки с тире допустимы. Опирайся на данные пользователя ниже: расписание дня, регулярные тренировки (ММА, зал), время подъёма, воду и питание. Давай конкретные рекомендации: разминка, нагрузка и её объём, восстановление и сон, вода, что и когда поесть до и после тренировки. Не ставь диагнозы и не назначай лекарства; при боли или травме советуй обратиться к врачу. Ты контролируешь сон: сверяй его с целью, при недосыпе снижай интенсивность тренировки и подсказывай, как лечь вовремя. Ты контролируешь выполнение программы тренировок по журналу: если тренировка пропущена или выполнена частично, скажи об этом прямо и предложи, как наверстать без перегруза. Ты также контролируешь питание по параметрам тела: сверяй съеденное с дневной нормой калорий и белка, говори, сколько осталось или на сколько перебор, предлагай конкретные блюда и порции, чтобы добрать норму или не выйти за неё, следи за динамикой веса и мягко корректируй. Если пользователь просит запланировать дело или записать еду, используй инструменты addTask или addMeal и коротко подтверди, что добавлено. Если пользователь называет съеденное блюдо, оцени его калорийность и белок сам и передай их в addMeal.';
   function coachContext(){
     const day = state.day || blank(state.key); const d = parseKey(state.key);
     const tasks = effectiveTasks(day); const goal = state.settings.waterGoal || 8;
@@ -2072,7 +2072,7 @@ textarea.notes{padding:8px 14px 14px;min-height:84px}
     waterSlots(rem).forEach(t => { L = L.concat(ev('w' + fromMin(t).replace(':', ''), fromMin(t), 'Выпить стакан воды')); });
     rem.meals.forEach((t, i) => { L = L.concat(ev('m' + i, t, MEAL_KINDS[i] + ': время поесть')); });
     L = L.concat(ev('s', fromMin((bedTarget(sleepCfg()) - 30 + 1440) % 1440), 'Пора готовиться ко сну'));
-    if (state.settings.autoReview !== false) L = L.concat(ev('r', state.settings.reviewAt, 'Мой день: анализ дня'));
+    if (state.settings.autoReview !== false) L = L.concat(ev('r', state.settings.reviewAt, 'Моя жиза: анализ дня'));
     L.push('END:VCALENDAR');
     return L.join('\r\n');
   }
@@ -2088,7 +2088,7 @@ textarea.notes{padding:8px 14px 14px;min-height:84px}
     const ics = buildIcs(rem);
     try {
       const file = new File([ics], 'moy-den.ics', {type: 'text/calendar'});
-      if (navigator.canShare && navigator.canShare({files: [file]})){ navigator.share({files: [file], title: 'Напоминания «Мой день»'}).catch(() => {}); return; }
+      if (navigator.canShare && navigator.canShare({files: [file]})){ navigator.share({files: [file], title: 'Напоминания «Моя жиза»'}).catch(() => {}); return; }
     } catch(e){}
     const blob = new Blob([ics], {type: 'text/calendar'}), a = document.createElement('a');
     a.href = URL.createObjectURL(blob); a.download = 'moy-den.ics'; document.body.appendChild(a); a.click(); setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 2000);
@@ -2101,7 +2101,7 @@ textarea.notes{padding:8px 14px 14px;min-height:84px}
     const b = $('#banner');
     b.innerHTML = '<span class="bt">' + esc(text) + '</span><span class="bb">' + actions.map((a, i) => '<button type="button" class="' + (a.fill ? 'fill' : '') + '" data-banner="' + i + '">' + esc(a.label) + '</button>').join('') + '</span>';
     b.hidden = false; b._actions = actions; beep();
-    try { if (STANDALONE && document.hidden && window.Notification && Notification.permission === 'granted' && navigator.serviceWorker) navigator.serviceWorker.ready.then(r => r.showNotification('Мой день', {body: text, tag: 'moy-den'})).catch(() => {}); } catch(e){}
+    try { if (STANDALONE && document.hidden && window.Notification && Notification.permission === 'granted' && navigator.serviceWorker) navigator.serviceWorker.ready.then(r => r.showNotification('Моя жиза', {body: text, tag: 'moy-den'})).catch(() => {}); } catch(e){}
   }
   function hideBanner(){ const b = $('#banner'); b.hidden = true; b._actions = null; }
   const remMem = {get(k){ try { return JSON.parse(localStorage.getItem('rem:' + k) || 'null'); } catch(e){ return null; } }, set(k, v){ try { localStorage.setItem('rem:' + k, JSON.stringify(v)); } catch(e){} }};
@@ -2521,7 +2521,7 @@ textarea.notes{padding:8px 14px 14px;min-height:84px}
     toast('Откроется список из ' + ev.length + ' ' + plural(ev.length, 'события', 'событий', 'событий') + ': нажмите «Добавить все»');
   }
 
-  const SEC_RULES = ['Ты — «Робот Секретарь», личный секретарь пользователя в приложении «Мой день». Ты ведёшь его дела и планы: записываешь поручения, назначаешь и переносишь дела, следишь за сроками, приоритетами и накладками.',
+  const SEC_RULES = ['Ты — «Робот Секретарь», личный секретарь пользователя в приложении «Моя жиза». Ты ведёшь его дела и планы: записываешь поручения, назначаешь и переносишь дела, следишь за сроками, приоритетами и накладками.',
     'Как работать. 1) Поручение выполняй сразу инструментами, не спрашивая подтверждения, если из него ясны дело и день. Время, длительность и приоритет подбирай разумно сам. 2) Уточняющий вопрос задавай только когда без ответа нельзя действовать, и только один. 3) Даты бери из календаря ближайших дней в данных: не вычисляй дни недели сам. Слова «сегодня», «завтра», «в пятницу», «на следующей неделе» переводи в дату по этому календарю. 4) Если время не названо, оставляй дело без времени. Если сказано «напомни», ставь напоминание: по умолчанию за 30 минут, для важных встреч за час. 5) Перед тем как назначить время, проверь накладки с другими делами, регулярными делами и тренировками. Если накладка есть, всё равно запиши дело и прямо скажи о накладке. 6) Изменяй и удаляй только те дела, идентификатор которых видишь в данных. Регулярные дела меняй только через add_routine. 7) Для поручений вида «каждый вторник» или «по будням» используй add_routine.',
     'Фиксация и вопросы. Фиксируй всё, что пользователь называет делом, встречей, сроком, звонком, оплатой или напоминанием: ничего не оставляй только в разговоре. Если у записанного дела есть время, а о напоминании ничего не сказано, запиши дело и одним вопросом спроси, нужно ли напомнить и за сколько. Когда пользователь диктует дела, в конце ответа спроси, есть ли ещё дела или напоминания. Если пользователь отвечает на твой вопрос о напоминании, поставь напоминание через update_task.',
     'Как отвечать. По-русски, коротко и по делу, без markdown. После действий перечисли, что сделано: дата, время, название. На вопросы о планах отвечай списком по дням в порядке времени, сначала важное. Замечай просроченные дела и предлагай, куда их перенести. Не выдумывай дел, которых нет в данных. Вопросы о тренировках, питании и сне относятся к Роботу Тренеру: коротко ответь по данным и посоветуй вкладку «Тренировки».'].join('\n');
@@ -2744,7 +2744,7 @@ textarea.notes{padding:8px 14px 14px;min-height:84px}
     $('#sheetOk').onclick = () => onOk($('#sheetText'), t => { const m = $('#sheetMsg'); m.textContent = t; m.hidden = !t; });
   }
   function showDumpText(text){
-    textSheet('Копия данных', 'Нажмите «Скопировать», затем вставьте текст в «Заметки» или в другое приложение «Мой день» через «Вставить скопированную копию».', text, (ta, msg) => {
+    textSheet('Копия данных', 'Нажмите «Скопировать», затем вставьте текст в «Заметки» или в другое приложение «Моя жиза» через «Вставить скопированную копию».', text, (ta, msg) => {
       ta.focus(); ta.select();
       const done = () => { closeEditor(); toast('Копия скопирована'); };
       if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(text).then(done).catch(() => msg('Не получилось скопировать автоматически. Текст выделен: нажмите на него и выберите «Скопировать».'));
@@ -2752,7 +2752,7 @@ textarea.notes{padding:8px 14px 14px;min-height:84px}
     }, 'Скопировать');
   }
   function applyDump(dump, done){
-    if (!dump || dump.app !== 'moy-den' || !Array.isArray(dump.days)){ toast('Это не похоже на копию «Мой день»'); return; }
+    if (!dump || dump.app !== 'moy-den' || !Array.isArray(dump.days)){ toast('Это не похоже на копию «Моя жиза»'); return; }
     const ed = $('#editor');
     ed.innerHTML = '<div class="overlay" id="ovl"><div class="sheet"><h3>Восстановить данные?</h3><div class="hint">В копии ' + dump.days.length + ' ' + plural(dump.days.length, 'день', 'дня', 'дней') + (dump.exported ? ', сохранена ' + esc(String(dump.exported).slice(0, 10)) : '') + '. Дни из копии заменят одноимённые дни на этом устройстве, настройки и программа тоже возьмутся из копии.</div>'
       + '<div class="foot"><span></span><div><button type="button" class="btn" id="impCancel">Отмена</button><button type="button" class="btn primary" id="impOk">Восстановить</button></div></div></div></div>';
@@ -2774,7 +2774,7 @@ textarea.notes{padding:8px 14px 14px;min-height:84px}
       try {
         const file = new File([text], name + ext, {type});
         if (navigator.canShare && navigator.canShare({files: [file]})){
-          try { await navigator.share({files: [file], title: 'Копия «Мой день»'}); toast('Выберите «Сохранить в Файлы», если ещё не сохранили'); }
+          try { await navigator.share({files: [file], title: 'Копия «Моя жиза»'}); toast('Выберите «Сохранить в Файлы», если ещё не сохранили'); }
           catch(err){ if (!err || err.name !== 'AbortError') showDumpText(text); }
           return;
         }
@@ -2795,7 +2795,7 @@ textarea.notes{padding:8px 14px 14px;min-height:84px}
   $('#pasteBtn').onclick = () => {
     textSheet('Вставить копию', 'Нажмите на поле ниже, выберите «Вставить», затем «Восстановить».', '', (ta, msg) => {
       let dump; try { dump = JSON.parse(ta.value.trim()); } catch(e){ msg('Текст не похож на копию. Скопируйте её заново целиком.'); return; }
-      if (!dump || dump.app !== 'moy-den'){ msg('Это не копия «Мой день».'); return; }
+      if (!dump || dump.app !== 'moy-den'){ msg('Это не копия «Моя жиза».'); return; }
       applyDump(dump);
     }, 'Восстановить');
     setTimeout(() => { const ta = $('#sheetText'); if (ta) ta.focus(); }, 50);
