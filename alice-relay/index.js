@@ -23,7 +23,7 @@ const reply = (status, body) => ({
 
 const pad = n => String(n).padStart(2, '0');
 
-// GET ?cal=1&w=0730,0900&m=0730,1300,1630,1830 — файл календаря с ежедневными напоминаниями
+// GET ?cal=1&w=0730,0900&m=0730,1300,1630,1830&s=2215 — файл календаря с ежедневными напоминаниями
 function calendar(q) {
   const d = new Date();
   const day = d.getUTCFullYear() + pad(d.getUTCMonth() + 1) + pad(d.getUTCDate());
@@ -34,6 +34,7 @@ function calendar(q) {
   let lines = ['BEGIN:VCALENDAR', 'VERSION:2.0', 'PRODID:-//moy-den//RU', 'CALSCALE:GREGORIAN'];
   String(q.w || '').split(',').filter(ok).slice(0, 24).forEach(t => { lines = lines.concat(ev('w' + t, t, 'Выпить стакан воды')); });
   String(q.m || '').split(',').slice(0, 4).forEach((t, i) => { if (ok(t)) lines = lines.concat(ev('m' + i, t, kinds[i] + ': время поесть')); });
+  if (ok(String(q.s || ''))) lines = lines.concat(ev('s', q.s, 'Пора готовиться ко сну'));
   lines.push('END:VCALENDAR');
   return { statusCode: 200, headers: { 'Content-Type': 'text/calendar; charset=utf-8', 'Content-Disposition': 'inline; filename="moy-den.ics"' }, body: lines.join('\r\n') };
 }
