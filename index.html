@@ -586,7 +586,7 @@ textarea.notes:focus-visible{outline:none;box-shadow:inset 0 0 0 2px var(--accen
     state.mode = m;
     const st = $('#status'), txt = $('#statusText');
     st.className = 'status ok';
-    txt.textContent = 'Данные хранятся на этом устройстве. Раз в неделю сохраняйте резервную копию.';
+    txt.textContent = 'Данные хранятся на этом устройстве. Раз в неделю сохраняйте резервную копию. Версия 4.';
   }
 
   function openDay(k){
@@ -1261,7 +1261,7 @@ textarea.notes:focus-visible{outline:none;box-shadow:inset 0 0 0 2px var(--accen
       let res;
       // text/plain: «простой» запрос без предварительной проверки CORS
       try { res = await fetch(url, {method:'POST', headers:{'content-type':'text/plain;charset=UTF-8'}, body: JSON.stringify(payload), signal}); }
-      catch(e){ if (e && e.name === 'AbortError') throw {code:'cancelled', message:''}; throw {code:'relay_unreachable', message:'relay'}; }
+      catch(e){ if (e && e.name === 'AbortError') throw {code:'cancelled', message:''}; throw {code:'relay_unreachable', message: String(e && e.message || e)}; }
       let j = null; try { j = await res.json(); } catch(e){}
       if (!res.ok){
         const msg = (j && (typeof j.error === 'string' ? j.error : (j.error && j.error.message) || j.message)) || ('HTTP '+res.status);
@@ -1394,7 +1394,7 @@ textarea.notes:focus-visible{outline:none;box-shadow:inset 0 0 0 2px var(--accen
         if (e.text){ bubble.className = 'msg bot'; bubble.textContent = e.text; coachTurns.push({role:'assistant', content: e.text}); } else { bubble.remove(); coachTurns.pop(); }
       } else {
         coachTurns.pop();
-        bubble.className = 'msg bot think'; bubble.textContent = (code !== 'refused' && e && e.text ? e.text+'\n\n' : '') + coachErrorText(code);
+        bubble.className = 'msg bot think'; bubble.textContent = (code !== 'refused' && e && e.text ? e.text+'\n\n' : '') + coachErrorText(code) + (e && e.message && String(e.message).length > 8 ? ' Подробности: '+String(e.message).slice(0, 160) : '');
       }
     } finally { setBusy(false); coachCtl = null; scrollChat(); }
   }
@@ -1446,7 +1446,11 @@ textarea.notes:focus-visible{outline:none;box-shadow:inset 0 0 0 2px var(--accen
   document.querySelectorAll('.chip').forEach(c => c.disabled = true);
   initStore().then(() => { openSettings(); openDay(state.key); });
   initCoach();
-  if ('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js').catch(() => {});
+  if ('serviceWorker' in navigator){
+    const hadController = !!navigator.serviceWorker.controller; let reloaded = false;
+    navigator.serviceWorker.addEventListener('controllerchange', () => { if (hadController && !reloaded){ reloaded = true; if (state.dirty) flush(); location.reload(); } });
+    navigator.serviceWorker.register('sw.js').then(r => r.update && r.update()).catch(() => {});
+  }
   if (navigator.storage && navigator.storage.persist) navigator.storage.persist().catch(() => {});
 })();
 </script>
