@@ -13,6 +13,7 @@
 <meta name="apple-mobile-web-app-title" content="Мой день">
 <link rel="apple-touch-icon" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAALQAAAC0CAYAAAA9zQYyAAACj0lEQVR42u3dyw3CMBBAwTRAqXRCf/TAjQpAnEHiGzDPs9JrYDOn2IRlGXw2291J47QYWKGHWHBDLLhBFtggawrYHpIysD0YJVB7GMrA9gCUQW3xyqC2cGVQW7QyqC1YGdQWqwxqC1UGtUUqhdoSlQFtgcqgtjilUFuaMqAtTCnUlqUMaItSCrUlKQPagpRCbTkCWhoRtMUohdpSBLQ0ImgLUQq1ZQhoCWgJaAloAS0BLQEtrQXaIpRCbQkCWgJaAloCWkBLQEtAS0BLQAtoCeivVxoIgQZaQAMN9MfbH45XAQ3hX4K+hflV2EDrp6DvYX4WNdD6GehHMQOtHOhHUQMtoIEGGmiggQYaaKCBlrccQGvc99AOVpQ5KXT0LZeTgBbQQAMNNNBAS0BLQEtAC2gJaAloCWgJaAEtAS0BLQEtoC1BQLs+OvMADTTQQAMNtB/JGqB9xsAA7UMzQAPtU2BAAw000EAboIE2QAMNNNDecgDdfw8NNNCZk0IHK0D/5V0Of40MtMtJQAMNtAEaaAO0BLQEtAS0gJaAloCWgJaAFtAS0BLQEtCS23ZuxQENNNBAAw203xQCDbRffRugfZcDaKB9OQlooH3bDmiggQYaaAM00EADDTTQQHvLAfSM76EdrACdOSl09A20y0kGaKCBBhpooIGWgJaAloAW0BLQEtDSG6AvYxHKYAZaQEtAS0BLQAtoCxHQEtDS2qChVgoz0AJaGhk01EphBlpASyODhlopzEArBxpqpTADrRxoqJXCDLRyoKFWCjPUymEGWjnQUCuFGWrlMEOtHGaolcMMtXKYoVYOM9TKYYZaOcxgKwcZaiUxg60cZLCVhAy2kpDh1jLTeOAQTzeAwPrMnAFRpIIvs1xU+AAAAABJRU5ErkJggg==">
 <link rel="icon" type="image/png" sizes="192x192" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMAAAADACAYAAABS3GwHAAAC2ElEQVR42u3dwY3CQBAAQSdAqGRCfuTAjwggAZAwRsKerpU6gfHU42DxLcuBzul8eWj/LY7lFiQWXkBYeuUxeKhKQvAQlYTgoSkJwUNSFoIHoywCD0RJBB6CshAMXlkEBq4sAoNWFoEBK4vAYJVGYKjKAjBQZREYpLIIDFBpBIanLACDUxqBoSkLwMCURmBYygIwKKURGJKyAAxIaQSGIwCkIgCDURqBoQgACQApBsBAlEZgGAJAAkACQAJAAkACQAJAmgnAIASABIAEgASABIAEgASABIAEgASABIAEgATAn5t6LCgAAAgAADQOwPV2fxkAAIwG8G7xtyAAQIcA8Mnyf4MAAI0DsAYBANo9gLXLDwAAAAAgAAAQAAAIAADkY1AANP2LMAAAGH0VwjfBALgL9KN7QADIbVAABAAAAgAA+U2wBIAEgASABIAEgASABIAEgASAADAIASABIAEgAeA6tFO4zg2AAwAADgB//mE8AAB4LYr/EAOAF2N5MRYAXo0IAABtAF6OC8AoAN4ODQAAAAAAAAAAAAAAAP4IBgAAAHwMCoAvwvyDDABchXAVAgC3QQEAAAAAAAAAAAAAkACQAJAAkACQAJAAkACQAJAAkACQAJAAkACQAJD8HsA54n19AAAAAAAAABgG4FdvhAAAAO8FcgDwZjgHAO8GdQDYJwBvhwYAAAAAAAAAAAAAAAAAAADAp0AAAACA7wEA8E2wb4IBcBfIXSAA3AYFAAAAAAAAAAAAAEACQAJAAkACQAJAAkDaCAACAWAYAkACQAJAAkACQAJAAkAaCwACpZcfAAFgKAJAigKAQOnlB0AAGI7KACBQevkBUB4ABEovPwDKA4BA6eUHQHkAECi9/AAoDwACpZcfAuWXHwLllx8A5QFAoPTyQ6D88kOg/PJDoPzyQ6D88oOg/OJDIMsPgSw/CLL4IMjigyCLD4IsPgyy9EDIwjvOXs8T8qJ5y+UoXMYAAAAASUVORK5CYII=">
+<script>window.MOYDEN_STANDALONE = true;</script>
 <style>html{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)} img{max-width:100%} [hidden]{display:none!important}</style>
 </head>
 <body>
@@ -262,6 +263,62 @@ textarea.notes:focus-visible{outline:none;box-shadow:inset 0 0 0 2px var(--accen
 .ask{display:flex;gap:8px;padding:8px 18px 10px}
 .ask input{flex:1;min-width:0;padding:10px 12px;border:1px solid var(--line);border-radius:10px;background:var(--bg)}
 
+/* Program, journal, menu, reminders */
+.pbody{padding:12px 18px 16px;display:grid;gap:12px}
+.btnrow{display:flex;flex-wrap:wrap;gap:6px}
+.btnrow .btn{padding:7px 12px;font-size:13px}
+.wk{border:1px solid var(--line-soft);border-radius:12px;padding:12px;display:grid;gap:8px}
+.wk h3{margin:0;font-size:15px;font-weight:600;overflow-wrap:anywhere}
+.wk .sub{font-size:13px;color:var(--muted);overflow-wrap:anywhere}
+.ex{list-style:none;margin:0;padding:0;display:grid;gap:2px}
+.ex li{display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:10px;align-items:start;padding:7px 4px;border-radius:8px}
+.ex li.done .en{text-decoration:line-through;color:var(--muted)}
+.ex .en{font-weight:500;overflow-wrap:anywhere}
+.ex .en small{display:block;font-weight:400;color:var(--muted);font-size:12px}
+.ex .sr{font-size:13px;font-variant-numeric:tabular-nums;white-space:nowrap;color:var(--muted);text-align:right}
+.finish{display:grid;grid-template-columns:minmax(0,1fr) 96px;gap:8px}
+.finish input,.finish select{padding:8px 10px;border:1px solid var(--line);border-radius:8px;background:var(--bg);width:100%;min-width:0}
+.finish .wide{grid-column:1/-1}
+.wrows{display:grid;gap:2px}
+.wrow{display:grid;grid-template-columns:54px minmax(0,1fr) auto;gap:10px;align-items:baseline;padding:8px;border-radius:8px;border:0;background:none;text-align:left;width:100%}
+.wrow:hover{background:var(--surface-2)}
+.wrow.sel{background:var(--accent-soft)}
+.wrow .dd{font-size:12px;color:var(--muted);font-variant-numeric:tabular-nums;text-transform:uppercase;letter-spacing:.04em}
+.wrow .tt{min-width:0;overflow-wrap:anywhere}
+.wrow .tt small{color:var(--muted);font-size:12px;margin-left:6px;white-space:nowrap}
+.tag{display:inline-block;font-size:11px;padding:2px 7px;border-radius:999px;background:var(--surface-2);color:var(--muted);white-space:nowrap}
+.tag.ok{background:var(--ok);color:#fff} .tag.miss{background:var(--hi);color:#fff} .tag.part{background:var(--mid);color:#fff}
+.chip.sel{border-color:var(--accent);background:var(--accent-soft);color:var(--fg)}
+.report{background:var(--surface-2);border-radius:10px;padding:10px 12px;font-size:14px;white-space:pre-wrap;overflow-wrap:anywhere;line-height:1.45}
+.report small{display:block;color:var(--muted);font-size:12px;margin-bottom:4px}
+.jwrap{overflow-x:auto}
+table.jr{width:100%;border-collapse:collapse;font-size:13px;font-variant-numeric:tabular-nums}
+table.jr th{font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);font-weight:500;text-align:left;padding:6px 8px;border-bottom:1px solid var(--line-soft);white-space:nowrap}
+table.jr td{padding:7px 8px;border-bottom:1px solid var(--line-soft);vertical-align:top}
+table.jr td.n{white-space:nowrap}
+.menuhead{display:flex;justify-content:space-between;align-items:baseline;gap:8px;padding:10px 18px 6px;border-top:1px solid var(--line-soft)}
+.menuhead b{font-size:13px}
+.plan{list-style:none;margin:0;padding:0 10px 8px;display:grid;gap:6px}
+.plan li{border:1px solid var(--line-soft);border-radius:10px;padding:9px 10px;display:grid;gap:4px}
+.plan li.eaten{opacity:.55}
+.plan li.none{border:0;padding:0 8px 4px;color:var(--muted);font-size:13px}
+.plan .ph{display:flex;justify-content:space-between;gap:8px;align-items:baseline}
+.plan .ph b{font-size:13px}
+.plan .pi{font-size:13px;overflow-wrap:anywhere}
+.plan .pm{font-size:12px;color:var(--muted);font-variant-numeric:tabular-nums;overflow-wrap:anywhere}
+.plan .pa{display:flex;gap:12px}
+.remgrid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.remgrid label{display:grid;gap:4px;font-size:12px;color:var(--muted)}
+.remgrid .wide{grid-column:1/-1}
+.remgrid input,.remgrid select{padding:8px 10px;border:1px solid var(--line);border-radius:8px;background:var(--bg);width:100%;min-width:0;font-variant-numeric:tabular-nums}
+.switch{display:flex;align-items:center;gap:6px;font-size:13px;color:var(--muted)}
+.banner{position:fixed;left:0;right:0;top:0;z-index:25;background:var(--accent);color:var(--accent-fg);padding:calc(10px + env(safe-area-inset-top,0px)) max(16px,env(safe-area-inset-right,0px)) 10px max(16px,env(safe-area-inset-left,0px));display:flex;flex-wrap:wrap;gap:8px 12px;align-items:center;justify-content:space-between;box-shadow:var(--shadow)}
+.banner .bt{font-weight:500;min-width:0;flex:1 1 200px;overflow-wrap:anywhere}
+.banner .bb{display:flex;flex-wrap:wrap;gap:6px}
+.banner button{border:1px solid currentColor;background:transparent;color:inherit;border-radius:8px;padding:6px 10px;font-weight:500}
+.banner button.fill{background:var(--accent-fg);color:var(--accent);border-color:var(--accent-fg)}
+.cta{margin:10px 18px 0;padding:12px;border:1px dashed var(--accent);border-radius:12px;display:grid;gap:8px;font-size:14px}
+
 /* Editor overlay */
 .overlay{position:fixed;inset:0;background:rgba(10,18,24,.45);display:grid;place-items:end center;z-index:20;padding:max(16px,env(safe-area-inset-left,0px));padding-bottom:max(16px,env(safe-area-inset-bottom,0px))}
 @media (min-width:600px){.overlay{place-items:center}}
@@ -306,6 +363,7 @@ textarea.notes:focus-visible{outline:none;box-shadow:inset 0 0 0 2px var(--accen
 
     <section class="panel" id="coachPanel">
       <div class="panel-h"><h2>Робот Тренер</h2><span style="display:flex;gap:10px;align-items:baseline"><button type="button" class="link" id="aiSetup">Настроить ИИ</button><span class="meta" id="coachMeta">ИИ-тренер</span></span></div>
+      <div class="cta" id="coachCta" hidden><span>Тренер пока не подключён к нейросети. Без неё не работают чат, программа тренировок, меню и отчёты. Нажмите кнопку и введите код доступа.</span><button type="button" class="btn primary" id="coachCtaBtn">Подключить ИИ-тренера</button></div>
       <div class="chat" id="chat">
         <div class="msg bot">Привет! Я Робот Тренер. Вижу ваше расписание, тренировки, воду и питание на выбранный день. Спросите про план на сегодня, разминку перед ММА, что съесть после зала или как выстроить неделю.</div>
       </div>
@@ -322,6 +380,29 @@ textarea.notes:focus-visible{outline:none;box-shadow:inset 0 0 0 2px var(--accen
         <button class="btn" type="button" id="stopBtn" hidden>Стоп</button>
       </form>
       <div class="hint" style="padding:0 18px 14px">Ответы ИИ — общие рекомендации, а не замена врачу. Тренер работает через Алису AI (Яндекс) или Claude: выберите нейросеть в «Настроить ИИ».</div>
+    </section>
+    <section class="panel" id="programPanel">
+      <div class="panel-h"><h2>Программа тренировок</h2><span class="meta" id="programMeta"></span></div>
+      <div class="pbody">
+        <div id="todayWorkout"></div>
+        <div id="weekTabs" class="chips" style="padding:0"></div>
+        <div id="weekFocus" class="hint"></div>
+        <div id="weekRows" class="wrows"></div>
+        <div class="btnrow">
+          <button type="button" class="btn primary" id="genWeek">Составить на неделю</button>
+          <button type="button" class="btn" id="genMonth">Составить на месяц</button>
+        </div>
+        <div class="hint" id="programHint"></div>
+      </div>
+    </section>
+
+    <section class="panel" id="journalPanel">
+      <div class="panel-h"><h2>Журнал</h2><button type="button" class="link" id="reportBtn">Отчёт тренера</button></div>
+      <div class="pbody">
+        <div class="report" id="reportBox" hidden></div>
+        <div class="jwrap"><table class="jr"><thead><tr><th>День</th><th>Тренировка</th><th>Вода</th><th>Ккал</th><th>Вес</th></tr></thead><tbody id="journalRows"></tbody></table></div>
+        <div class="hint">Журнал ведётся сам: тренировки попадают сюда после кнопки «Завершить», вода и еда — из ваших отметок за день. Тренер сверяет его с программой.</div>
+      </div>
     </section>
     </div>
 
@@ -366,6 +447,8 @@ textarea.notes:focus-visible{outline:none;box-shadow:inset 0 0 0 2px var(--accen
             <button type="button" class="btn" data-water="-250" aria-label="Убрать 250 мл">− 250</button>
           </div>
         </div>
+        <div class="menuhead"><b>Меню от тренера</b><button type="button" class="link" id="menuBtn">Составить меню</button></div>
+        <ul class="plan" id="menuList"></ul>
         <form class="meal-form" id="mealForm" autocomplete="off">
           <input type="text" id="mealTitle" placeholder="Что съели: овсянка с ягодами" maxlength="120" required aria-label="Что съели">
           <button class="btn primary" type="submit" style="padding:8px 14px" aria-label="Добавить приём пищи">+</button>
@@ -398,8 +481,30 @@ textarea.notes:focus-visible{outline:none;box-shadow:inset 0 0 0 2px var(--accen
             </select>
           </label>
           <label>Цель <select id="pGoal"><option value="lose">Снизить вес</option><option value="keep" selected>Держать вес</option><option value="gain">Набрать массу</option></select></label>
+          <label>Подготовка <select id="pLevel"><option value="beginner">Новичок: тренируюсь меньше года</option><option value="mid">Средняя: 1–3 года регулярно</option><option value="adv">Высокая: больше 3 лет</option></select></label>
+          <label>Ограничения и травмы <input type="text" id="pLimits" maxlength="200" placeholder="например: болит колено, нельзя бег"></label>
         </form>
         <div class="targets" id="targets"></div>
+      </section>
+
+      <section class="panel" id="remPanel">
+        <div class="panel-h"><h2>Напоминания</h2><label class="switch"><input type="checkbox" id="remOn"> включены</label></div>
+        <div class="pbody">
+          <div class="remgrid">
+            <label class="wide">Вода каждые <select id="remEvery"><option value="60">1 час</option><option value="90">1,5 часа</option><option value="120">2 часа</option><option value="180">3 часа</option></select></label>
+            <label>С <input type="time" id="remFrom" step="300"></label>
+            <label>До <input type="time" id="remTo" step="300"></label>
+            <label>Завтрак <input type="time" id="remM0" step="300"></label>
+            <label>Обед <input type="time" id="remM1" step="300"></label>
+            <label>Перекус <input type="time" id="remM2" step="300"></label>
+            <label>Ужин <input type="time" id="remM3" step="300"></label>
+          </div>
+          <div class="btnrow" id="remBtns" hidden>
+            <button type="button" class="btn primary" id="remCal">Добавить в Календарь iPhone</button>
+            <button type="button" class="btn" id="remNotify">Включить уведомления</button>
+          </div>
+          <div class="hint" id="remHint">Пока приложение открыто, оно само покажет напоминание вверху экрана.</div>
+        </div>
       </section>
 
       <section class="panel">
@@ -428,6 +533,7 @@ textarea.notes:focus-visible{outline:none;box-shadow:inset 0 0 0 2px var(--accen
   </div>
 </div>
 
+<div id="banner" class="banner" hidden></div>
 <div id="editor" hidden></div>
 <div id="toast" class="toast" hidden></div>
 
@@ -456,7 +562,8 @@ textarea.notes:focus-visible{outline:none;box-shadow:inset 0 0 0 2px var(--accen
     mode: null,           // 'db' | 'local'
     dirty: false,
     weekDays: {},         // key -> {total, done}
-    settings: {waterGoal: 8, routines: [], profile: null, recent: []},
+    settings: {waterGoal: 8, routines: [], profile: null, recent: [], rem: null, program: null, journal: [], report: null},
+    weekView: null,
   };
   const normRecent = arr => Array.isArray(arr) ? arr.filter(m => m && typeof m.title === 'string').map(m => ({
     title: m.title.slice(0,120), kind: typeof m.kind === 'string' ? m.kind : 'Перекус',
@@ -476,6 +583,7 @@ textarea.notes:focus-visible{outline:none;box-shadow:inset 0 0 0 2px var(--accen
     const out = {
       sex: p.sex === 'f' ? 'f' : 'm', age: num(p.age, 10, 100), height: num(p.height, 120, 230), weight: num(p.weight, 30, 300),
       activity: num(p.activity, 1, 5) || 4, goal: GOAL_TEXT.hasOwnProperty(p.goal) ? p.goal : 'keep',
+      level: ['beginner','mid','adv'].indexOf(p.level) >= 0 ? p.level : 'beginner', limits: typeof p.limits === 'string' ? p.limits.trim().slice(0, 200) : '',
       weights: Array.isArray(p.weights) ? p.weights.filter(w => w && /^\d{4}-\d{2}-\d{2}$/.test(String(w.date)) && num(w.kg, 30, 300)).map(w => ({date: String(w.date), kg: Number(w.kg)})).slice(-120) : []
     };
     return out;
@@ -512,6 +620,10 @@ textarea.notes:focus-visible{outline:none;box-shadow:inset 0 0 0 2px var(--accen
     if (Array.isArray(o.routines)) state.settings.routines = normRoutines(o.routines);
     if (o.profile) state.settings.profile = normProfile(o.profile);
     if (Array.isArray(o.recent)) state.settings.recent = normRecent(o.recent);
+    if (o.rem) state.settings.rem = normRem(o.rem);
+    if (o.program !== undefined) state.settings.program = normProgram(o.program);
+    if (Array.isArray(o.journal)) state.settings.journal = normJournal(o.journal);
+    if (o.report && typeof o.report.text === 'string') state.settings.report = {date: String(o.report.date || ''), text: o.report.text.slice(0, 4000)};
   }
   const routinesFor = k => { const dow = parseKey(k).getDay(); return state.settings.routines.filter(r => r.days.indexOf(dow) >= 0); };
   function effectiveTasks(day){
@@ -537,6 +649,69 @@ textarea.notes:focus-visible{outline:none;box-shadow:inset 0 0 0 2px var(--accen
   const mlText = ml => ml >= 1000 ? (ml/1000).toLocaleString('ru-RU',{maximumFractionDigits:2})+' л' : ml+' мл';
   const defaultKind = () => { const h = new Date().getHours(); return h < 11 ? 'Завтрак' : h < 16 ? 'Обед' : h < 21 ? 'Ужин' : 'Перекус'; };
 
+  // ---------- Program, journal, menu, reminders: data ----------
+  const STANDALONE = !!window.MOYDEN_STANDALONE;
+  const LEVEL_TEXT = {beginner: 'новичок, тренируется меньше года', mid: 'средняя, 1–3 года регулярных тренировок', adv: 'высокая, больше 3 лет тренировок'};
+  const TYPE_TEXT = {gym: 'зал', mma: 'единоборства', cardio: 'кардио', rest: 'отдых'};
+  const FEEL_TEXT = ['', 'очень легко', 'легко', 'нормально', 'тяжело', 'очень тяжело'];
+  const MEAL_KINDS = ['Завтрак', 'Обед', 'Перекус', 'Ужин'];
+  function isTime(t){ return /^\d{2}:\d{2}$/.test(String(t || '')); }
+  function isKey(k){ return /^\d{4}-\d{2}-\d{2}$/.test(String(k || '')); }
+  function sstr(v, n){ return typeof v === 'string' ? v.trim().slice(0, n) : (typeof v === 'number' ? String(v) : ''); }
+  function pnum(v){ const n = Number(v); return Number.isFinite(n) && n > 0 ? Math.round(n) : null; }
+  function defaultRem(){ return {on: true, every: 90, from: '07:30', to: '22:00', meals: ['07:30', '13:00', '16:30', '18:30']}; }
+  function normRem(r){
+    const d = defaultRem(); if (!r || typeof r !== 'object') return d;
+    return {on: r.on !== false, every: [60, 90, 120, 180].indexOf(Number(r.every)) >= 0 ? Number(r.every) : d.every,
+      from: isTime(r.from) ? r.from : d.from, to: isTime(r.to) ? r.to : d.to,
+      meals: d.meals.map((t, i) => Array.isArray(r.meals) && isTime(r.meals[i]) ? r.meals[i] : t)};
+  }
+  function remCfg(){ return state.settings.rem || defaultRem(); }
+  function normWeek(w){
+    if (!w || !Array.isArray(w.days)) return null;
+    const days = [];
+    for (let d = 1; d <= 7; d++){
+      const src = w.days.find(x => x && Number(x.d) === d) || {};
+      const items = (Array.isArray(src.items) ? src.items : []).filter(it => it && (it.n || it.name)).slice(0, 12)
+        .map(it => ({n: sstr(it.n || it.name, 80), s: pnum(it.s), r: sstr(it.r, 40), rest: sstr(it.rest, 30), note: sstr(it.note, 140)}));
+      const type = ['gym', 'mma', 'cardio', 'rest'].indexOf(src.type) >= 0 ? src.type : (items.length ? 'gym' : 'rest');
+      days.push({d, title: sstr(src.title, 80) || (type === 'rest' ? 'Отдых' : 'Тренировка'), type, min: pnum(src.min), intensity: sstr(src.intensity, 20),
+        warmup: sstr(src.warmup, 300), items, cooldown: sstr(src.cooldown, 300), tip: sstr(src.tip, 300)});
+    }
+    return {start: isKey(w.start) ? w.start : null, focus: sstr(w.focus, 200), days};
+  }
+  function normProgram(p){
+    if (!p || !Array.isArray(p.weeks)) return null;
+    const weeks = p.weeks.map(normWeek).filter(w => w && w.start).slice(0, 8);
+    return weeks.length ? {created: sstr(p.created, 10), weeks} : null;
+  }
+  function normJournal(a){
+    const byDate = {};
+    (Array.isArray(a) ? a : []).forEach(e => { if (e && isKey(e.date)) byDate[e.date] = {date: e.date, title: sstr(e.title, 80), type: sstr(e.type, 10),
+      done: pnum(e.done) || 0, total: pnum(e.total) || 0, min: pnum(e.min), feel: Number(e.feel) >= 1 && Number(e.feel) <= 5 ? Math.round(Number(e.feel)) : null, note: sstr(e.note, 200)}; });
+    return Object.keys(byDate).sort().slice(-180).map(k => byDate[k]);
+  }
+  function normMenu(m){
+    if (!m || !Array.isArray(m.meals)) return null;
+    const meals = m.meals.filter(x => x && Array.isArray(x.items)).slice(0, 8).map(x => ({
+      kind: sstr(x.kind, 20) || 'Перекус', time: isTime(x.time) ? x.time : '', why: sstr(x.why, 160), eaten: !!x.eaten,
+      items: x.items.filter(i => i && (i.n || i.name)).slice(0, 8).map(i => ({n: sstr(i.n || i.name, 80), g: pnum(i.g), kcal: pnum(i.kcal), p: pnum(i.p), f: pnum(i.f), c: pnum(i.c)}))
+    })).filter(x => x.items.length);
+    return meals.length ? {meals} : null;
+  }
+  function normWorkout(w){
+    if (!w || typeof w !== 'object') return null;
+    return {done: (Array.isArray(w.done) ? w.done : []).map(Number).filter(n => Number.isInteger(n) && n >= 0 && n < 40),
+      finished: !!w.finished, feel: Number(w.feel) >= 1 && Number(w.feel) <= 5 ? Math.round(Number(w.feel)) : null, min: pnum(w.min), note: sstr(w.note, 200)};
+  }
+  function mondayOf(k){ return weekKeys(k)[0]; }
+  function planFor(k){
+    const pr = state.settings.program; if (!pr) return null;
+    const mon = mondayOf(k), wi = pr.weeks.findIndex(w => w.start === mon); if (wi < 0) return null;
+    return {week: pr.weeks[wi], wi, day: pr.weeks[wi].days[(parseKey(k).getDay() + 6) % 7]};
+  }
+  function isRest(p){ return !p || (p.type === 'rest' && !p.items.length); }
+
   // ---------- Storage ----------
   const local = {
     read(k){ try { const v = localStorage.getItem('day:'+k); return v ? JSON.parse(v) : null; } catch(e){ return null; } },
@@ -544,7 +719,7 @@ textarea.notes:focus-visible{outline:none;box-shadow:inset 0 0 0 2px var(--accen
     all(){ const out = []; try { for (let i=0;i<localStorage.length;i++){ const kk = localStorage.key(i); if (kk && kk.indexOf('day:')===0){ const v = JSON.parse(localStorage.getItem(kk)); if (v) out.push(v); } } } catch(e){} return out; }
   };
   let db = null, unsubDay = null, unsubWeek = null, loadTimer = null;
-  const blank = k => ({date:k, tasks:[], notes:'', water:0, waterMl:0, meals:[], skip:[]});
+  const blank = k => ({date:k, tasks:[], notes:'', water:0, waterMl:0, meals:[], skip:[], menu:null, workout:null});
   const setWater = (d, ml) => { d.waterMl = Math.max(0, Math.min(10000, Math.round(ml))); d.water = Math.round(d.waterMl / GLASS_ML); };
   const normalize = (k, d) => {
     const out = blank(k);
@@ -558,6 +733,8 @@ textarea.notes:focus-visible{outline:none;box-shadow:inset 0 0 0 2px var(--accen
         return o;
       });
       if (Array.isArray(d.skip)) out.skip = d.skip.filter(x => typeof x === 'string');
+      if (d.menu) out.menu = normMenu(d.menu);
+      if (d.workout) out.workout = normWorkout(d.workout);
       if (typeof d.notes === 'string') out.notes = d.notes;
       const w = Number(d.water); out.water = Number.isFinite(w) && w > 0 ? Math.min(40, Math.floor(w)) : 0;
       const wm = Number(d.waterMl); out.waterMl = Number.isFinite(wm) && wm > 0 ? Math.min(10000, Math.round(wm)) : out.water * GLASS_ML;
@@ -586,7 +763,7 @@ textarea.notes:focus-visible{outline:none;box-shadow:inset 0 0 0 2px var(--accen
     state.mode = m;
     const st = $('#status'), txt = $('#statusText');
     st.className = 'status ok';
-    txt.textContent = 'Данные хранятся на этом устройстве. Раз в неделю сохраняйте резервную копию. Версия 4.';
+    txt.textContent = 'Данные хранятся на этом устройстве. Раз в неделю сохраняйте резервную копию. Версия 5.';
   }
 
   function openDay(k){
@@ -678,7 +855,8 @@ textarea.notes:focus-visible{outline:none;box-shadow:inset 0 0 0 2px var(--accen
     }
   }
   function saveSettings(){
-    const body = {waterGoal: state.settings.waterGoal, routines: state.settings.routines, profile: state.settings.profile, recent: state.settings.recent};
+    const body = {waterGoal: state.settings.waterGoal, routines: state.settings.routines, profile: state.settings.profile, recent: state.settings.recent,
+      rem: state.settings.rem, program: state.settings.program, journal: state.settings.journal, report: state.settings.report};
     if (state.mode === 'db') db.doc('settings/main').set(body).catch(() => toast('Не удалось сохранить настройки'));
     else { try { localStorage.setItem('settings', JSON.stringify(body)); } catch(e){} }
   }
@@ -770,6 +948,9 @@ textarea.notes:focus-visible{outline:none;box-shadow:inset 0 0 0 2px var(--accen
 
     renderFood(day);
     renderRoutines();
+    renderProgram();
+    renderJournal();
+    renderRem();
 
     const carry = day.tasks.filter(t => !t.done && !t.rid).length;
     $('#carryBtn').disabled = !carry; $('#carryBtn').textContent = carry ? 'Перенести невыполненные на завтра ('+carry+')' : 'Переносить нечего';
@@ -841,6 +1022,7 @@ textarea.notes:focus-visible{outline:none;box-shadow:inset 0 0 0 2px var(--accen
       const tgt = nt ? '<div class="tgt" style="bottom:'+(19 + Math.round(45 * nt.target / maxK))+'px"></div>' : '';
       wf.innerHTML = '<div class="cap"><span>Неделя: в среднем <b>'+avgK.toLocaleString('ru-RU')+'</b> ккал и <b>'+mlText(avgW)+'</b> воды в день</span>'+(nt ? '<span>пунктир — норма '+nt.target.toLocaleString('ru-RU')+'</span>' : '')+'</div><div class="wf">'+cols+tgt+'</div>';
     }
+    renderMenu(day);
     renderProfile();
   }
   function openMealEditor(id){
@@ -883,7 +1065,7 @@ textarea.notes:focus-visible{outline:none;box-shadow:inset 0 0 0 2px var(--accen
   }
   function renderProfile(){
     const p = state.settings.profile;
-    const f = {pSex: p ? p.sex : 'm', pAge: p && p.age ? p.age : '', pHeight: p && p.height ? p.height : '', pWeight: p && p.weight ? p.weight : '', pAct: p ? p.activity : 4, pGoal: p ? p.goal : 'keep'};
+    const f = {pSex: p ? p.sex : 'm', pAge: p && p.age ? p.age : '', pHeight: p && p.height ? p.height : '', pWeight: p && p.weight ? p.weight : '', pAct: p ? p.activity : 4, pGoal: p ? p.goal : 'keep', pLevel: p ? p.level : 'beginner', pLimits: p ? p.limits : ''};
     Object.keys(f).forEach(id => { const el = $('#'+id); if (document.activeElement !== el && String(el.value) !== String(f[id])) el.value = f[id]; });
     const nt = nutrition(p), box = $('#targets');
     if (!nt){ $('#profileMeta').textContent = 'не заполнено'; box.innerHTML = '<div class="hint">Укажите возраст, рост и вес. Расчёт нормы — по формуле Миффлина-Сан Жеора с поправкой на активность и цель.</div>'; return; }
@@ -1041,7 +1223,7 @@ textarea.notes:focus-visible{outline:none;box-shadow:inset 0 0 0 2px var(--accen
     const prev = state.settings.profile;
     const p = normProfile({
       sex: $('#pSex').value, age: $('#pAge').value, height: $('#pHeight').value, weight: $('#pWeight').value,
-      activity: $('#pAct').value, goal: $('#pGoal').value, weights: prev ? prev.weights : []
+      activity: $('#pAct').value, goal: $('#pGoal').value, level: $('#pLevel').value, limits: $('#pLimits').value, weights: prev ? prev.weights : []
     });
     if (p.weight){ const today = keyOf(new Date()); p.weights = p.weights.filter(w => w.date !== today).concat([{date: today, kg: p.weight}]).slice(-120); }
     state.settings.profile = p; saveSettings();
@@ -1101,7 +1283,7 @@ textarea.notes:focus-visible{outline:none;box-shadow:inset 0 0 0 2px var(--accen
 
   // ---------- Coach (AI) ----------
   let sampleFn = null, coachReady = false, coachToolsOk = false, coachTurns = [], coachCtl = null;
-  const COACH_RULES = 'Ты — «Робот Тренер», персональный тренер и помощник по режиму дня внутри приложения-планировщика «Мой день». Отвечай только по-русски, коротко и по делу: обычно 4–10 строк, без markdown-заголовков, жирного текста и таблиц; короткие списки с тире допустимы. Опирайся на данные пользователя ниже: расписание дня, регулярные тренировки (ММА, зал), время подъёма, воду и питание. Давай конкретные рекомендации: разминка, нагрузка и её объём, восстановление и сон, вода, что и когда поесть до и после тренировки. Не ставь диагнозы и не назначай лекарства; при боли или травме советуй обратиться к врачу. Ты также контролируешь питание по параметрам тела: сверяй съеденное с дневной нормой калорий и белка, говори, сколько осталось или на сколько перебор, предлагай конкретные блюда и порции, чтобы добрать норму или не выйти за неё, следи за динамикой веса и мягко корректируй. Если пользователь просит запланировать дело или записать еду, используй инструменты addTask или addMeal и коротко подтверди, что добавлено. Если пользователь называет съеденное блюдо, оцени его калорийность и белок сам и передай их в addMeal.';
+  const COACH_RULES = 'Ты — «Робот Тренер», персональный тренер и помощник по режиму дня внутри приложения-планировщика «Мой день». Отвечай только по-русски, коротко и по делу: обычно 4–10 строк, без markdown-заголовков, жирного текста и таблиц; короткие списки с тире допустимы. Опирайся на данные пользователя ниже: расписание дня, регулярные тренировки (ММА, зал), время подъёма, воду и питание. Давай конкретные рекомендации: разминка, нагрузка и её объём, восстановление и сон, вода, что и когда поесть до и после тренировки. Не ставь диагнозы и не назначай лекарства; при боли или травме советуй обратиться к врачу. Ты контролируешь выполнение программы тренировок по журналу: если тренировка пропущена или выполнена частично, скажи об этом прямо и предложи, как наверстать без перегруза. Ты также контролируешь питание по параметрам тела: сверяй съеденное с дневной нормой калорий и белка, говори, сколько осталось или на сколько перебор, предлагай конкретные блюда и порции, чтобы добрать норму или не выйти за неё, следи за динамикой веса и мягко корректируй. Если пользователь просит запланировать дело или записать еду, используй инструменты addTask или addMeal и коротко подтверди, что добавлено. Если пользователь называет съеденное блюдо, оцени его калорийность и белок сам и передай их в addMeal.';
   function coachContext(){
     const day = state.day || blank(state.key); const d = parseKey(state.key);
     const tasks = effectiveTasks(day); const goal = state.settings.waterGoal || 8;
@@ -1121,6 +1303,12 @@ textarea.notes:focus-visible{outline:none;box-shadow:inset 0 0 0 2px var(--accen
         + ' За выбранный день съедено '+kcal+' ккал (остаток '+(nt.target - kcal)+'), белков '+prot+' г, жиров '+fat+' г, углеводов '+carb+' г.'
         + (tr ? ' Динамика веса: '+(tr.diff > 0 ? '+' : '')+tr.diff+' кг за '+tr.days+' дн.' : ''));
     } else lines.push('Параметры тела не заполнены. Если вопрос про питание или вес, попроси заполнить блок «Мои параметры» (пол, возраст, рост, вес, активность, цель).');
+    const pfx = planFor(state.key);
+    if (p) lines.push('Подготовка: '+LEVEL_TEXT[p.level]+'.'+(p.limits ? ' Ограничения и травмы: '+p.limits+'.' : ''));
+    if (state.settings.program){
+      lines.push('Программа на выбранный день: '+(pfx ? (isRest(pfx.day) ? 'отдых' : pfx.day.title+' ('+pfx.day.items.map(it => it.n+(it.s ? ' '+it.s+'×'+it.r : '')).join(', ')+')'+(day.workout && day.workout.finished ? ', уже выполнена и записана в журнал' : ', ещё не отмечена как выполненная')) : 'на этот день не составлена')+'.');
+      lines.push('Журнал за последние дни:\n'+journalForAi(7));
+    } else lines.push('Программа тренировок ещё не составлена: предложи нажать «Составить на неделю» в блоке «Программа тренировок».');
     if (day.notes) lines.push('Заметки дня: '+day.notes.slice(0, 600));
     return lines.join('\n');
   }
@@ -1152,11 +1340,12 @@ textarea.notes:focus-visible{outline:none;box-shadow:inset 0 0 0 2px var(--accen
   }
   function addMsg(cls, text){ const el = document.createElement('div'); el.className = 'msg '+cls; el.textContent = text; $('#chat').appendChild(el); scrollChat(); return el; }
   function scrollChat(){ const c = $('#chat'); c.scrollTop = c.scrollHeight; }
-  function setBusy(b){ $('#askBtn').hidden = b; $('#stopBtn').hidden = !b; $('#askInput').disabled = b; document.querySelectorAll('.chip').forEach(c => c.disabled = b || !coachReady); }
+  function setBusy(b){ $('#askBtn').hidden = b; $('#stopBtn').hidden = !b; $('#askInput').disabled = b; document.querySelectorAll('#chips .chip').forEach(c => c.disabled = b || !coachReady); }
   function disableCoach(reason){
     sampleFn = null; coachReady = false;
-    $('#coachMeta').textContent = reason; $('#askInput').disabled = true; $('#askBtn').disabled = true;
-    document.querySelectorAll('.chip').forEach(c => c.disabled = true);
+    $('#coachMeta').textContent = reason; $('#askInput').disabled = !STANDALONE; $('#askBtn').disabled = !STANDALONE;
+    document.querySelectorAll('#chips .chip').forEach(c => c.disabled = true);
+    $('#coachCta').hidden = !STANDALONE;
   }
   const coachErrorText = code => ({
     rate_limited: 'Слишком много запросов или исчерпан лимит. Попробуйте чуть позже.',
@@ -1255,9 +1444,11 @@ textarea.notes:focus-visible{outline:none;box-shadow:inset 0 0 0 2px var(--accen
   // ---------- Алиса AI (Яндекс) через функцию-посредника в Yandex Cloud ----------
   const lsGet = k => { try { return (localStorage.getItem(k) || '').trim(); } catch(e){ return ''; } };
   const aiProvider = () => lsGet('aiProvider') === 'claude' ? 'claude' : 'alice';
+  const ALICE_DEFAULT_URL = 'https://functions.yandexcloud.net/d4ektg01hgjndru4i1j4';
+  function aliceUrl(){ return lsGet('aliceUrl') || ALICE_DEFAULT_URL; }
   function makeAliceSampler(url, secret){
-    async function call(messages, tools, signal){
-      const payload = {secret, messages}; if (tools && tools.length) payload.tools = tools;
+    async function call(messages, tools, signal, maxTokens){
+      const payload = {secret, messages}; if (tools && tools.length) payload.tools = tools; if (maxTokens) payload.max_tokens = maxTokens;
       let res;
       // text/plain: «простой» запрос без предварительной проверки CORS
       try { res = await fetch(url, {method:'POST', headers:{'content-type':'text/plain;charset=UTF-8'}, body: JSON.stringify(payload), signal}); }
@@ -1279,8 +1470,8 @@ textarea.notes:focus-visible{outline:none;box-shadow:inset 0 0 0 2px var(--accen
       try {
         for (let round = 0; round < 5; round++){
           let j;
-          try { j = await call(msgs, tools, opts.signal); }
-          catch(e){ if (e && e.code === 'invalid_request' && tools.length){ tools = []; j = await call(msgs, tools, opts.signal); } else throw e; }
+          try { j = await call(msgs, tools, opts.signal, opts.maxTokens); }
+          catch(e){ if (e && e.code === 'invalid_request' && tools.length){ tools = []; j = await call(msgs, tools, opts.signal, opts.maxTokens); } else throw e; }
           const ch = j && j.choices && j.choices[0]; const m = ch && ch.message;
           if (!m) throw {code:'upstream_error', message:'empty'};
           if (ch.finish_reason === 'length') truncated = true;
@@ -1314,7 +1505,7 @@ textarea.notes:focus-visible{outline:none;box-shadow:inset 0 0 0 2px var(--accen
     return sample;
   }
   function enableCoach(label){
-    coachReady = true; coachToolsOk = true;
+    coachReady = true; coachToolsOk = true; $('#coachCta').hidden = true;
     $('#coachMeta').textContent = label; $('#askInput').disabled = false; $('#askBtn').disabled = false;
     document.querySelectorAll('.chip').forEach(c => c.disabled = false);
     if (state.loaded) render();
@@ -1322,7 +1513,7 @@ textarea.notes:focus-visible{outline:none;box-shadow:inset 0 0 0 2px var(--accen
   async function initCoach(){
     const off = () => { sampleFn = null; coachReady = false; disableCoach('нужна настройка'); };
     if (aiProvider() === 'alice'){
-      const url = lsGet('aliceUrl'), secret = lsGet('aliceSecret');
+      const url = aliceUrl(), secret = lsGet('aliceSecret');
       if (!/^https?:\/\//.test(url) || !secret){ off(); return; }
       sampleFn = makeAliceSampler(url, secret); enableCoach('готов · Алиса AI'); return;
     }
@@ -1334,12 +1525,13 @@ textarea.notes:focus-visible{outline:none;box-shadow:inset 0 0 0 2px var(--accen
   function openAiSetup(){
     const ed = $('#editor'); const prov = aiProvider(), key = aiKey(), model = aiModel();
     const hasAny = !!(key || lsGet('aliceUrl') || lsGet('aliceSecret'));
+    setTimeout(() => { const f = aiProvider() === 'alice' ? $('#aliceSecretInput') : $('#aiKeyInput'); if (f) f.focus(); }, 50);
     ed.innerHTML = '<div class="overlay" id="ovl"><form class="sheet" id="aiForm">'
       + '<h3>Настройка ИИ-тренера</h3>'
       + '<label>Нейросеть <select id="aiProv"><option value="alice"'+(prov === 'alice' ? ' selected' : '')+'>Алиса AI (Яндекс)</option><option value="claude"'+(prov === 'claude' ? ' selected' : '')+'>Claude (Anthropic)</option></select></label>'
       + '<div id="aiAlice" style="display:grid;gap:12px">'
-      +   '<div class="hint">Алиса AI подключается через Yandex Cloud. Приложению нужен адрес вашей функции-посредника и код доступа к ней. Как их получить, описано в README в разделе «Алиса AI». Запросы оплачиваются с вашего платёжного аккаунта Yandex Cloud.</div>'
-      +   '<label>Адрес функции <input type="url" id="aliceUrlInput" value="'+esc(lsGet('aliceUrl'))+'" placeholder="https://functions.yandexcloud.net/…" autocomplete="off" spellcheck="false"></label>'
+      +   '<div class="hint">Алиса AI подключена через вашу функцию в Yandex Cloud. Адрес уже указан, введите только код доступа. Запросы оплачиваются с вашего платёжного аккаунта Yandex Cloud.</div>'
+      +   '<label>Адрес функции <input type="url" id="aliceUrlInput" value="'+esc(aliceUrl())+'" placeholder="https://functions.yandexcloud.net/…" autocomplete="off" spellcheck="false"></label>'
       +   '<label>Код доступа <input type="password" id="aliceSecretInput" value="'+esc(lsGet('aliceSecret'))+'" placeholder="код, заданный в функции" autocomplete="off" spellcheck="false"></label>'
       + '</div>'
       + '<div id="aiClaude" style="display:grid;gap:12px">'
@@ -1365,7 +1557,7 @@ textarea.notes:focus-visible{outline:none;box-shadow:inset 0 0 0 2px var(--accen
         if (p === 'alice'){
           const u = $('#aliceUrlInput').value.trim(), sc = $('#aliceSecretInput').value.trim();
           if (u && !/^https?:\/\//.test(u)){ toast('Адрес функции должен начинаться с https://'); return; }
-          put('aliceUrl', u); put('aliceSecret', sc);
+          put('aliceUrl', u === ALICE_DEFAULT_URL ? '' : u); put('aliceSecret', sc);
         } else { put('apiKey', $('#aiKeyInput').value.trim()); localStorage.setItem('apiModel', $('#aiModelSel').value); }
       } catch(err){ toast('Не удалось сохранить: хранилище недоступно'); return; }
       closeEditor(); initCoach(); toast(coachReady ? 'ИИ-тренер подключён' : 'Заполните поля, чтобы включить тренера');
@@ -1401,6 +1593,347 @@ textarea.notes:focus-visible{outline:none;box-shadow:inset 0 0 0 2px var(--accen
   $('#askForm').addEventListener('submit', e => { e.preventDefault(); const v = $('#askInput').value; $('#askInput').value = ''; askCoach(v); });
   $('#stopBtn').onclick = () => { if (coachCtl) coachCtl.abort(); };
   $('#chips').addEventListener('click', e => { const c = e.target.closest('.chip'); if (c && !c.disabled) askCoach(c.getAttribute('data-q')); });
+
+  // ---------- Программа тренировок, контроль выполнения, журнал ----------
+  let aiBusy = false;
+  function needAi(){
+    if (coachReady && sampleFn) return true;
+    if (typeof openAiSetup === 'function') openAiSetup(); else toast('ИИ-тренер недоступен в этом просмотре');
+    return false;
+  }
+  function twoStep(btn, askText){
+    if (btn.dataset.armed === '1'){ btn.dataset.armed = ''; btn.textContent = btn.dataset.label; return true; }
+    btn.dataset.armed = '1'; btn.dataset.label = btn.textContent; btn.textContent = askText;
+    setTimeout(() => { if (btn.dataset.armed === '1'){ btn.dataset.armed = ''; btn.textContent = btn.dataset.label; } }, 4000);
+    return false;
+  }
+  function aiFail(e){ const code = e && e.code; if (code !== 'cancelled') toast(coachErrorText(code) + (e && e.message && String(e.message).length > 8 ? ' ' + String(e.message).slice(0, 120) : '')); }
+  function athleteText(){
+    const p = state.settings.profile, nt = nutrition(p);
+    return (p.sex === 'f' ? 'женщина' : 'мужчина') + ', ' + p.age + ' лет, рост ' + p.height + ' см, вес ' + p.weight + ' кг, ИМТ ' + nt.bmi.toFixed(1) + ' (' + bmiText(nt.bmi) + '). Цель: ' + GOAL_TEXT[p.goal]
+      + '. Подготовка: ' + LEVEL_TEXT[p.level] + '.' + (p.limits ? ' Ограничения и травмы: ' + p.limits + '.' : ' Ограничений и травм не указано.');
+  }
+  function routinesText(){
+    return [1, 2, 3, 4, 5, 6, 0].map(n => {
+      const rs = state.settings.routines.filter(r => r.days.indexOf(n) >= 0);
+      return WD[n] + ': ' + (rs.map(r => r.title + (r.start ? ' в ' + r.start : '') + ' (' + durText(r.dur) + ')').join(', ') || 'нет регулярных дел');
+    }).join('\n');
+  }
+  function journalText(n){
+    const j = state.settings.journal.slice(-n);
+    return j.length ? j.map(e => e.date + ': ' + e.title + ', выполнено ' + e.done + ' из ' + e.total + (e.min ? ', ' + e.min + ' мин' : '') + (e.feel ? ', нагрузка ощущалась: ' + FEEL_TEXT[e.feel] : '') + (e.note ? ', заметка: ' + e.note : '')).join('\n') : 'записей пока нет';
+  }
+  function programPrompt(weekNo, total, prev){
+    return [
+      'Ты — персональный тренер. Составь индивидуальную программу тренировок на одну неделю и верни её строго в формате JSON.',
+      'Атлет: ' + athleteText(),
+      'Регулярные дела атлета по дням недели (тренировочные дни определяй по ним):', routinesText(),
+      'Журнал последних тренировок:', journalText(8),
+      total > 1 ? 'Это неделя ' + weekNo + ' из ' + total + ' месячного цикла. Нагрузку наращивай постепенно: неделя 1 вводная, недели 2 и 3 рабочие с ростом объёма или веса на 5–10 %, неделя 4 разгрузочная.' : 'Это программа на текущую неделю.',
+      prev.length ? 'Предыдущие недели цикла: ' + prev.map((w, i) => 'неделя ' + (i + 1) + ' — ' + w.focus + ' (' + w.days.filter(d => d.items.length).map(d => WD_SHORT[d.d - 1] + ' ' + d.title).join(', ') + ')').join('; ') : '',
+      'Правила: учитывай подготовку, вес, цель и ограничения. В дни занятий в зале дай 5–7 упражнений с подходами, повторениями и отдыхом. В дни занятий в секции единоборств основную работу ведёт тренер секции, поэтому дай 3–4 дополнительных упражнения: суставная разминка, корпус, заминка. В дни без тренировок поставь отдых или лёгкую активность, items — пустой массив. Не ставь тяжёлую работу на одни и те же мышцы два дня подряд.',
+      'Формат ответа — только JSON без пояснений и без markdown:',
+      '{"focus":"цель недели одной фразой","days":[{"d":1,"title":"короткое название","type":"gym","min":90,"intensity":"средняя","warmup":"разминка одной фразой","items":[{"n":"упражнение","s":4,"r":"8-10","rest":"90 с","note":"короткая подсказка"}],"cooldown":"заминка одной фразой","tip":"совет дня одной фразой"}]}',
+      'Ровно 7 элементов в days, d от 1 (понедельник) до 7 (воскресенье). type — одно из: gym, mma, cardio, rest. intensity — низкая, средняя или высокая. Пиши по-русски и кратко.'
+    ].filter(Boolean).join('\n');
+  }
+  async function generateProgram(nWeeks, btn){
+    if (aiBusy || !needAi()) return;
+    if (!nutrition(state.settings.profile)){ toast('Сначала заполните «Мои параметры»: возраст, рост, вес и подготовку'); $('#profilePanel').scrollIntoView({behavior: 'smooth', block: 'start'}); return; }
+    if (state.settings.program && !twoStep(btn, 'Заменить текущую программу?')) return;
+    aiBusy = true; $('#genWeek').disabled = $('#genMonth').disabled = true;
+    const todayKey = keyOf(new Date()), late = (parseKey(todayKey).getDay() + 6) % 7 >= 4;   // пт, сб, вс: начинаем со следующего понедельника
+    const start = late ? addDays(mondayOf(todayKey), 7) : mondayOf(todayKey), weeks = [];
+    try {
+      for (let i = 0; i < nWeeks; i++){
+        $('#programHint').textContent = 'Тренер составляет программу: неделя ' + (i + 1) + ' из ' + nWeeks + '. Обычно это занимает до минуты на неделю.';
+        const raw = await sampleFn.json(programPrompt(i + 1, nWeeks, weeks), {cache: false, maxTokens: 6000});
+        const w = normWeek(Object.assign({}, raw, {start: addDays(start, i * 7)}));
+        if (!w || !w.days.some(d => d.items.length)) throw {code: 'invalid_json', message: 'в ответе нет упражнений'};
+        weeks.push(w);
+        state.settings.program = {created: keyOf(new Date()), weeks: weeks.slice()}; state.weekView = null; saveSettings();
+        if (state.loaded) render();
+      }
+      toast(nWeeks > 1 ? 'Программа на месяц готова' : 'Программа на неделю готова');
+    } catch(e){ aiFail(e); if (weeks.length) toast('Сохранено недель: ' + weeks.length + ' из ' + nWeeks + '. Попробуйте ещё раз позже.'); }
+    finally { aiBusy = false; $('#genWeek').disabled = $('#genMonth').disabled = false; if (state.loaded) render(); }
+  }
+  function beforeProgram(k){ const pr = state.settings.program; return !pr || k < (pr.created || pr.weeks[0].start); }
+  function workoutTag(k, p){
+    const je = state.settings.journal.find(e => e.date === k), today = keyOf(new Date());
+    if (je) return je.total && je.done < je.total ? '<span class="tag part">частично ' + je.done + '/' + je.total + '</span>' : '<span class="tag ok">выполнено</span>';
+    if (isRest(p)) return '<span class="tag">отдых</span>';
+    if (beforeProgram(k)) return '';
+    return k < today ? '<span class="tag miss">пропуск</span>' : (k === today ? '<span class="tag">сегодня</span>' : '');
+  }
+  function renderProgram(){
+    const pr = state.settings.program, pf = planFor(state.key), day = state.day, box = $('#todayWorkout');
+    $('#programMeta').textContent = pr ? (pr.weeks.length > 1 ? (pf ? 'неделя ' + (pf.wi + 1) + ' из ' + pr.weeks.length : pr.weeks.length + ' нед.') : 'на неделю') : '';
+    if (!aiBusy) $('#programHint').textContent = pr ? 'Программа составлена ' + fmtShort(pr.created || pr.weeks[0].start) + '. Отмечайте упражнения и нажимайте «Завершить», тогда тренировка попадёт в журнал.' : 'Тренер составит программу по вашим параметрам, подготовке и регулярным тренировкам из блока «Каждую неделю».';
+    if (!pr){ box.innerHTML = ''; $('#weekTabs').innerHTML = ''; $('#weekFocus').textContent = ''; $('#weekRows').innerHTML = ''; return; }
+    if (!pf){
+      const last = pr.weeks[pr.weeks.length - 1];
+      box.innerHTML = state.key < pr.weeks[0].start
+        ? '<div class="wk"><h3>Программа начнётся ' + fmtShort(pr.weeks[0].start) + '</h3><div class="sub">Она составлена на ' + fmtShort(pr.weeks[0].start) + ' — ' + fmtShort(addDays(last.start, 6)) + '. Нажмите на день ниже, чтобы посмотреть тренировку заранее.</div></div>'
+        : '<div class="wk"><h3>' + fmtShort(state.key) + ': программы на этот день нет</h3><div class="sub">Она составлена на ' + fmtShort(pr.weeks[0].start) + ' — ' + fmtShort(addDays(last.start, 6)) + '.</div></div>';
+    } else {
+      const p = pf.day, w = (day && day.workout) || {done: [], finished: false, feel: null, min: null, note: ''};
+      const head = '<h3>' + esc(p.title) + '</h3>';
+      if (isRest(p)) box.innerHTML = '<div class="wk">' + head + '<div class="sub">День отдыха.' + (p.tip ? ' ' + esc(p.tip) : '') + '</div></div>';
+      else {
+        const doneN = w.done.filter(i => i < p.items.length).length;
+        const meta = [TYPE_TEXT[p.type] || '', p.min ? p.min + ' мин' : '', p.intensity ? 'интенсивность ' + esc(p.intensity) : '', p.items.length ? 'выполнено ' + doneN + ' из ' + p.items.length : ''].filter(Boolean).join(' · ');
+        const items = p.items.map((it, i) => {
+          const on = w.done.indexOf(i) >= 0;
+          return '<li class="' + (on ? 'done' : '') + '"><input type="checkbox" class="chk" data-ex="' + i + '"' + (on ? ' checked' : '') + (w.finished || !state.loaded ? ' disabled' : '') + ' aria-label="Выполнено: ' + esc(it.n) + '"><span class="en">' + esc(it.n) + (it.note ? '<small>' + esc(it.note) + '</small>' : '') + '</span><span class="sr">' + (it.s ? it.s + ' × ' : '') + esc(it.r) + (it.rest ? '<br>отдых ' + esc(it.rest) : '') + '</span></li>';
+        }).join('');
+        const fin = w.finished
+          ? '<div class="sub"><span class="tag ok">записано в журнал</span> ' + (w.min ? w.min + ' мин' : '') + (w.feel ? ' · ' + FEEL_TEXT[w.feel] : '') + (w.note ? ' · ' + esc(w.note) : '') + ' <button type="button" class="link" id="reopenBtn">Изменить</button></div>'
+          : '<div class="finish"><select id="finFeel" aria-label="Как далась нагрузка"><option value="">Как далась нагрузка?</option>' + [1, 2, 3, 4, 5].map(n => '<option value="' + n + '">' + FEEL_TEXT[n] + '</option>').join('') + '</select><input type="number" id="finMin" min="1" max="400" placeholder="мин" value="' + (p.min || '') + '" aria-label="Длительность, минут"><input type="text" id="finNote" class="wide" maxlength="200" placeholder="Заметка: веса, самочувствие, что не получилось"><button type="button" class="btn primary wide" id="finishBtn">Завершить и записать в журнал</button></div>';
+        box.innerHTML = '<div class="wk">' + head + '<div class="sub">' + meta + '</div>'
+          + (p.warmup ? '<div class="sub"><b>Разминка:</b> ' + esc(p.warmup) + '</div>' : '')
+          + (items ? '<ul class="ex">' + items + '</ul>' : '')
+          + (p.cooldown ? '<div class="sub"><b>Заминка:</b> ' + esc(p.cooldown) + '</div>' : '')
+          + (p.tip ? '<div class="sub"><b>Совет:</b> ' + esc(p.tip) + '</div>' : '') + fin + '</div>';
+      }
+    }
+    const wi = state.weekView !== null && pr.weeks[state.weekView] ? state.weekView : (pf ? pf.wi : 0), week = pr.weeks[wi];
+    $('#weekTabs').innerHTML = pr.weeks.length > 1 ? pr.weeks.map((w, i) => '<button type="button" class="chip' + (i === wi ? ' sel' : '') + '" data-week="' + i + '">Неделя ' + (i + 1) + '</button>').join('') : '';
+    $('#weekFocus').textContent = week.focus ? 'Цель недели: ' + week.focus : '';
+    $('#weekRows').innerHTML = week.days.map((d, i) => {
+      const k = addDays(week.start, i);
+      return '<button type="button" class="wrow' + (k === state.key ? ' sel' : '') + '" data-day="' + k + '"><span class="dd">' + WD_SHORT[i] + ' ' + parseKey(k).getDate() + '</span><span class="tt">' + esc(d.title) + (d.min && !isRest(d) ? '<small>' + d.min + ' мин</small>' : '') + '</span>' + workoutTag(k, d) + '</button>';
+    }).join('');
+  }
+  function finishWorkout(){
+    const pf = planFor(state.key); if (!pf || !state.loaded) return;
+    const p = pf.day, feel = Number($('#finFeel').value) || null, min = pnum($('#finMin').value), note = $('#finNote').value.trim().slice(0, 200);
+    const done = ((state.day.workout && state.day.workout.done) || []).filter(i => i < p.items.length);
+    commit(d => { d.workout = {done, finished: true, feel, min, note}; });
+    state.settings.journal = normJournal(state.settings.journal.filter(e => e.date !== state.key).concat([{date: state.key, title: p.title, type: p.type, done: done.length, total: p.items.length, min, feel, note}]));
+    saveSettings(); render();
+    toast(done.length < p.items.length ? 'Записано в журнал: выполнено ' + done.length + ' из ' + p.items.length : 'Тренировка выполнена полностью и записана в журнал');
+  }
+  function dayStatsFor(k){
+    if (k === state.key && state.day) return dayStats(state.day);
+    if (state.weekDays[k]) return state.weekDays[k];
+    if (state.mode === 'local'){ const d = local.read(k); return d ? dayStats(normalize(k, d)) : null; }
+    return null;
+  }
+  function journalRows(n){
+    const today = keyOf(new Date()), goalMl = (state.settings.waterGoal || 8) * GLASS_ML, nt = nutrition(state.settings.profile), p = state.settings.profile, rows = [];
+    for (let i = 0; i < n; i++){
+      const k = addDays(today, -i), st = dayStatsFor(k), pf = planFor(k), je = state.settings.journal.find(e => e.date === k), wt = p ? p.weights.find(w => w.date === k) : null;
+      if (i > 0 && !pf && !je && !wt && !(st && (st.kcal || st.waterMl))) continue;
+      rows.push({k, st, plan: pf ? pf.day : null, je, wt, goalMl, target: nt ? nt.target : null, today});
+    }
+    return rows;
+  }
+  function renderJournal(){
+    const rows = journalRows(14);
+    $('#journalRows').innerHTML = rows.length ? rows.map(r => {
+      const d = parseKey(r.k);
+      const wo = r.je ? workoutTag(r.k, r.plan) + ' ' + esc(r.je.title) + (r.je.min ? ', ' + r.je.min + ' мин' : '') + (r.je.feel ? ', ' + FEEL_TEXT[r.je.feel] : '')
+        : (r.plan ? workoutTag(r.k, r.plan) + (isRest(r.plan) ? '' : ' ' + esc(r.plan.title)) : '—');
+      return '<tr><td class="n">' + WD_SHORT[(d.getDay() + 6) % 7] + ' ' + d.getDate() + '.' + pad(d.getMonth() + 1) + '</td><td>' + wo + '</td><td class="n">' + (r.st && r.st.waterMl ? mlText(r.st.waterMl) : '—') + '</td><td class="n">' + (r.st && r.st.kcal ? r.st.kcal.toLocaleString('ru-RU') : '—') + '</td><td class="n">' + (r.wt ? r.wt.kg.toLocaleString('ru-RU') : '') + '</td></tr>';
+    }).join('') : '<tr><td colspan="5" style="color:var(--muted)">Записей пока нет.</td></tr>';
+    const rep = state.settings.report, box = $('#reportBox');
+    if (rep && rep.text && !box.dataset.live){ box.hidden = false; box.innerHTML = '<small>Отчёт тренера от ' + esc(isKey(rep.date) ? fmtShort(rep.date) : rep.date) + '</small>' + esc(rep.text); }
+    else if (!rep && !box.dataset.live) box.hidden = true;
+  }
+  function journalForAi(n){
+    return journalRows(n).map(r => {
+      const wo = r.je ? 'тренировка «' + r.je.title + '» выполнена ' + r.je.done + ' из ' + r.je.total + (r.je.feel ? ', ' + FEEL_TEXT[r.je.feel] : '') + (r.je.note ? ', заметка: ' + r.je.note : '')
+        : (r.plan ? (isRest(r.plan) ? 'по плану отдых' : (beforeProgram(r.k) ? 'программа ещё не была составлена' : (r.k < r.today ? 'ПРОПУЩЕНА тренировка «' + r.plan.title + '»' : 'запланирована «' + r.plan.title + '»'))) : 'программы нет');
+      return r.k + ': ' + wo + '; вода ' + (r.st ? mlText(r.st.waterMl) : 'нет данных') + ' из ' + mlText(r.goalMl) + '; калории ' + (r.st && r.st.kcal ? r.st.kcal : 'нет данных') + (r.target ? ' из ' + r.target : '') + (r.st && r.st.prot ? ', белок ' + r.st.prot + ' г' : '') + (r.wt ? '; вес ' + r.wt.kg + ' кг' : '');
+    }).join('\n');
+  }
+  async function coachReport(){
+    if (aiBusy || !needAi()) return;
+    if (!nutrition(state.settings.profile)){ toast('Сначала заполните «Мои параметры»'); return; }
+    aiBusy = true; const btn = $('#reportBtn'), box = $('#reportBox'); btn.disabled = true; box.hidden = false; box.dataset.live = '1'; box.textContent = 'Тренер изучает журнал…';
+    try {
+      const prompt = ['Ты — тренер, который контролирует выполнение программы тренировок, питание и питьевой режим подопечного по его журналу. Напиши отчёт по-русски, до 14 строк, без markdown и без таблиц.',
+        'Подопечный: ' + athleteText(), 'Журнал за последние дни (свежие сверху):', journalForAi(14) || 'записей нет',
+        'Структура отчёта: 1) что выполнено и что пропущено по программе; 2) питание и вода относительно нормы; 3) динамика веса; 4) три конкретные корректировки на ближайшие дни. Если данных мало, прямо скажи, что нужно отмечать.'].join('\n');
+      const res = await sampleFn(prompt, {cache: false, maxTokens: 1500, onText: u => { box.textContent = u.text; }});
+      state.settings.report = {date: keyOf(new Date()), text: res.text.slice(0, 4000)}; saveSettings();
+    } catch(e){ aiFail(e); }
+    finally { aiBusy = false; btn.disabled = false; delete box.dataset.live; renderJournal(); }
+  }
+
+  // ---------- Меню на день от тренера ----------
+  function menuContext(){
+    const day = state.day, nt = nutrition(state.settings.profile), rem = remCfg(), pf = planFor(state.key), n = new Date();
+    const sum = f => day.meals.reduce((s, m) => s + (m[f] || 0), 0);
+    return ['Подопечный: ' + athleteText(),
+      'Норма на день: ' + nt.target + ' ккал, белки ' + nt.protein + ' г, жиры ' + nt.fat + ' г, углеводы ' + nt.carbs + ' г.',
+      'Уже съедено сегодня: ' + sum('kcal') + ' ккал, белки ' + sum('prot') + ' г, жиры ' + sum('fat') + ' г, углеводы ' + sum('carb') + ' г' + (day.meals.length ? ' (' + day.meals.map(m => m.kind + ': ' + m.title).join('; ') + ')' : '') + '.',
+      'Время приёмов пищи: ' + MEAL_KINDS.map((k, i) => k + ' ' + rem.meals[i]).join(', ') + '.' + (state.key === keyOf(n) ? ' Сейчас ' + pad(n.getHours()) + ':' + pad(n.getMinutes()) + '.' : ''),
+      'Дела дня: ' + (effectiveTasks(day).filter(t => t.start).map(t => t.title + ' в ' + t.start).join(', ') || 'нет') + '.' + (pf && !isRest(pf.day) ? ' По программе сегодня тренировка: ' + pf.day.title + '.' : ' Сегодня день без тренировки.')].join('\n');
+  }
+  const MENU_FORMAT = '{"kind":"Завтрак","time":"07:30","items":[{"n":"продукт или блюдо","g":150,"kcal":220,"p":12,"f":6,"c":30}],"why":"зачем этот приём, одной фразой"}';
+  async function generateMenu(btn){
+    if (aiBusy || !needAi() || !state.loaded) return;
+    if (!nutrition(state.settings.profile)){ toast('Сначала заполните «Мои параметры»: без нормы калорий меню не составить'); $('#profilePanel').scrollIntoView({behavior: 'smooth', block: 'start'}); return; }
+    aiBusy = true; btn.disabled = true; btn.textContent = 'Составляю…';
+    try {
+      const prompt = ['Ты — тренер и нутрициолог. Составь меню на день: что и сколько съесть в каждый приём пищи, чтобы уложиться в норму. Верни строго JSON.', menuContext(),
+        'Правила: продукты обычные для России и простые в приготовлении. Учитывай уже съеденное: не включай приёмы, время которых прошло больше двух часов назад, а остаток нормы распредели по оставшимся. Перед тренировкой — углеводы и немного белка за 1,5–2 часа, после — белок. Сумма калорий за день в пределах 5 % от нормы. В каждом приёме 2–4 позиции с граммами.',
+        'Формат ответа — только JSON без пояснений и без markdown: {"meals":[' + MENU_FORMAT + ']}'].join('\n');
+      const menu = normMenu(await sampleFn.json(prompt, {cache: false, maxTokens: 3000}));
+      if (!menu) throw {code: 'invalid_json', message: 'в ответе нет блюд'};
+      commit(d => { d.menu = menu; }); toast('Меню на день готово');
+    } catch(e){ aiFail(e); }
+    finally { aiBusy = false; btn.disabled = false; btn.textContent = 'Составить меню'; if (state.loaded) render(); }
+  }
+  async function swapMeal(i){
+    const m = state.day.menu && state.day.menu.meals[i]; if (!m || aiBusy || !needAi()) return;
+    aiBusy = true; toast('Тренер подбирает замену…');
+    try {
+      const kcal = m.items.reduce((s, x) => s + (x.kcal || 0), 0);
+      const prompt = ['Ты — тренер и нутрициолог. Предложи другой вариант одного приёма пищи. Верни строго JSON.', menuContext(),
+        'Заменить нужно: ' + m.kind + (m.time ? ' в ' + m.time : '') + ' — ' + m.items.map(x => x.n).join(', ') + '. Новый вариант должен дать около ' + kcal + ' ккал, состоять из других продуктов и быть простым.',
+        'Формат ответа — только JSON без пояснений: ' + MENU_FORMAT].join('\n');
+      const one = normMenu({meals: [await sampleFn.json(prompt, {cache: false, maxTokens: 1000})]});
+      if (!one) throw {code: 'invalid_json', message: 'в ответе нет блюд'};
+      commit(d => { if (d.menu && d.menu.meals[i]) d.menu.meals[i] = Object.assign(one.meals[0], {kind: m.kind, time: m.time || one.meals[0].time}); });
+    } catch(e){ aiFail(e); }
+    finally { aiBusy = false; }
+  }
+  function eatMenuMeal(i){
+    const m = state.day.menu && state.day.menu.meals[i]; if (!m) return;
+    const sum = f => m.items.reduce((s, x) => s + (x[f] || 0), 0);
+    addMeal({title: m.items.map(x => x.n + (x.g ? ' ' + x.g + ' г' : '')).join(', ').slice(0, 120), kind: m.kind, time: '', kcal: sum('kcal') || null, prot: sum('p') || null, fat: sum('f') || null, carb: sum('c') || null});
+    commit(d => { if (d.menu && d.menu.meals[i]) d.menu.meals[i].eaten = true; });
+    toast('Записано: ' + m.kind);
+  }
+  function renderMenu(day){
+    const menu = day.menu;
+    $('#menuList').innerHTML = menu ? menu.meals.map((m, i) => {
+      const kcal = m.items.reduce((s, x) => s + (x.kcal || 0), 0), pr = m.items.reduce((s, x) => s + (x.p || 0), 0);
+      return '<li class="' + (m.eaten ? 'eaten' : '') + '"><div class="ph"><b>' + (m.time ? m.time + ' · ' : '') + esc(m.kind) + '</b><span class="pm">' + (kcal ? kcal + ' ккал' : '') + (pr ? ' · Б ' + pr : '') + '</span></div>'
+        + '<div class="pi">' + m.items.map(x => esc(x.n) + (x.g ? ' ' + x.g + ' г' : '')).join(', ') + '</div>' + (m.why ? '<div class="pm">' + esc(m.why) + '</div>' : '')
+        + '<div class="pa">' + (m.eaten ? '<span class="tag ok">съедено</span>' : '<button type="button" class="link" data-menu-eat="' + i + '">Съел, записать</button><button type="button" class="link" data-menu-swap="' + i + '">Заменить</button>') + '</div></li>';
+    }).join('') : '<li class="none">Тренер составит меню под вашу норму: что и сколько съесть в каждый приём пищи.</li>';
+    $('#menuBtn').textContent = aiBusy ? $('#menuBtn').textContent : (menu ? 'Пересоставить' : 'Составить меню');
+  }
+
+  // ---------- Напоминания о воде и еде ----------
+  function waterSlots(rem){ const a = toMin(rem.from), b = toMin(rem.to), out = []; for (let t = a; t <= b && out.length < 24; t += rem.every) out.push(t); return out; }
+  function renderRem(){
+    const rem = remCfg(), set = (id, v) => { const el = $('#' + id); if (document.activeElement !== el && String(el.value) !== String(v)) el.value = v; };
+    $('#remOn').checked = rem.on; set('remEvery', rem.every); set('remFrom', rem.from); set('remTo', rem.to); rem.meals.forEach((t, i) => set('remM' + i, t));
+    $('#remBtns').hidden = !STANDALONE;
+    const n = waterSlots(rem).length;
+    $('#remHint').textContent = (rem.on ? 'Вода: ' + n + ' ' + plural(n, 'напоминание', 'напоминания', 'напоминаний') + ' в день. ' : 'Напоминания выключены. ')
+      + (STANDALONE ? 'Открытое приложение показывает напоминание вверху экрана. Чтобы телефон напоминал и при закрытом приложении, добавьте расписание в Календарь iPhone: веб-приложения на iPhone не умеют будить сами себя.' : 'Пока страница открыта, она покажет напоминание вверху экрана.');
+  }
+  function readRem(){
+    const meals = [0, 1, 2, 3].map(i => $('#remM' + i).value);
+    state.settings.rem = normRem({on: $('#remOn').checked, every: $('#remEvery').value, from: $('#remFrom').value, to: $('#remTo').value, meals});
+    saveSettings(); renderRem();
+  }
+  function buildIcs(rem){
+    const d = keyOf(new Date()).replace(/-/g, '');
+    const ev = (uid, hhmm, title) => ['BEGIN:VEVENT', 'UID:moyden-' + uid + '@moy-den', 'DTSTAMP:' + d + 'T000000Z', 'DTSTART:' + d + 'T' + hhmm.replace(':', '') + '00', 'DURATION:PT5M', 'RRULE:FREQ=DAILY', 'SUMMARY:' + title, 'BEGIN:VALARM', 'ACTION:DISPLAY', 'DESCRIPTION:' + title, 'TRIGGER:PT0M', 'END:VALARM', 'END:VEVENT'];
+    let L = ['BEGIN:VCALENDAR', 'VERSION:2.0', 'PRODID:-//moy-den//RU', 'CALSCALE:GREGORIAN'];
+    waterSlots(rem).forEach(t => { L = L.concat(ev('w' + fromMin(t).replace(':', ''), fromMin(t), 'Выпить стакан воды')); });
+    rem.meals.forEach((t, i) => { L = L.concat(ev('m' + i, t, MEAL_KINDS[i] + ': время поесть')); });
+    L.push('END:VCALENDAR');
+    return L.join('\r\n');
+  }
+  function addToCalendar(){
+    const rem = remCfg();
+    const relay = typeof aliceUrl === 'function' ? aliceUrl() : '';
+    if (/^https:\/\//.test(relay)){
+      // Внешняя ссылка: iPhone сам предложит добавить события в Календарь.
+      const url = relay + '?cal=1&w=' + waterSlots(rem).map(t => fromMin(t).replace(':', '')).join(',') + '&m=' + rem.meals.map(t => t.replace(':', '')).join(',');
+      const a = document.createElement('a'); a.href = url; a.target = '_blank'; a.rel = 'noopener'; document.body.appendChild(a); a.click(); a.remove();
+      toast('Откроется список событий: нажмите «Добавить все», чтобы телефон напоминал сам'); return;
+    }
+    const ics = buildIcs(rem);
+    try {
+      const file = new File([ics], 'moy-den.ics', {type: 'text/calendar'});
+      if (navigator.canShare && navigator.canShare({files: [file]})){ navigator.share({files: [file], title: 'Напоминания «Мой день»'}).catch(() => {}); return; }
+    } catch(e){}
+    const blob = new Blob([ics], {type: 'text/calendar'}), a = document.createElement('a');
+    a.href = URL.createObjectURL(blob); a.download = 'moy-den.ics'; document.body.appendChild(a); a.click(); setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 2000);
+  }
+  function beep(){
+    try { const C = window.AudioContext || window.webkitAudioContext; if (!C) return; const ctx = new C(), o = ctx.createOscillator(), g = ctx.createGain();
+      o.frequency.value = 880; g.gain.value = 0.08; o.connect(g); g.connect(ctx.destination); o.start(); o.stop(ctx.currentTime + 0.25); setTimeout(() => ctx.close(), 600); } catch(e){}
+  }
+  function showBanner(text, actions){
+    const b = $('#banner');
+    b.innerHTML = '<span class="bt">' + esc(text) + '</span><span class="bb">' + actions.map((a, i) => '<button type="button" class="' + (a.fill ? 'fill' : '') + '" data-banner="' + i + '">' + esc(a.label) + '</button>').join('') + '</span>';
+    b.hidden = false; b._actions = actions; beep();
+    try { if (STANDALONE && document.hidden && window.Notification && Notification.permission === 'granted' && navigator.serviceWorker) navigator.serviceWorker.ready.then(r => r.showNotification('Мой день', {body: text, tag: 'moy-den'})).catch(() => {}); } catch(e){}
+  }
+  function hideBanner(){ const b = $('#banner'); b.hidden = true; b._actions = null; }
+  const remMem = {get(k){ try { return JSON.parse(localStorage.getItem('rem:' + k) || 'null'); } catch(e){ return null; } }, set(k, v){ try { localStorage.setItem('rem:' + k, JSON.stringify(v)); } catch(e){} }};
+  function remTick(){
+    const rem = remCfg(), today = keyOf(new Date());
+    if (!rem.on || !state.loaded || state.key !== today || !state.day || !$('#banner').hidden || !$('#editor').hidden) return;
+    const n = new Date(), now = n.getHours() * 60 + n.getMinutes(), day = state.day;
+    // 1. Контроль программы: вчерашняя тренировка не отмечена
+    const yk = addDays(today, -1), yp = planFor(yk), miss = remMem.get('miss');
+    if (yp && !isRest(yp.day) && !beforeProgram(yk) && !state.settings.journal.some(e => e.date === yk) && miss !== yk){
+      remMem.set('miss', yk);
+      showBanner('Вчера по программе была тренировка «' + yp.day.title + '», в журнале её нет.', [{label: 'Открыть вчера', fill: true, fn: () => openDay(yk)}, {label: 'Пропустил', fn: () => {}}]); return;
+    }
+    // 2. Еда
+    const fired = remMem.get('meals') || {}; const done = fired.date === today ? fired.list : [];
+    for (let i = 0; i < 4; i++){
+      const t = toMin(rem.meals[i]);
+      if (now < t || now > t + 60 || done.indexOf(i) >= 0) continue;
+      remMem.set('meals', {date: today, list: done.concat([i])});
+      if (day.meals.some(m => m.time && toMin(m.time) >= t - 45)) continue;
+      const mi = day.menu ? day.menu.meals.findIndex(m => !m.eaten && m.kind === MEAL_KINDS[i]) : -1;
+      const text = MEAL_KINDS[i] + ': время поесть.' + (mi >= 0 ? ' По меню: ' + day.menu.meals[mi].items.map(x => x.n + (x.g ? ' ' + x.g + ' г' : '')).join(', ') + '.' : '');
+      showBanner(text, (mi >= 0 ? [{label: 'Съел по меню', fill: true, fn: () => eatMenuMeal(mi)}] : []).concat([{label: 'К питанию', fill: mi < 0, fn: () => $('#kcalBox').scrollIntoView({behavior: 'smooth', block: 'start'})}, {label: 'Позже', fn: () => {}}])); return;
+    }
+    // 3. Вода: сколько положено выпить к этому часу
+    const slots = waterSlots(rem), goalMl = (state.settings.waterGoal || 8) * GLASS_ML, due = slots.filter(t => t <= now).length;
+    if (!due || day.waterMl >= goalMl) return;
+    const expected = Math.min(goalMl, Math.round(goalMl * due / slots.length / 50) * 50), deficit = expected - day.waterMl, last = Number(remMem.get('water')) || 0;
+    if (deficit < 200 || Date.now() - last < rem.every * 60000) return;
+    remMem.set('water', Date.now());
+    showBanner('Время пить воду. Выпито ' + mlText(day.waterMl) + ' из ' + mlText(goalMl) + (deficit >= 500 ? ', отставание ' + mlText(deficit) : '') + '.',
+      [{label: 'Выпил стакан', fill: true, fn: () => commit(d => { setWater(d, d.waterMl + GLASS_ML); })}, {label: 'Через 15 мин', fn: () => remMem.set('water', Date.now() - (rem.every - 15) * 60000)}]);
+  }
+
+  // ---------- События новых разделов ----------
+  document.addEventListener('change', e => {
+    const t = e.target; if (!t || !t.getAttribute) return;
+    const ex = t.getAttribute('data-ex');
+    if (ex !== null && state.loaded){ const i = Number(ex), on = t.checked; commit(d => { const w = d.workout || {done: [], finished: false, feel: null, min: null, note: ''}; w.done = w.done.filter(x => x !== i); if (on) w.done.push(i); d.workout = w; }); return; }
+    if (t.closest && t.closest('#remPanel')) readRem();
+  });
+  document.addEventListener('click', e => {
+    const t = e.target; if (!t || !t.closest) return;
+    const bb = t.closest('[data-banner]');
+    if (bb){ const acts = $('#banner')._actions || [], a = acts[Number(bb.getAttribute('data-banner'))]; hideBanner(); if (a && a.fn) a.fn(); return; }
+    const wd = t.closest('[data-day]'); if (wd){ openDay(wd.getAttribute('data-day')); $('#programPanel').scrollIntoView({behavior: 'smooth', block: 'start'}); return; }
+    const wt = t.closest('[data-week]'); if (wt){ state.weekView = Number(wt.getAttribute('data-week')); renderProgram(); return; }
+    const me = t.closest('[data-menu-eat]'); if (me){ eatMenuMeal(Number(me.getAttribute('data-menu-eat'))); return; }
+    const ms = t.closest('[data-menu-swap]'); if (ms){ swapMeal(Number(ms.getAttribute('data-menu-swap'))); return; }
+    if (t.closest('#finishBtn')){ finishWorkout(); return; }
+    if (t.closest('#reopenBtn')){ commit(d => { if (d.workout) d.workout.finished = false; }); return; }
+    if (t.closest('#genWeek')){ generateProgram(1, $('#genWeek')); return; }
+    if (t.closest('#genMonth')){ generateProgram(4, $('#genMonth')); return; }
+    if (t.closest('#reportBtn')){ coachReport(); return; }
+    if (t.closest('#menuBtn')){ generateMenu($('#menuBtn')); return; }
+    if (t.closest('#coachCtaBtn')){ needAi(); return; }
+    if (t.closest('#remCal')){ addToCalendar(); return; }
+    if (t.closest('#remNotify')){
+      if (!window.Notification){ toast('На этом устройстве уведомления недоступны. Используйте «Добавить в Календарь iPhone».'); return; }
+      Notification.requestPermission().then(p => toast(p === 'granted' ? 'Уведомления включены. Они приходят, пока приложение запущено.' : 'Уведомления не разрешены. Используйте «Добавить в Календарь iPhone».')).catch(() => {});
+    }
+  });
+  setInterval(remTick, 30000);
+  document.addEventListener('visibilitychange', () => { if (!document.hidden) setTimeout(remTick, 800); });
+  setTimeout(remTick, 4000);
 
   $('#aiSetup').onclick = openAiSetup;
   $('#exportBtn').onclick = () => {
@@ -1443,7 +1976,7 @@ textarea.notes:focus-visible{outline:none;box-shadow:inset 0 0 0 2px var(--accen
   // ---------- Boot ----------
   renderHeader(); renderWeek(); render();
   $('#mealKind').value = defaultKind();
-  document.querySelectorAll('.chip').forEach(c => c.disabled = true);
+  document.querySelectorAll('#chips .chip').forEach(c => c.disabled = true);
   initStore().then(() => { openSettings(); openDay(state.key); });
   initCoach();
   if ('serviceWorker' in navigator){

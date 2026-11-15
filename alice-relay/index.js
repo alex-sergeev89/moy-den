@@ -12,7 +12,7 @@
  */
 const CORS = {
   'Access-Control-Allow-Origin': '*',
-  'Access-Control-Allow-Methods': 'POST, OPTIONS',
+  'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
   'Access-Control-Allow-Headers': 'content-type',
 };
 const reply = (status, body) => ({
@@ -21,8 +21,26 @@ const reply = (status, body) => ({
   body: typeof body === 'string' ? body : JSON.stringify(body),
 });
 
+const pad = n => String(n).padStart(2, '0');
+
+// GET ?cal=1&w=0730,0900&m=0730,1300,1630,1830 — файл календаря с ежедневными напоминаниями
+function calendar(q) {
+  const d = new Date();
+  const day = d.getUTCFullYear() + pad(d.getUTCMonth() + 1) + pad(d.getUTCDate());
+  const kinds = ['Завтрак', 'Обед', 'Перекус', 'Ужин'];
+  const ok = t => /^[0-2][0-9][0-5][0-9]$/.test(t);
+  const ev = (uid, t, title) => ['BEGIN:VEVENT', 'UID:moyden-' + uid + '@moy-den', 'DTSTAMP:' + day + 'T000000Z', 'DTSTART:' + day + 'T' + t + '00',
+    'DURATION:PT5M', 'RRULE:FREQ=DAILY', 'SUMMARY:' + title, 'BEGIN:VALARM', 'ACTION:DISPLAY', 'DESCRIPTION:' + title, 'TRIGGER:PT0M', 'END:VALARM', 'END:VEVENT'];
+  let lines = ['BEGIN:VCALENDAR', 'VERSION:2.0', 'PRODID:-//moy-den//RU', 'CALSCALE:GREGORIAN'];
+  String(q.w || '').split(',').filter(ok).slice(0, 24).forEach(t => { lines = lines.concat(ev('w' + t, t, 'Выпить стакан воды')); });
+  String(q.m || '').split(',').slice(0, 4).forEach((t, i) => { if (ok(t)) lines = lines.concat(ev('m' + i, t, kinds[i] + ': время поесть')); });
+  lines.push('END:VCALENDAR');
+  return { statusCode: 200, headers: { 'Content-Type': 'text/calendar; charset=utf-8', 'Content-Disposition': 'inline; filename="moy-den.ics"' }, body: lines.join('\r\n') };
+}
+
 module.exports.handler = async function (event, context) {
   if (event.httpMethod === 'OPTIONS') return { statusCode: 204, headers: CORS, body: '' };
+  if (event.httpMethod === 'GET') return calendar(event.queryStringParameters || {});
   if (event.httpMethod !== 'POST') return reply(405, { error: 'Поддерживается только POST' });
 
   const secret = process.env.APP_SECRET;
@@ -49,7 +67,7 @@ module.exports.handler = async function (event, context) {
     model: 'gpt://' + folder + '/' + (process.env.MODEL || 'aliceai-llm'),
     messages: req.messages,
     temperature: 0.4,
-    max_tokens: 2000,
+    max_tokens: Math.min(Number(req.max_tokens) || 2000, 8000),
   };
   if (Array.isArray(req.tools) && req.tools.length) payload.tools = req.tools;
 
