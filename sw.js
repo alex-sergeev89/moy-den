@@ -1,5 +1,5 @@
 /* Мой день — service worker: кэширует оболочку приложения для работы офлайн. */
-const VERSION = 'moy-den-v2';
+const VERSION = 'moy-den-v3';
 const SHELL = ['./', './index.html', './manifest.webmanifest'];
 
 self.addEventListener('install', e => {

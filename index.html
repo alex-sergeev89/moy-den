@@ -321,7 +321,7 @@ textarea.notes:focus-visible{outline:none;box-shadow:inset 0 0 0 2px var(--accen
         <button class="btn primary" type="submit" id="askBtn">Спросить</button>
         <button class="btn" type="button" id="stopBtn" hidden>Стоп</button>
       </form>
-      <div class="hint" style="padding:0 18px 14px">Ответы ИИ — общие рекомендации, а не замена врачу. Тренер работает через ваш ключ Anthropic API; запросы оплачиваются с вашего аккаунта Anthropic.</div>
+      <div class="hint" style="padding:0 18px 14px">Ответы ИИ — общие рекомендации, а не замена врачу. Тренер работает через Алису AI (Яндекс) или Claude: выберите нейросеть в «Настроить ИИ».</div>
     </section>
     </div>
 
@@ -1165,8 +1165,9 @@ textarea.notes:focus-visible{outline:none;box-shadow:inset 0 0 0 2px var(--accen
     empty_completion: 'Ответ пустой. Попробуйте задать вопрос иначе.',
     prompt_too_large: 'Слишком длинный разговор. Очистите чат и спросите снова.',
     invalid_request: 'Запрос отклонён API. Попробуйте другую модель в настройках ИИ.',
-    bad_key: 'Ключ API не принят. Проверьте его в настройках ИИ.',
-    not_granted: 'Ключ API не принят. Проверьте его в настройках ИИ.'
+    bad_key: 'Ключ или код доступа не принят. Проверьте настройки ИИ.',
+    not_granted: 'Ключ или код доступа не принят. Проверьте настройки ИИ.',
+    relay_unreachable: 'Нет связи с посредником Алисы AI. Проверьте адрес в настройках ИИ и интернет.'
   })[code] || 'Связь с тренером прервалась. Попробуйте ещё раз.';
   // ---------- ИИ через Anthropic API (собственный ключ) ----------
   const AI_MODELS = [
@@ -1251,6 +1252,67 @@ textarea.notes:focus-visible{outline:none;box-shadow:inset 0 0 0 2px var(--accen
     sample.limits = async () => ({maxPromptBytes: 262144, tools: {maxCount: 16}, modelTiers: ['default']});
     return sample;
   }
+  // ---------- Алиса AI (Яндекс) через функцию-посредника в Yandex Cloud ----------
+  const lsGet = k => { try { return (localStorage.getItem(k) || '').trim(); } catch(e){ return ''; } };
+  const aiProvider = () => lsGet('aiProvider') === 'claude' ? 'claude' : 'alice';
+  function makeAliceSampler(url, secret){
+    async function call(messages, tools, signal){
+      const payload = {secret, messages}; if (tools && tools.length) payload.tools = tools;
+      let res;
+      // text/plain: «простой» запрос без предварительной проверки CORS
+      try { res = await fetch(url, {method:'POST', headers:{'content-type':'text/plain;charset=UTF-8'}, body: JSON.stringify(payload), signal}); }
+      catch(e){ if (e && e.name === 'AbortError') throw {code:'cancelled', message:''}; throw {code:'relay_unreachable', message:'relay'}; }
+      let j = null; try { j = await res.json(); } catch(e){}
+      if (!res.ok){
+        const msg = (j && (typeof j.error === 'string' ? j.error : (j.error && j.error.message) || j.message)) || ('HTTP '+res.status);
+        throw {code: res.status === 401 || res.status === 403 ? 'bad_key' : res.status === 429 ? 'rate_limited' : res.status === 400 ? 'invalid_request' : 'upstream_error', message: msg};
+      }
+      return j;
+    }
+    async function sample(input, opts){
+      opts = opts || {};
+      let msgs = typeof input === 'string' ? [{role:'user', content: input}] : input.map(m => ({role: m.role, content: m.content}));
+      if (typeof input !== 'string' && msgs.length > 1) msgs[0] = {role:'system', content: msgs[0].content};
+      let tools = (opts.tools || []).map(t => ({type:'function', function:{name: t.name, description: t.description, parameters: t.inputSchema || {type:'object', properties:{}}}}));
+      let text = '', truncated = false; const notes = [];
+      const emit = d => { text += d; if (opts.onText && text.trim()) opts.onText({text, delta: d}); };
+      try {
+        for (let round = 0; round < 5; round++){
+          let j;
+          try { j = await call(msgs, tools, opts.signal); }
+          catch(e){ if (e && e.code === 'invalid_request' && tools.length){ tools = []; j = await call(msgs, tools, opts.signal); } else throw e; }
+          const ch = j && j.choices && j.choices[0]; const m = ch && ch.message;
+          if (!m) throw {code:'upstream_error', message:'empty'};
+          if (ch.finish_reason === 'length') truncated = true;
+          if (m.content && String(m.content).trim()) emit((text ? '\n\n' : '') + String(m.content).trim());
+          const calls = Array.isArray(m.tool_calls) ? m.tool_calls : [];
+          if (!calls.length) break;
+          msgs = msgs.concat([{role:'assistant', content: m.content || '', tool_calls: calls}]);
+          for (const c of calls){
+            const fn = c.function || {}; const t = (opts.tools || []).find(x => x.name === fn.name); let out;
+            try {
+              let args = {}; try { args = typeof fn.arguments === 'string' ? JSON.parse(fn.arguments || '{}') : (fn.arguments || {}); } catch(e){}
+              out = t ? await t.execute(args, {signal: opts.signal}) : 'Error: unknown tool'; out = typeof out === 'string' ? out : JSON.stringify(out);
+              if (t) notes.push(out);
+            } catch(e){ out = 'Error: ' + ((e && e.message) || e); }
+            msgs.push({role:'tool', tool_call_id: c.id, content: String(out)});
+          }
+        }
+      } catch(e){ if (e && e.code){ if (text) e.text = text; throw e; } throw {code:'upstream_error', message: String(e && e.message || e), text}; }
+      if (!text.trim() && notes.length) emit(notes.join('\n'));
+      if (!text.trim()) throw {code:'empty_completion', message:'empty'};
+      return {text, truncated, modelTierApplied: 'default'};
+    }
+    sample.json = async (input, opts) => {
+      const r = await sample(input, opts); let t = r.text.trim();
+      const m = t.match(/```(?:json)?\s*([\s\S]*?)```/); if (m) t = m[1];
+      const a = t.search(/[\[{]/), b = Math.max(t.lastIndexOf(']'), t.lastIndexOf('}'));
+      if (a < 0 || b < a) throw {code:'invalid_json', message:'no json', text: r.text};
+      try { return JSON.parse(t.slice(a, b + 1)); } catch(e){ throw {code:'invalid_json', message:'bad json', text: r.text}; }
+    };
+    sample.limits = async () => ({maxPromptBytes: 200000, tools: {maxCount: 16}, modelTiers: ['default']});
+    return sample;
+  }
   function enableCoach(label){
     coachReady = true; coachToolsOk = true;
     $('#coachMeta').textContent = label; $('#askInput').disabled = false; $('#askBtn').disabled = false;
@@ -1258,29 +1320,55 @@ textarea.notes:focus-visible{outline:none;box-shadow:inset 0 0 0 2px var(--accen
     if (state.loaded) render();
   }
   async function initCoach(){
+    const off = () => { sampleFn = null; coachReady = false; disableCoach('нужна настройка'); };
+    if (aiProvider() === 'alice'){
+      const url = lsGet('aliceUrl'), secret = lsGet('aliceSecret');
+      if (!/^https?:\/\//.test(url) || !secret){ off(); return; }
+      sampleFn = makeAliceSampler(url, secret); enableCoach('готов · Алиса AI'); return;
+    }
     const key = aiKey();
-    if (!key){ disableCoach('нужен ключ API'); return; }
+    if (!key){ off(); return; }
     sampleFn = makeApiSampler(key, aiModel());
     enableCoach('готов · ' + (AI_MODELS.find(x => x.id === aiModel()) || {}).label.split(' (')[0]);
   }
   function openAiSetup(){
-    const ed = $('#editor'); const key = aiKey(), model = aiModel();
+    const ed = $('#editor'); const prov = aiProvider(), key = aiKey(), model = aiModel();
+    const hasAny = !!(key || lsGet('aliceUrl') || lsGet('aliceSecret'));
     ed.innerHTML = '<div class="overlay" id="ovl"><form class="sheet" id="aiForm">'
       + '<h3>Настройка ИИ-тренера</h3>'
-      + '<div class="hint">Тренер работает через Anthropic API с вашим ключом. Ключ создаётся на сайте console.anthropic.com в разделе API Keys и хранится только на этом устройстве. Каждый вопрос оплачивается с вашего аккаунта Anthropic.</div>'
-      + '<label>Ключ API <input type="password" id="aiKeyInput" value="'+esc(key)+'" placeholder="sk-ant-…" autocomplete="off" spellcheck="false"></label>'
-      + '<label>Модель <select id="aiModelSel">'+AI_MODELS.map(m => '<option value="'+m.id+'"'+(m.id === model ? ' selected' : '')+'>'+m.label+'</option>').join('')+'</select></label>'
-      + '<div class="foot">'+(key ? '<button type="button" class="btn danger" id="aiForget">Удалить ключ</button>' : '<span></span>')+'<div><button type="button" class="btn" id="aiCancel">Отмена</button><button type="submit" class="btn primary">Сохранить</button></div></div>'
+      + '<label>Нейросеть <select id="aiProv"><option value="alice"'+(prov === 'alice' ? ' selected' : '')+'>Алиса AI (Яндекс)</option><option value="claude"'+(prov === 'claude' ? ' selected' : '')+'>Claude (Anthropic)</option></select></label>'
+      + '<div id="aiAlice" style="display:grid;gap:12px">'
+      +   '<div class="hint">Алиса AI подключается через Yandex Cloud. Приложению нужен адрес вашей функции-посредника и код доступа к ней. Как их получить, описано в README в разделе «Алиса AI». Запросы оплачиваются с вашего платёжного аккаунта Yandex Cloud.</div>'
+      +   '<label>Адрес функции <input type="url" id="aliceUrlInput" value="'+esc(lsGet('aliceUrl'))+'" placeholder="https://functions.yandexcloud.net/…" autocomplete="off" spellcheck="false"></label>'
+      +   '<label>Код доступа <input type="password" id="aliceSecretInput" value="'+esc(lsGet('aliceSecret'))+'" placeholder="код, заданный в функции" autocomplete="off" spellcheck="false"></label>'
+      + '</div>'
+      + '<div id="aiClaude" style="display:grid;gap:12px">'
+      +   '<div class="hint">Claude работает через Anthropic API с вашим ключом. Ключ создаётся на console.anthropic.com в разделе API Keys. Запросы оплачиваются с вашего аккаунта Anthropic.</div>'
+      +   '<label>Ключ API <input type="password" id="aiKeyInput" value="'+esc(key)+'" placeholder="sk-ant-…" autocomplete="off" spellcheck="false"></label>'
+      +   '<label>Модель <select id="aiModelSel">'+AI_MODELS.map(m => '<option value="'+m.id+'"'+(m.id === model ? ' selected' : '')+'>'+m.label+'</option>').join('')+'</select></label>'
+      + '</div>'
+      + '<div class="hint">Ключи и коды хранятся только на этом устройстве.</div>'
+      + '<div class="foot">'+(hasAny ? '<button type="button" class="btn danger" id="aiForget">Сбросить</button>' : '<span></span>')+'<div><button type="button" class="btn" id="aiCancel">Отмена</button><button type="submit" class="btn primary">Сохранить</button></div></div>'
       + '</form></div>';
-    ed.hidden = false; $('#aiKeyInput').focus();
+    ed.hidden = false;
+    const sync = () => { const p = $('#aiProv').value; $('#aiAlice').hidden = p !== 'alice'; $('#aiClaude').hidden = p !== 'claude'; };
+    $('#aiProv').addEventListener('change', sync); sync();
     $('#aiCancel').onclick = closeEditor;
     $('#ovl').addEventListener('click', e => { if (e.target.id === 'ovl') closeEditor(); });
-    if (key){ $('#aiForget').onclick = () => { try { localStorage.removeItem('apiKey'); } catch(e){} sampleFn = null; coachReady = false; disableCoach('нужен ключ API'); closeEditor(); toast('Ключ удалён'); }; }
+    if (hasAny){ $('#aiForget').onclick = () => { try { ['apiKey','aliceUrl','aliceSecret'].forEach(k => localStorage.removeItem(k)); } catch(e){} closeEditor(); initCoach(); toast('Настройки ИИ сброшены'); }; }
     $('#aiForm').onsubmit = e => {
       e.preventDefault();
-      const k = $('#aiKeyInput').value.trim(); const m = $('#aiModelSel').value;
-      try { if (k) localStorage.setItem('apiKey', k); else localStorage.removeItem('apiKey'); localStorage.setItem('apiModel', m); } catch(err){ toast('Не удалось сохранить: хранилище недоступно'); return; }
-      closeEditor(); initCoach(); toast(k ? 'ИИ-тренер подключён' : 'Ключ не задан');
+      const p = $('#aiProv').value;
+      const put = (k, v) => { if (v) localStorage.setItem(k, v); else localStorage.removeItem(k); };
+      try {
+        localStorage.setItem('aiProvider', p);
+        if (p === 'alice'){
+          const u = $('#aliceUrlInput').value.trim(), sc = $('#aliceSecretInput').value.trim();
+          if (u && !/^https?:\/\//.test(u)){ toast('Адрес функции должен начинаться с https://'); return; }
+          put('aliceUrl', u); put('aliceSecret', sc);
+        } else { put('apiKey', $('#aiKeyInput').value.trim()); localStorage.setItem('apiModel', $('#aiModelSel').value); }
+      } catch(err){ toast('Не удалось сохранить: хранилище недоступно'); return; }
+      closeEditor(); initCoach(); toast(coachReady ? 'ИИ-тренер подключён' : 'Заполните поля, чтобы включить тренера');
     };
   }
   async function askCoach(q){
