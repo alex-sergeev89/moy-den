@@ -54,6 +54,7 @@ module.exports.handler = async function (event, context) {
     return reply(400, { error: 'Тело запроса должно быть JSON' });
   }
   if (!req || req.secret !== secret) return reply(401, { error: 'Неверный код доступа' });
+  if (req.ping) return reply(200, { ok: true });   // проверка кода из настроек приложения, без обращения к Алисе
   if (!Array.isArray(req.messages) || !req.messages.length) return reply(400, { error: 'Нет сообщений' });
   if (JSON.stringify(req.messages).length > 200000) return reply(400, { error: 'Слишком длинный запрос' });
 

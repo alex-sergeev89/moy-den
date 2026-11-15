@@ -763,7 +763,7 @@ table.jr td.n{white-space:nowrap}
     state.mode = m;
     const st = $('#status'), txt = $('#statusText');
     st.className = 'status ok';
-    txt.textContent = 'Данные хранятся на этом устройстве. Раз в неделю сохраняйте резервную копию. Версия 5.';
+    txt.textContent = 'Данные хранятся на этом устройстве. Раз в неделю сохраняйте резервную копию. Версия 6.';
   }
 
   function openDay(k){
@@ -1532,7 +1532,8 @@ table.jr td.n{white-space:nowrap}
       + '<div id="aiAlice" style="display:grid;gap:12px">'
       +   '<div class="hint">Алиса AI подключена через вашу функцию в Yandex Cloud. Адрес уже указан, введите только код доступа. Запросы оплачиваются с вашего платёжного аккаунта Yandex Cloud.</div>'
       +   '<label>Адрес функции <input type="url" id="aliceUrlInput" value="'+esc(aliceUrl())+'" placeholder="https://functions.yandexcloud.net/…" autocomplete="off" spellcheck="false"></label>'
-      +   '<label>Код доступа <input type="password" id="aliceSecretInput" value="'+esc(lsGet('aliceSecret'))+'" placeholder="код, заданный в функции" autocomplete="off" spellcheck="false"></label>'
+      +   '<label>Код доступа <input type="text" id="aliceSecretInput" value="'+esc(lsGet('aliceSecret'))+'" placeholder="20 букв и цифр" autocomplete="off" autocapitalize="none" autocorrect="off" spellcheck="false" inputmode="text"></label>'
+      +   '<div class="hint">В коде 20 латинских букв и цифр. Большие или маленькие буквы и дефисы значения не имеют. Букв i, l, o и цифр 0, 1 в коде нет.</div>'
       + '</div>'
       + '<div id="aiClaude" style="display:grid;gap:12px">'
       +   '<div class="hint">Claude работает через Anthropic API с вашим ключом. Ключ создаётся на console.anthropic.com в разделе API Keys. Запросы оплачиваются с вашего аккаунта Anthropic.</div>'
@@ -1540,7 +1541,8 @@ table.jr td.n{white-space:nowrap}
       +   '<label>Модель <select id="aiModelSel">'+AI_MODELS.map(m => '<option value="'+m.id+'"'+(m.id === model ? ' selected' : '')+'>'+m.label+'</option>').join('')+'</select></label>'
       + '</div>'
       + '<div class="hint">Ключи и коды хранятся только на этом устройстве.</div>'
-      + '<div class="foot">'+(hasAny ? '<button type="button" class="btn danger" id="aiForget">Сбросить</button>' : '<span></span>')+'<div><button type="button" class="btn" id="aiCancel">Отмена</button><button type="submit" class="btn primary">Сохранить</button></div></div>'
+      + '<div class="hint" id="aiMsg" hidden style="color:var(--hi);font-size:14px"></div>'
+      + '<div class="foot">'+(hasAny ? '<button type="button" class="btn danger" id="aiForget">Сбросить</button>' : '<span></span>')+'<div><button type="button" class="btn" id="aiCancel">Отмена</button><button type="submit" class="btn primary" id="aiSave">Сохранить</button></div></div>'
       + '</form></div>';
     ed.hidden = false;
     const sync = () => { const p = $('#aiProv').value; $('#aiAlice').hidden = p !== 'alice'; $('#aiClaude').hidden = p !== 'claude'; };
@@ -1548,19 +1550,32 @@ table.jr td.n{white-space:nowrap}
     $('#aiCancel').onclick = closeEditor;
     $('#ovl').addEventListener('click', e => { if (e.target.id === 'ovl') closeEditor(); });
     if (hasAny){ $('#aiForget').onclick = () => { try { ['apiKey','aliceUrl','aliceSecret'].forEach(k => localStorage.removeItem(k)); } catch(e){} closeEditor(); initCoach(); toast('Настройки ИИ сброшены'); }; }
-    $('#aiForm').onsubmit = e => {
+    const msg = t => { const m = $('#aiMsg'); m.textContent = t; m.hidden = !t; };
+    $('#aiForm').onsubmit = async e => {
       e.preventDefault();
       const p = $('#aiProv').value;
       const put = (k, v) => { if (v) localStorage.setItem(k, v); else localStorage.removeItem(k); };
-      try {
-        localStorage.setItem('aiProvider', p);
-        if (p === 'alice'){
-          const u = $('#aliceUrlInput').value.trim(), sc = $('#aliceSecretInput').value.trim();
-          if (u && !/^https?:\/\//.test(u)){ toast('Адрес функции должен начинаться с https://'); return; }
-          put('aliceUrl', u === ALICE_DEFAULT_URL ? '' : u); put('aliceSecret', sc);
-        } else { put('apiKey', $('#aiKeyInput').value.trim()); localStorage.setItem('apiModel', $('#aiModelSel').value); }
-      } catch(err){ toast('Не удалось сохранить: хранилище недоступно'); return; }
-      closeEditor(); initCoach(); toast(coachReady ? 'ИИ-тренер подключён' : 'Заполните поля, чтобы включить тренера');
+      if (p === 'alice'){
+        const u = $('#aliceUrlInput').value.trim() || ALICE_DEFAULT_URL, raw = $('#aliceSecretInput').value;
+        if (!/^https?:\/\//.test(u)){ msg('Адрес функции должен начинаться с https://'); return; }
+        if (/[а-яё]/i.test(raw)){ msg('В коде есть русские буквы. Переключите клавиатуру на английскую и введите код заново.'); return; }
+        const t = raw.toLowerCase().replace(/[^a-z0-9]/g, ''), sc = t.length === 20 ? t.match(/.{5}/g).join('-') : raw.trim();
+        if (!sc){ msg('Введите код доступа.'); return; }
+        const btn = $('#aiSave'); btn.disabled = true; btn.textContent = 'Проверяю код…'; msg('');
+        let verdict = 'ok', detail = '';
+        try {
+          const r = await fetch(u, {method: 'POST', headers: {'content-type': 'text/plain;charset=UTF-8'}, body: JSON.stringify({secret: sc, ping: true})});
+          if (r.status === 401 || r.status === 403) verdict = 'bad'; else if (r.status >= 500){ verdict = 'down'; detail = 'ответ ' + r.status; }
+        } catch(err){ verdict = 'net'; detail = String(err && err.message || err); }
+        if (!$('#aiSave')) return;   // окно закрыли во время проверки
+        btn.disabled = false; btn.textContent = 'Сохранить';
+        if (verdict === 'bad'){ msg('Код не подошёл (введено символов: ' + t.length + ' из 20). Проверьте его и попробуйте ещё раз.'); return; }
+        if (verdict !== 'ok'){ msg('Не удалось связаться с функцией Яндекса: ' + detail + '. Проверьте интернет и попробуйте ещё раз.'); return; }
+        try { localStorage.setItem('aiProvider', p); put('aliceUrl', u === ALICE_DEFAULT_URL ? '' : u); put('aliceSecret', sc); } catch(err){ msg('Не удалось сохранить: хранилище недоступно.'); return; }
+      } else {
+        try { localStorage.setItem('aiProvider', p); put('apiKey', $('#aiKeyInput').value.trim()); localStorage.setItem('apiModel', $('#aiModelSel').value); } catch(err){ msg('Не удалось сохранить: хранилище недоступно.'); return; }
+      }
+      closeEditor(); initCoach(); toast(coachReady ? 'Код принят, ИИ-тренер подключён' : 'Заполните поля, чтобы включить тренера');
     };
   }
   async function askCoach(q){
