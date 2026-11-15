@@ -35,6 +35,15 @@ function calendar(q) {
   String(q.w || '').split(',').filter(ok).slice(0, 24).forEach(t => { lines = lines.concat(ev('w' + t, t, 'Выпить стакан воды')); });
   String(q.m || '').split(',').slice(0, 4).forEach((t, i) => { if (ok(t)) lines = lines.concat(ev('m' + i, t, kinds[i] + ': время поесть')); });
   if (ok(String(q.s || ''))) lines = lines.concat(ev('s', q.s, 'Пора готовиться ко сну'));
+  if (ok(String(q.r || ''))) lines = lines.concat(ev('r', q.r, 'Мой день: анализ дня'));
+  // e=ГГГГММДДЧЧММ~длительность~за_сколько_минут_напомнить~название;… — разовые дела с напоминанием
+  String(q.e || '').split(';').slice(0, 30).forEach((x, i) => {
+    const p = x.split('~');
+    if (p.length < 4 || !/^[0-9]{12}$/.test(p[0])) return;
+    const title = p.slice(3).join(' ').slice(0, 80);
+    lines = lines.concat(['BEGIN:VEVENT', 'UID:moyden-t' + p[0] + '-' + i + '@moy-den', 'DTSTAMP:' + day + 'T000000Z', 'DTSTART:' + p[0].slice(0, 8) + 'T' + p[0].slice(8) + '00',
+      'DURATION:PT' + (Number(p[1]) || 30) + 'M', 'SUMMARY:' + title, 'BEGIN:VALARM', 'ACTION:DISPLAY', 'DESCRIPTION:' + title, 'TRIGGER:-PT' + (Number(p[2]) || 0) + 'M', 'END:VALARM', 'END:VEVENT']);
+  });
   lines.push('END:VCALENDAR');
   return { statusCode: 200, headers: { 'Content-Type': 'text/calendar; charset=utf-8', 'Content-Disposition': 'inline; filename="moy-den.ics"' }, body: lines.join('\r\n') };
 }

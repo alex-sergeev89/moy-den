@@ -11,8 +11,8 @@
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="apple-mobile-web-app-title" content="Мой день">
-<link rel="apple-touch-icon" sizes="180x180" href="icons/apple-touch-icon.png?v=9">
-<link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png?v=9">
+<link rel="apple-touch-icon" sizes="180x180" href="icons/apple-touch-icon.png?v=10">
+<link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png?v=10">
 <script>window.MOYDEN_STANDALONE = true;</script>
 <style>html{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)} img{max-width:100%} [hidden]{display:none!important}</style>
 </head>
@@ -345,7 +345,27 @@ table.jr td.n{white-space:nowrap}
 .week .dn{font-size:15px}
 .layout{grid-template-columns:minmax(0,1fr);gap:12px}
 .main,.side{display:contents}
-#briefPanel{order:-3} #addForm{order:-2} .agenda{order:-1}
+#secPanel{order:-4} #reviewPanel{order:-3} #briefPanel{order:-3}
+.rv{display:grid;gap:10px}
+.rv-score{display:flex;align-items:baseline;gap:8px}
+.rv-score b{font-family:var(--font-display);font-size:26px;line-height:1;font-variant-numeric:tabular-nums}
+.rv-score span{color:var(--muted);font-size:13px}
+.rv h4{margin:0 0 2px;font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);font-weight:500}
+.rv ul{margin:0;padding-left:18px;display:grid;gap:3px;font-size:14px}
+.rv li{overflow-wrap:anywhere}
+.switch input[type=time]{padding:4px 6px;border:1px solid var(--line);border-radius:6px;background:var(--bg);font-variant-numeric:tabular-nums} #addForm{order:-2} .agenda{order:-1}
+.plist{list-style:none;margin:0;padding:4px 6px 10px;display:grid;gap:1px}
+.plist .ph2{font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);padding:8px 8px 2px}
+.plist .ph2.late{color:var(--hi)}
+.plist .pr{display:grid;grid-template-columns:46px minmax(0,1fr) auto;gap:8px;align-items:baseline;padding:7px 8px;border-radius:8px;border:0;background:none;width:100%;text-align:left}
+.plist .pr:hover{background:var(--surface-2)}
+.plist .pr.done .pn{text-decoration:line-through;color:var(--muted)}
+.plist .pt{font-size:12px;color:var(--muted);font-variant-numeric:tabular-nums}
+.plist .pn{min-width:0;overflow-wrap:anywhere}
+.plist .none{padding:6px 8px 4px;color:var(--muted);font-size:14px}
+#secChat{padding:0;max-height:300px}
+#secForm{padding:0}
+#secChips{padding:0}
 .panel{border-radius:12px}
 .panel-h{padding:12px 14px 0;flex-wrap:wrap;gap:4px 12px}
 .panel-h h2{white-space:nowrap}
@@ -402,6 +422,33 @@ textarea.notes{padding:8px 14px 14px;min-height:84px}
 
   <div class="layout">
     <div class="main">
+    <section class="panel" id="secPanel">
+      <div class="panel-h"><h2>Робот Секретарь</h2><span class="meta" id="secMeta"></span></div>
+      <div class="pbody" style="gap:8px">
+        <div class="brief-state" id="secDigest"></div>
+        <div class="chat" id="secChat" hidden></div>
+        <div class="hint" id="secUndo" hidden>Секретарь внёс изменения в дела. <button type="button" class="link" id="secUndoBtn">Отменить их</button></div>
+        <div class="chips" id="secChips">
+          <button type="button" class="chip" data-sq="Что у меня сегодня и что самое важное?">Что сегодня</button>
+          <button type="button" class="chip" data-sq="Покажи мои планы на неделю и предупреди о накладках.">Планы на неделю</button>
+          <button type="button" class="chip" data-sq="Разбери просроченные дела и дела без времени: предложи, когда их сделать, и расставь по дням.">Разобрать хвосты</button>
+        </div>
+        <form class="ask" id="secForm" autocomplete="off">
+          <input type="text" id="secInput" placeholder="Например: завтра в 13:30 суд, напомни за час" maxlength="600" aria-label="Поручение секретарю">
+          <button class="btn primary" type="submit" id="secSend">Поручить</button>
+          <button class="btn" type="button" id="secStop" hidden>Стоп</button>
+        </form>
+      </div>
+    </section>
+
+    <section class="panel" id="reviewPanel">
+      <div class="panel-h"><h2>Итоги дня</h2><button type="button" class="link" id="reviewBtn">Провести анализ</button></div>
+      <div class="pbody">
+        <div id="reviewBody"></div>
+        <label class="switch"><input type="checkbox" id="reviewAuto"> анализ дня каждый вечер в <input type="time" id="reviewAt" step="300" aria-label="Время анализа дня"></label>
+      </div>
+    </section>
+
     <section class="panel" id="briefPanel">
       <div class="panel-h"><h2>Тренер о вашем дне</h2><button type="button" class="link" id="briefBtn">Обдумать день</button></div>
       <div class="pbody">
@@ -459,7 +506,7 @@ textarea.notes{padding:8px 14px 14px;min-height:84px}
       <div class="panel-h"><h2>Журнал</h2><button type="button" class="link" id="reportBtn">Отчёт тренера</button></div>
       <div class="pbody">
         <div class="report" id="reportBox" hidden></div>
-        <div class="jwrap"><table class="jr"><thead><tr><th>День</th><th>Тренировка</th><th>Сон</th><th>Вода</th><th>Ккал</th><th>Вес</th></tr></thead><tbody id="journalRows"></tbody></table></div>
+        <div class="jwrap"><table class="jr"><thead><tr><th>День</th><th>Тренировка</th><th>Сон</th><th>Вода</th><th>Ккал</th><th>Вес</th><th>Итог</th></tr></thead><tbody id="journalRows"></tbody></table></div>
         <div class="hint">Журнал ведётся сам: тренировки попадают сюда после кнопки «Завершить», вода и еда — из ваших отметок за день. Тренер сверяет его с программой.</div>
       </div>
     </section>
@@ -489,6 +536,11 @@ textarea.notes{padding:8px 14px 14px;min-height:84px}
       <section class="panel">
         <div class="panel-h"><h2>Без времени</h2><span class="meta" id="untimedMeta"></span></div>
         <ul class="list" id="untimed"></ul>
+      </section>
+
+      <section class="panel" id="plansPanel">
+        <div class="panel-h"><h2>Планы на 7 дней</h2><button type="button" class="link" id="plansCal" hidden>В Календарь iPhone</button></div>
+        <ul class="plist" id="plansList"></ul>
       </section>
 
       <section class="panel">
@@ -614,9 +666,9 @@ textarea.notes{padding:8px 14px 14px;min-height:84px}
 </div>
 
 <nav class="tabs" id="tabs" aria-label="Разделы">
-  <button type="button" data-go="day" class="on"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="3"/><path d="M3 10h18M8 3v4M16 3v4"/></svg><span>День</span></button>
+  <button type="button" data-go="day" class="on"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="3"/><path d="M3 10h18M8 3v4M16 3v4"/></svg><span>Дела</span></button>
   <button type="button" data-go="food"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3c3.5 4.5 6 7.6 6 11a6 6 0 0 1-12 0c0-3.4 2.5-6.5 6-11z"/></svg><span>Питание</span></button>
-  <button type="button" data-go="coach"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 10v4M6 7v10M18 7v10M21 10v4M6 12h12"/></svg><span>Тренер</span></button>
+  <button type="button" data-go="coach"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 10v4M6 7v10M18 7v10M21 10v4M6 12h12"/></svg><span>Тренировки</span></button>
   <button type="button" data-go="sleep"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 14.5A8.5 8.5 0 1 1 9.5 4a7 7 0 0 0 10.5 10.5z"/></svg><span>Сон</span></button>
   <button type="button" data-go="more"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg><span>Ещё</span></button>
 </nav>
@@ -649,7 +701,7 @@ textarea.notes{padding:8px 14px 14px;min-height:84px}
     mode: null,           // 'db' | 'local'
     dirty: false,
     weekDays: {},         // key -> {total, done}
-    settings: {waterGoal: 8, routines: [], profile: null, recent: [], rem: null, program: null, journal: [], report: null, sleep: null, brief: null, autoBrief: true},
+    settings: {waterGoal: 8, routines: [], profile: null, recent: [], rem: null, program: null, journal: [], report: null, sleep: null, brief: null, autoBrief: true, review: null, autoReview: true, reviewAt: '21:00', scores: {}},
     weekView: null,
   };
   const normRecent = arr => Array.isArray(arr) ? arr.filter(m => m && typeof m.title === 'string').map(m => ({
@@ -711,6 +763,10 @@ textarea.notes{padding:8px 14px 14px;min-height:84px}
     if (o.sleep) state.settings.sleep = normSleepCfg(o.sleep);
     if (o.brief !== undefined) state.settings.brief = normBrief(o.brief);
     if (typeof o.autoBrief === 'boolean') state.settings.autoBrief = o.autoBrief;
+    if (o.review !== undefined) state.settings.review = normReview(o.review);
+    if (typeof o.autoReview === 'boolean') state.settings.autoReview = o.autoReview;
+    if (isTime(o.reviewAt)) state.settings.reviewAt = o.reviewAt;
+    if (o.scores && typeof o.scores === 'object'){ const sc = {}; Object.keys(o.scores).filter(isKey).sort().slice(-90).forEach(k => { const v = Number(o.scores[k]); if (v >= 1 && v <= 10) sc[k] = Math.round(v); }); state.settings.scores = sc; }
     if (o.program !== undefined) state.settings.program = normProgram(o.program);
     if (Array.isArray(o.journal)) state.settings.journal = normJournal(o.journal);
     if (o.report && typeof o.report.text === 'string') state.settings.report = {date: String(o.report.date || ''), text: o.report.text.slice(0, 4000)};
@@ -823,6 +879,12 @@ textarea.notes{padding:8px 14px 14px;min-height:84px}
     const r = state.settings.routines.find(x => /подъ[её]м/i.test(x.title) && x.start);
     return Object.assign({}, c, {wake: r ? r.start : '07:00'});
   }
+  function normReview(r){
+    if (!r || typeof r !== 'object' || !isKey(r.date)) return null;
+    const list = (a, n) => (Array.isArray(a) ? a : []).map(x => sstr(typeof x === 'string' ? x : (x && (x.text || x.what)) || '', 200)).filter(Boolean).slice(0, n);
+    const sc = Number(r.score), o = {date: r.date, score: sc >= 1 && sc <= 10 ? Math.round(sc) : null, summary: sstr(r.summary, 600), good: list(r.good, 6), bad: list(r.bad, 6), tomorrow: list(r.tomorrow, 6)};
+    return o.summary || o.good.length || o.bad.length ? o : null;
+  }
   function normBrief(b){
     if (!b || typeof b !== 'object' || !isKey(b.date)) return null;
     const plan = (Array.isArray(b.plan) ? b.plan : []).filter(x => x && isTime(x.t) && (x.what || x.w)).slice(0, 12).map(x => ({t: x.t, what: sstr(x.what || x.w, 160), added: !!x.added}));
@@ -850,6 +912,7 @@ textarea.notes{padding:8px 14px 14px;min-height:84px}
           dur: Number(t.dur) > 0 ? Number(t.dur) : 30, pri: PRI.hasOwnProperty(t.pri) ? t.pri : 'mid', done: !!t.done
         };
         if (typeof t.rid === 'string') o.rid = t.rid;
+        if (t.remind !== undefined && t.remind !== null && Number(t.remind) >= 0) o.remind = Math.min(2880, Math.round(Number(t.remind)));
         return o;
       });
       if (Array.isArray(d.skip)) out.skip = d.skip.filter(x => typeof x === 'string');
@@ -884,7 +947,7 @@ textarea.notes{padding:8px 14px 14px;min-height:84px}
     state.mode = m;
     const st = $('#status'), txt = $('#statusText');
     st.className = 'status ok';
-    txt.textContent = 'Данные хранятся на этом устройстве. Раз в неделю сохраняйте резервную копию. Версия 9.';
+    txt.textContent = 'Данные хранятся на этом устройстве. Раз в неделю сохраняйте резервную копию. Версия 10.';
   }
 
   function openDay(k){
@@ -977,7 +1040,8 @@ textarea.notes{padding:8px 14px 14px;min-height:84px}
   }
   function saveSettings(){
     const body = {waterGoal: state.settings.waterGoal, routines: state.settings.routines, profile: state.settings.profile, recent: state.settings.recent,
-      rem: state.settings.rem, program: state.settings.program, journal: state.settings.journal, report: state.settings.report, sleep: state.settings.sleep, brief: state.settings.brief, autoBrief: state.settings.autoBrief !== false};
+      rem: state.settings.rem, program: state.settings.program, journal: state.settings.journal, report: state.settings.report, sleep: state.settings.sleep, brief: state.settings.brief, autoBrief: state.settings.autoBrief !== false,
+      review: state.settings.review, autoReview: state.settings.autoReview !== false, reviewAt: state.settings.reviewAt, scores: state.settings.scores};
     if (state.mode === 'db') db.doc('settings/main').set(body).catch(() => toast('Не удалось сохранить настройки'));
     else { try { localStorage.setItem('settings', JSON.stringify(body)); } catch(e){} }
   }
@@ -1050,7 +1114,7 @@ textarea.notes{padding:8px 14px 14px;min-height:84px}
         const w = 100/x.cols, left = x.col*w;
         return '<div class="block '+x.t.pri+(x.t.done?' done':'')+(h>=52?' tall':'')+'" data-id="'+x.t.id+'" style="top:'+top+'px;height:'+h+'px;left:calc('+left+'% + 2px);width:calc('+w+'% - 6px)" title="'+esc(x.t.title)+'">'
           + '<input type="checkbox" class="chk" data-toggle="'+x.t.id+'" '+(x.t.done?'checked':'')+' aria-label="Выполнено: '+esc(x.t.title)+'">'
-          + '<div style="min-width:0;flex:1"><div class="t">'+esc(x.t.title)+'</div><div class="tm">'+x.t.start+'–'+fromMin(x.e)+' · '+durText(x.t.dur)+'</div></div></div>';
+          + '<div style="min-width:0;flex:1"><div class="t">'+esc(x.t.title)+'</div><div class="tm">'+x.t.start+'–'+fromMin(x.e)+' · '+durText(x.t.dur)+(x.t.remind != null ? ' · с напоминанием' : '')+'</div></div></div>';
       }).join('');
       let now = '';
       if (state.key === keyOf(new Date())){
@@ -1074,6 +1138,8 @@ textarea.notes{padding:8px 14px 14px;min-height:84px}
     renderRem();
     renderSleep(day);
     renderBrief();
+    renderSecretary();
+    renderReview();
 
     const carry = day.tasks.filter(t => !t.done && !t.rid).length;
     $('#carryBtn').disabled = !carry; $('#carryBtn').textContent = carry ? 'Перенести невыполненные на завтра ('+carry+')' : 'Переносить нечего';
@@ -1261,6 +1327,7 @@ textarea.notes{padding:8px 14px 14px;min-height:84px}
       + '<label>Длительность <select id="eDur">'+[15,30,45,60,90,120,180,240].map(m=>'<option value="'+m+'"'+(m===t.dur?' selected':'')+'>'+durText(m)+'</option>').join('')+'</select></label></div>'
       + '<div class="row"><label>Приоритет <select id="ePri"><option value="hi"'+(t.pri==='hi'?' selected':'')+'>Важно</option><option value="mid"'+(t.pri==='mid'?' selected':'')+'>Обычно</option><option value="lo"'+(t.pri==='lo'?' selected':'')+'>Потом</option></select></label>'
       + '<label>Перенести на дату <input type="date" id="eDate" value="'+state.key+'"></label></div>'
+      + '<label>Напомнить <select id="eRemind">'+[['', 'не напоминать'], ['0', 'в момент начала'], ['10', 'за 10 минут'], ['30', 'за 30 минут'], ['60', 'за час'], ['120', 'за 2 часа'], ['1440', 'за день']].map(o => '<option value="'+o[0]+'"'+(String(t.remind == null ? '' : t.remind) === o[0] ? ' selected' : '')+'>'+o[1]+'</option>').join('')+'</select></label>'
       + '<div class="foot"><button type="button" class="btn danger" id="eDelete">'+(t.rid ? 'Убрать на этот день' : 'Удалить')+'</button><div><button type="button" class="btn" id="eCancel">Отмена</button><button type="submit" class="btn primary">Сохранить</button></div></div>'
       + '</form></div>';
     ed.hidden = false;
@@ -1277,10 +1344,10 @@ textarea.notes{padding:8px 14px 14px;min-height:84px}
     $('#editForm').onsubmit = e => {
       e.preventDefault();
       const title = $('#eTitle').value.trim(); if (!title) return;
-      const upd = {title, start: $('#eTime').value || null, dur: Number($('#eDur').value), pri: $('#ePri').value};
+      const upd = {title, start: $('#eTime').value || null, dur: Number($('#eDur').value), pri: $('#ePri').value, remind: $('#eRemind').value === '' ? null : Number($('#eRemind').value)};
       const toKey = $('#eDate').value;
       if (toKey && toKey !== state.key && /^\d{4}-\d{2}-\d{2}$/.test(toKey)){
-        const copy = {id: uid(), title: upd.title, start: upd.start, dur: upd.dur, pri: upd.pri, done: false};
+        const copy = {id: uid(), title: upd.title, start: upd.start, dur: upd.dur, pri: upd.pri, remind: upd.remind, done: false};
         moveTasks([copy], toKey).then(() => { commit(removeHere); toast('Перенесено на '+fmtShort(toKey)); });
       } else {
         commit(d => { const x = concrete(d, id); if (x) Object.assign(x, upd); });
@@ -1602,6 +1669,7 @@ textarea.notes{padding:8px 14px 14px;min-height:84px}
           if (ch.finish_reason === 'length') truncated = true;
           if (m.content && String(m.content).trim()) emit((text ? '\n\n' : '') + String(m.content).trim());
           const calls = Array.isArray(m.tool_calls) ? m.tool_calls : [];
+          const seenIds = {}; calls.forEach((c, i) => { if (!c.id || seenIds[c.id]) c.id = (c.id || 'call') + '_' + i; seenIds[c.id] = 1; });   // Алиса даёт одинаковые id одинаковым действиям
           if (!calls.length) break;
           msgs = msgs.concat([{role:'assistant', content: m.content || '', tool_calls: calls}]);
           for (const c of calls){
@@ -1864,8 +1932,8 @@ textarea.notes{padding:8px 14px 14px;min-height:84px}
     const today = keyOf(new Date()), goalMl = (state.settings.waterGoal || 8) * GLASS_ML, nt = nutrition(state.settings.profile), p = state.settings.profile, rows = [];
     for (let i = 0; i < n; i++){
       const k = addDays(today, -i), st = dayStatsFor(k), pf = planFor(k), je = state.settings.journal.find(e => e.date === k), wt = p ? p.weights.find(w => w.date === k) : null;
-      if (i > 0 && !pf && !je && !wt && !(st && (st.kcal || st.waterMl || st.sleepMin))) continue;
-      rows.push({k, st, plan: pf ? pf.day : null, je, wt, goalMl, target: nt ? nt.target : null, today});
+      if (i > 0 && !pf && !je && !wt && !(state.settings.scores || {})[k] && !(st && (st.kcal || st.waterMl || st.sleepMin))) continue;
+      rows.push({k, st, plan: pf ? pf.day : null, je, wt, goalMl, target: nt ? nt.target : null, today, score: (state.settings.scores || {})[k] || null});
     }
     return rows;
   }
@@ -1875,8 +1943,8 @@ textarea.notes{padding:8px 14px 14px;min-height:84px}
       const d = parseKey(r.k);
       const wo = r.je ? workoutTag(r.k, r.plan) + ' ' + esc(r.je.title) + (r.je.min ? ', ' + r.je.min + ' мин' : '') + (r.je.feel ? ', ' + FEEL_TEXT[r.je.feel] : '')
         : (r.plan ? workoutTag(r.k, r.plan) + (isRest(r.plan) ? '' : ' ' + esc(r.plan.title)) : '—');
-      return '<tr><td class="n">' + WD_SHORT[(d.getDay() + 6) % 7] + ' ' + d.getDate() + '.' + pad(d.getMonth() + 1) + '</td><td>' + wo + '</td><td class="n">' + (r.st && r.st.sleepMin ? hm(r.st.sleepMin) : '—') + '</td><td class="n">' + (r.st && r.st.waterMl ? mlText(r.st.waterMl) : '—') + '</td><td class="n">' + (r.st && r.st.kcal ? r.st.kcal.toLocaleString('ru-RU') : '—') + '</td><td class="n">' + (r.wt ? r.wt.kg.toLocaleString('ru-RU') : '') + '</td></tr>';
-    }).join('') : '<tr><td colspan="6" style="color:var(--muted)">Записей пока нет.</td></tr>';
+      return '<tr><td class="n">' + WD_SHORT[(d.getDay() + 6) % 7] + ' ' + d.getDate() + '.' + pad(d.getMonth() + 1) + '</td><td>' + wo + '</td><td class="n">' + (r.st && r.st.sleepMin ? hm(r.st.sleepMin) : '—') + '</td><td class="n">' + (r.st && r.st.waterMl ? mlText(r.st.waterMl) : '—') + '</td><td class="n">' + (r.st && r.st.kcal ? r.st.kcal.toLocaleString('ru-RU') : '—') + '</td><td class="n">' + (r.wt ? r.wt.kg.toLocaleString('ru-RU') : '') + '</td><td class="n">' + (r.score ? r.score + '/10' : '') + '</td></tr>';
+    }).join('') : '<tr><td colspan="7" style="color:var(--muted)">Записей пока нет.</td></tr>';
     const rep = state.settings.report, box = $('#reportBox');
     if (rep && rep.text && !box.dataset.live){ box.hidden = false; box.innerHTML = '<small>Отчёт тренера от ' + esc(isKey(rep.date) ? fmtShort(rep.date) : rep.date) + '</small>' + esc(rep.text); }
     else if (!rep && !box.dataset.live) box.hidden = true;
@@ -1981,6 +2049,7 @@ textarea.notes{padding:8px 14px 14px;min-height:84px}
     waterSlots(rem).forEach(t => { L = L.concat(ev('w' + fromMin(t).replace(':', ''), fromMin(t), 'Выпить стакан воды')); });
     rem.meals.forEach((t, i) => { L = L.concat(ev('m' + i, t, MEAL_KINDS[i] + ': время поесть')); });
     L = L.concat(ev('s', fromMin((bedTarget(sleepCfg()) - 30 + 1440) % 1440), 'Пора готовиться ко сну'));
+    if (state.settings.autoReview !== false) L = L.concat(ev('r', state.settings.reviewAt, 'Мой день: анализ дня'));
     L.push('END:VCALENDAR');
     return L.join('\r\n');
   }
@@ -1989,7 +2058,7 @@ textarea.notes{padding:8px 14px 14px;min-height:84px}
     const relay = typeof aliceUrl === 'function' ? aliceUrl() : '';
     if (/^https:\/\//.test(relay)){
       // Внешняя ссылка: iPhone сам предложит добавить события в Календарь.
-      const url = relay + '?cal=1&w=' + waterSlots(rem).map(t => fromMin(t).replace(':', '')).join(',') + '&m=' + rem.meals.map(t => t.replace(':', '')).join(',') + '&s=' + fromMin((bedTarget(sleepCfg()) - 30 + 1440) % 1440).replace(':', '');
+      const url = relay + '?cal=1&w=' + waterSlots(rem).map(t => fromMin(t).replace(':', '')).join(',') + '&m=' + rem.meals.map(t => t.replace(':', '')).join(',') + '&s=' + fromMin((bedTarget(sleepCfg()) - 30 + 1440) % 1440).replace(':', '') + (state.settings.autoReview !== false ? '&r=' + state.settings.reviewAt.replace(':', '') : '');
       const a = document.createElement('a'); a.href = url; a.target = '_blank'; a.rel = 'noopener'; document.body.appendChild(a); a.click(); a.remove();
       toast('Откроется список событий: нажмите «Добавить все», чтобы телефон напоминал сам'); return;
     }
@@ -2034,6 +2103,14 @@ textarea.notes{padding:8px 14px 14px;min-height:84px}
       remMem.set('sleepBed', today);
       showBanner('Пора готовиться ко сну: ложитесь к ' + fromMin(bedT) + ', чтобы проспать ' + hm(sc.goal) + ' до подъёма в ' + sc.wake + '.',
         [{label: 'Ложусь спать', fill: true, fn: () => sleepNow()}, {label: 'Позже', fn: () => {}}]); return;
+    }
+    // 1b. Напоминания о делах
+    const tf = remMem.get('tasks') || {}, tdone = tf.date === today ? tf.ids : [];
+    const dueTask = effectiveTasks(day).find(t => !t.done && t.start && t.remind != null && tdone.indexOf(t.id) < 0 && now >= toMin(t.start) - t.remind && now <= toMin(t.start) + 15);
+    if (dueTask){
+      remMem.set('tasks', {date: today, ids: tdone.concat([dueTask.id])});
+      const left = toMin(dueTask.start) - now;
+      showBanner((left > 0 ? 'Через ' + hm(left).replace(/^0 ч /, '') + ': ' : 'Сейчас: ') + dueTask.title + ' в ' + dueTask.start + '.', [{label: 'Хорошо', fill: true, fn: () => {}}]); return;
     }
     // 2. Еда
     const fired = remMem.get('meals') || {}; const done = fired.date === today ? fired.list : [];
@@ -2108,7 +2185,7 @@ textarea.notes{padding:8px 14px 14px;min-height:84px}
   }
 
   // ---------- Разделы (вкладки) ----------
-  const TAB_OF = {briefPanel: 'day', addForm: 'day', sleepPanel: 'sleep', profilePanel: 'more', remPanel: 'more', backupPanel: 'more', coachPanel: 'coach', programPanel: 'coach', journalPanel: 'coach'};
+  const TAB_OF = {secPanel: 'day', reviewPanel: 'day', plansPanel: 'day', briefPanel: 'coach', addForm: 'day', sleepPanel: 'sleep', profilePanel: 'more', remPanel: 'more', backupPanel: 'more', coachPanel: 'coach', programPanel: 'coach', journalPanel: 'coach'};
   function showTab(name){
     if (['day', 'food', 'coach', 'sleep', 'more'].indexOf(name) < 0) name = 'day';
     document.querySelectorAll('.layout .panel').forEach(p => { p.hidden = p.dataset.tab !== name; });
@@ -2170,17 +2247,252 @@ textarea.notes{padding:8px 14px 14px;min-height:84px}
   }
   function maybeAutoBrief(){
     if (briefTried || state.settings.autoBrief === false || !coachReady || !state.loaded) return;
-    const today = keyOf(new Date()); if (state.key !== today || new Date().getHours() < 5) return;
+    const today = keyOf(new Date()), nb = new Date(); if (state.key !== today || nb.getHours() < 5 || nb.getHours() * 60 + nb.getMinutes() >= toMin(state.settings.reviewAt)) return;
     briefTried = true;
     const b = state.settings.brief; if (b && b.date === today) return;
     generateBrief(true);
   }
-  function tick(){ maybeAutoBrief(); remTick(); }
+  // ---------- Вечерний анализ дня ----------
+  let reviewBusy = false, reviewTried = false;
+  function reviewPrompt(){
+    const today = keyOf(new Date()), tk = addDays(today, 1);
+    const tmr = tasksOn(tk).sort(byTime).map(t => (t.start ? t.start + ' ' : '') + t.title).join('; '), pf = planFor(tk);
+    return ['Ты — личный помощник подопечного: Робот Тренер и Робот Секретарь в одном лице. Сейчас вечер. Проведи анализ прошедшего дня по данным: дела, тренировка, питание, вода, сон. Будь честным и конкретным: опирайся на цифры и факты из данных, ничего не выдумывай. Если данных по какому-то пункту нет, так и скажи и попроси отмечать.',
+      'ДАННЫЕ ДНЯ', coachContext(),
+      'Дела на завтра: ' + (tmr || 'пока нет') + '.' + (pf && !isRest(pf.day) ? ' Завтра по программе тренировка: ' + pf.day.title + '.' : ' Завтра по программе тренировки нет.'),
+      'Верни только JSON без пояснений и без markdown:',
+      '{"score":7,"summary":"общий итог дня, 2–3 предложения","good":["что получилось"],"bad":["что не получилось или упущено"],"tomorrow":["конкретный шаг на завтра, со временем где уместно"]}',
+      'score — целое число от 1 до 10. В good и bad от 1 до 4 пунктов, в tomorrow ровно 3 пункта. Пиши по-русски, коротко.'].join('\n');
+  }
+  function renderReview(){
+    const r = state.settings.review, today = keyOf(new Date()), body = $('#reviewBody'), at = state.settings.reviewAt;
+    $('#reviewAuto').checked = state.settings.autoReview !== false;
+    const inp = $('#reviewAt'); if (document.activeElement !== inp && inp.value !== at) inp.value = at;
+    if (reviewBusy) return;
+    if (!r){ body.innerHTML = '<div class="hint">' + (coachReady ? 'Анализ дня появится после ' + at + ': что получилось, что упущено и три шага на завтра. Приложение проводит его, когда вы открываете его вечером.' : 'Подключите ИИ во вкладке «Тренировки», и каждый вечер здесь будет появляться разбор дня.') + '</div>'; return; }
+    const li = a => a.map(x => '<li>' + esc(x) + '</li>').join('');
+    body.innerHTML = '<div class="rv">' + (r.date !== today ? '<div class="hint">Анализ за ' + fmtShort(r.date) + '. Сегодняшний появится после ' + at + '.</div>' : '')
+      + (r.score ? '<div class="rv-score"><b>' + r.score + '</b><span>из 10 · оценка дня</span></div>' : '')
+      + (r.summary ? '<div class="brief-state">' + esc(r.summary) + '</div>' : '')
+      + (r.good.length ? '<div><h4>Получилось</h4><ul>' + li(r.good) + '</ul></div>' : '')
+      + (r.bad.length ? '<div><h4>Упущено</h4><ul>' + li(r.bad) + '</ul></div>' : '')
+      + (r.tomorrow.length ? '<div class="brief-focus"><h4 style="margin:0 0 4px;font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);font-weight:500">На завтра</h4><ul style="margin:0;padding-left:18px;display:grid;gap:3px">' + li(r.tomorrow) + '</ul></div>' : '') + '</div>';
+  }
+  async function generateReview(auto){
+    if (aiBusy || reviewBusy) return;
+    if (auto ? !(coachReady && sampleFn) : !needAi()) return;
+    const today = keyOf(new Date());
+    if (state.key !== today || !state.loaded){ if (!auto){ toast('Анализ проводится для сегодняшнего дня'); openDay(today); } return; }
+    reviewBusy = aiBusy = true; reviewTried = true; const btn = $('#reviewBtn'); btn.disabled = true;
+    $('#reviewBody').innerHTML = '<div class="hint">Идёт анализ дня: дела, тренировка, питание, вода и сон. Это занимает до минуты.</div>';
+    let ok = false;
+    try {
+      const r = normReview(Object.assign({}, await sampleFn.json(reviewPrompt(), {cache: false, maxTokens: 2500}), {date: today}));
+      if (!r) throw {code: 'invalid_json', message: 'пустой анализ'};
+      state.settings.review = r; if (r.score){ state.settings.scores = Object.assign({}, state.settings.scores, {[today]: r.score}); }
+      saveSettings(); ok = true;
+    } catch(e){ if (!auto) aiFail(e); }
+    finally { reviewBusy = aiBusy = false; btn.disabled = false; if (state.loaded) render(); else renderReview(); }
+    if (ok && auto && $('#banner').hidden) showBanner('Анализ дня готов' + (state.settings.review.score ? ': оценка ' + state.settings.review.score + ' из 10.' : '.'), [{label: 'Посмотреть', fill: true, fn: () => reveal('#reviewPanel')}, {label: 'Позже', fn: () => {}}]);
+  }
+  function maybeAutoReview(){
+    if (reviewTried || state.settings.autoReview === false || !coachReady || !state.loaded || aiBusy) return;
+    const n = new Date(), today = keyOf(n); if (state.key !== today || n.getHours() * 60 + n.getMinutes() < toMin(state.settings.reviewAt)) return;
+    const r = state.settings.review; if (r && r.date === today){ reviewTried = true; return; }
+    generateReview(true);
+  }
+  function tick(){ maybeAutoBrief(); maybeAutoReview(); remTick(); }
+
+  // ---------- Робот Секретарь: дела и планы ----------
+  async function readDay(k){
+    if (k === state.key && state.day) return JSON.parse(JSON.stringify(state.day));
+    if (state.mode === 'db' && db){ const sn = await db.doc('days/' + k).get(); return normalize(k, sn.exists ? sn.data() : null); }
+    return normalize(k, local.read(k));
+  }
+  async function writeDay(k, d){
+    const n = normalize(k, d);
+    if (state.mode === 'db' && db) await db.doc('days/' + k).set(n); else { local.write(k, n); refreshWeekLocal(); }
+  }
+  function localDay(k){ return k === state.key && state.day ? state.day : (state.mode === 'local' ? normalize(k, local.read(k)) : null); }
+  function tasksOn(k){ const d = localDay(k); return d ? effectiveTasks(d) : []; }
+  function overdueTasks(){
+    const today = keyOf(new Date()), out = [];
+    for (let i = 1; i <= 14; i++){ const k = addDays(today, -i), d = localDay(k); if (d) d.tasks.filter(x => !x.done && !x.rid).forEach(x => out.push({k, t: x})); }
+    return out;
+  }
+  const byTime = (a, b) => (a.start ? toMin(a.start) : 9999) - (b.start ? toMin(b.start) : 9999) || PRI[a.pri] - PRI[b.pri];
+  const dayLabel = (k, today) => { const d = parseKey(k); return (k === today ? 'сегодня, ' : k === addDays(today, 1) ? 'завтра, ' : '') + WD_SHORT[(d.getDay() + 6) % 7] + ' ' + d.getDate() + ' ' + MONTHS[d.getMonth()]; };
+  function relayUrl(){ const u = typeof aliceUrl === 'function' ? aliceUrl() : ''; return /^https:\/\//.test(u) ? u : ''; }
+  function renderSecretary(){
+    const n = new Date(), today = keyOf(n), now = n.getHours() * 60 + n.getMinutes();
+    const t = tasksOn(today), open = t.filter(x => !x.done), late = overdueTasks();
+    const next = open.filter(x => x.start && toMin(x.start) + x.dur >= now).sort(byTime)[0];
+    const tm = tasksOn(addDays(today, 1)).filter(x => !x.done && x.start && !x.rid).sort(byTime)[0];
+    $('#secDigest').textContent = 'Сегодня дел: ' + t.length + ', выполнено: ' + (t.length - open.length) + '.'
+      + (next ? ' Ближайшее: ' + next.start + ' ' + next.title + '.' : (open.length ? ' Без времени ждут: ' + open.filter(x => !x.start).length + '.' : (t.length ? ' Всё сделано.' : '')))
+      + (late.length ? ' Просрочено: ' + late.length + '.' : '') + (tm ? ' Завтра первое дело в ' + tm.start + ': ' + tm.title + '.' : '');
+    $('#secMeta').textContent = coachReady ? 'на связи' : 'нужно подключить ИИ';
+    const rows = [];
+    if (late.length){
+      rows.push('<li class="ph2 late">Просрочено</li>');
+      late.slice(0, 12).forEach(x => rows.push('<li><button type="button" class="pr" data-goto="' + x.k + '"><span class="pt">' + parseKey(x.k).getDate() + '.' + pad(parseKey(x.k).getMonth() + 1) + '</span><span class="pn">' + esc(x.t.title) + '</span><span class="pri dot ' + x.t.pri + '" style="width:8px;height:8px;border-radius:50%"></span></button></li>'));
+    }
+    let any = false;
+    for (let i = 0; i <= 7; i++){
+      const k = addDays(today, i), list = tasksOn(k).filter(x => !x.rid || !x.virtual).filter(x => !x.virtual).sort(byTime);
+      if (!list.length) continue; any = true;
+      rows.push('<li class="ph2">' + dayLabel(k, today) + '</li>');
+      list.slice(0, 12).forEach(x => rows.push('<li><button type="button" class="pr' + (x.done ? ' done' : '') + '" data-goto="' + k + '"><span class="pt">' + (x.start || '—') + '</span><span class="pn">' + esc(x.title) + (x.remind != null ? ' <span class="tag">напомнить</span>' : '') + '</span><span class="pri dot ' + x.pri + '" style="width:8px;height:8px;border-radius:50%"></span></button></li>'));
+    }
+    $('#plansList').innerHTML = rows.length ? rows.join('') : '<li class="none">На ближайшую неделю дел нет. Поручите секретарю: «в среду в 15 встреча с клиентом».</li>';
+    $('#plansCal').hidden = !(STANDALONE && relayUrl() && any);
+  }
+  function plansToCalendar(){
+    const today = keyOf(new Date()), ev = [];
+    for (let i = 0; i <= 14 && ev.length < 25; i++){
+      const k = addDays(today, i);
+      tasksOn(k).filter(x => !x.virtual && !x.done && x.start).sort(byTime).forEach(x => { if (ev.length < 25) ev.push(k.replace(/-/g, '') + x.start.replace(':', '') + '~' + x.dur + '~' + (x.remind != null ? x.remind : 30) + '~' + x.title.replace(/[~;,\r\n\\]/g, ' ').slice(0, 60)); });
+    }
+    if (!ev.length){ toast('В ближайшие две недели нет дел с указанным временем'); return; }
+    const a = document.createElement('a'); a.href = relayUrl() + '?cal=1&e=' + encodeURIComponent(ev.join(';')); a.target = '_blank'; a.rel = 'noopener'; document.body.appendChild(a); a.click(); a.remove();
+    toast('Откроется список из ' + ev.length + ' ' + plural(ev.length, 'события', 'событий', 'событий') + ': нажмите «Добавить все»');
+  }
+
+  const SEC_RULES = ['Ты — «Робот Секретарь», личный секретарь пользователя в приложении «Мой день». Ты ведёшь его дела и планы: записываешь поручения, назначаешь и переносишь дела, следишь за сроками, приоритетами и накладками.',
+    'Как работать. 1) Поручение выполняй сразу инструментами, не спрашивая подтверждения, если из него ясны дело и день. Время, длительность и приоритет подбирай разумно сам. 2) Уточняющий вопрос задавай только когда без ответа нельзя действовать, и только один. 3) Даты бери из календаря ближайших дней в данных: не вычисляй дни недели сам. Слова «сегодня», «завтра», «в пятницу», «на следующей неделе» переводи в дату по этому календарю. 4) Если время не названо, оставляй дело без времени. Если сказано «напомни», ставь напоминание: по умолчанию за 30 минут, для важных встреч за час. 5) Перед тем как назначить время, проверь накладки с другими делами, регулярными делами и тренировками. Если накладка есть, всё равно запиши дело и прямо скажи о накладке. 6) Изменяй и удаляй только те дела, идентификатор которых видишь в данных. Регулярные дела меняй только через add_routine. 7) Для поручений вида «каждый вторник» или «по будням» используй add_routine.',
+    'Как отвечать. По-русски, коротко и по делу, без markdown. После действий перечисли, что сделано: дата, время, название. На вопросы о планах отвечай списком по дням в порядке времени, сначала важное. Замечай просроченные дела и предлагай, куда их перенести. Не выдумывай дел, которых нет в данных. Вопросы о тренировках, питании и сне относятся к Роботу Тренеру: коротко ответь по данным и посоветуй вкладку «Тренировки».'].join('\n');
+  async function secContext(){
+    const n = new Date(), today = keyOf(n), lines = [];
+    lines.push('Сейчас: ' + today + ', ' + WD[n.getDay()] + ', ' + pad(n.getHours()) + ':' + pad(n.getMinutes()) + '. На экране открыт день ' + state.key + '.');
+    lines.push('Календарь ближайших дней: ' + Array.from({length: 15}, (_, i) => { const k = addDays(today, i); return k + ' — ' + WD[parseKey(k).getDay()] + (i === 0 ? ' (сегодня)' : i === 1 ? ' (завтра)' : i === 2 ? ' (послезавтра)' : ''); }).join('; ') + '.');
+    lines.push('Регулярные дела (повторяются сами, в списках по дням не показаны): ' + (state.settings.routines.map(r => r.title + ' — ' + daysText(r.days) + (r.start ? ', в ' + r.start : '') + ', ' + durText(r.dur)).join('; ') || 'нет') + '.');
+    const tr = []; for (let i = 0; i <= 7; i++){ const k = addDays(today, i), pf = planFor(k); if (pf && !isRest(pf.day)) tr.push(k + ' ' + pf.day.title); }
+    if (tr.length) lines.push('Тренировки по программе: ' + tr.join('; ') + '.');
+    const sc = sleepCfg(); lines.push('Режим: подъём в ' + sc.wake + ', отбой около ' + fromMin(bedTarget(sc)) + '.');
+    lines.push('Дела по дням ([идентификатор] время название):');
+    let any = false;
+    for (let i = -7; i <= 14; i++){
+      const k = addDays(today, i), d = await readDay(k);
+      if (!d.tasks.length && !(d.notes && i >= 0)) continue; any = true;
+      lines.push(k + ' (' + WD_SHORT[(parseKey(k).getDay() + 6) % 7] + (i < 0 ? ', прошедший день' : '') + '): ' + (d.tasks.slice().sort(byTime).map(t => '[' + t.id + '] ' + (t.start ? t.start : 'без времени') + ' ' + t.title + ', ' + durText(t.dur) + (t.pri === 'hi' ? ', важно' : t.pri === 'lo' ? ', не срочно' : '') + (t.done ? ', ВЫПОЛНЕНО' : (i < 0 ? ', НЕ ВЫПОЛНЕНО' : '')) + (t.remind != null ? ', напоминание за ' + t.remind + ' мин' : '')).join('; ') || 'дел нет') + (d.notes && i >= 0 ? ' | заметки: ' + d.notes.slice(0, 200) : ''));
+    }
+    if (!any) lines.push('записанных дел нет');
+    return lines.join('\n');
+  }
+  let secUndo = null, secLastUndo = null, secTurns = [], secCtl = null;
+  async function mutateDay(k, fn){
+    if (!isKey(k)) throw new Error('дата должна быть в формате ГГГГ-ММ-ДД');
+    if (secUndo && !(k in secUndo.days)) secUndo.days[k] = JSON.stringify(await readDay(k));
+    if (k === state.key && state.loaded){ let res; commit(d => { res = fn(d); }); return res; }
+    const d = await readDay(k), res = fn(d); await writeDay(k, d); return res;
+  }
+  const cleanTask = inp => {
+    const o = {};
+    if (inp.title !== undefined) o.title = String(inp.title).trim().slice(0, 140);
+    if (inp.start !== undefined) o.start = isTime(inp.start) ? inp.start : null;
+    if (inp.dur !== undefined && Number(inp.dur) > 0) o.dur = Math.min(720, Math.round(Number(inp.dur)));
+    if (inp.pri !== undefined && PRI.hasOwnProperty(inp.pri)) o.pri = inp.pri;
+    if (inp.done !== undefined) o.done = !!inp.done;
+    if (inp.remind !== undefined) o.remind = inp.remind === null || Number(inp.remind) < 0 || inp.remind === '' ? null : Math.round(Number(inp.remind));
+    return o;
+  };
+  function secTools(){
+    const D = {type: 'string', description: 'дата ГГГГ-ММ-ДД из календаря ближайших дней'}, T = {type: 'string', description: 'время начала ЧЧ:ММ; пустая строка, если без времени'};
+    const P = {type: 'string', enum: ['hi', 'mid', 'lo'], description: 'приоритет: hi важно, mid обычно, lo не срочно'}, R = {type: 'number', description: 'за сколько минут до начала напомнить; не указывай, если напоминание не нужно'};
+    return [
+      {name: 'add_task', description: 'Добавляет новое дело на указанную дату. Возвращает подтверждение с идентификатором.',
+        inputSchema: {type: 'object', properties: {date: D, title: {type: 'string', description: 'короткое название дела'}, start: T, dur: {type: 'number', description: 'длительность в минутах'}, pri: P, remind: R}, required: ['date', 'title']},
+        async execute(inp){
+          const f = cleanTask(inp); if (!f.title) throw new Error('нет названия');
+          const t = {id: uid(), title: f.title, start: f.start || null, dur: f.dur || 30, pri: f.pri || 'mid', done: false}; if (f.remind != null) t.remind = f.remind;
+          await mutateDay(String(inp.date), d => { d.tasks.push(t); });
+          return 'Добавлено [' + t.id + ']: ' + inp.date + ' ' + (t.start || 'без времени') + ' ' + t.title;
+        }},
+      {name: 'update_task', description: 'Изменяет существующее дело по идентификатору: название, время, длительность, приоритет, напоминание, отметку «выполнено» или переносит на другую дату (new_date).',
+        inputSchema: {type: 'object', properties: {date: Object.assign({}, D, {description: 'дата, на которой дело сейчас'}), id: {type: 'string', description: 'идентификатор дела из данных'}, new_date: Object.assign({}, D, {description: 'новая дата, если дело нужно перенести'}), title: {type: 'string'}, start: T, dur: {type: 'number'}, pri: P, remind: R, done: {type: 'boolean'}}, required: ['date', 'id']},
+        async execute(inp){
+          const f = cleanTask(inp), from = String(inp.date), id = String(inp.id); let moved = null;
+          await mutateDay(from, d => {
+            const i = d.tasks.findIndex(x => x.id === id); if (i < 0) throw new Error('дело ' + id + ' на ' + from + ' не найдено');
+            Object.assign(d.tasks[i], f);
+            if (inp.new_date && String(inp.new_date) !== from){ moved = Object.assign({}, d.tasks[i], {id: uid(), done: false}); delete moved.rid; d.tasks.splice(i, 1); }
+          });
+          if (moved){ await mutateDay(String(inp.new_date), d => { d.tasks.push(moved); }); return 'Перенесено на ' + inp.new_date + ' [' + moved.id + ']: ' + (moved.start || 'без времени') + ' ' + moved.title; }
+          return 'Изменено [' + id + '] на ' + from;
+        }},
+      {name: 'delete_task', description: 'Удаляет дело по идентификатору. Используй только по прямой просьбе пользователя.',
+        inputSchema: {type: 'object', properties: {date: D, id: {type: 'string'}}, required: ['date', 'id']},
+        async execute(inp){
+          const id = String(inp.id); let title = '';
+          await mutateDay(String(inp.date), d => { const i = d.tasks.findIndex(x => x.id === id); if (i < 0) throw new Error('дело ' + id + ' не найдено'); title = d.tasks[i].title; d.tasks.splice(i, 1); });
+          return 'Удалено: ' + title;
+        }},
+      {name: 'list_tasks', description: 'Возвращает дела за период, если нужных дат нет в данных. Не больше 31 дня.',
+        inputSchema: {type: 'object', properties: {from: D, to: D}, required: ['from', 'to']},
+        async execute(inp){
+          if (!isKey(inp.from) || !isKey(inp.to)) throw new Error('даты в формате ГГГГ-ММ-ДД'); const out = [];
+          for (let k = inp.from, i = 0; k <= inp.to && i < 31; k = addDays(k, 1), i++){ const d = await readDay(k); if (d.tasks.length) out.push(k + ': ' + d.tasks.slice().sort(byTime).map(t => '[' + t.id + '] ' + (t.start || 'без времени') + ' ' + t.title + (t.done ? ' (выполнено)' : '')).join('; ')); }
+          return out.join('\n') || 'дел за этот период нет';
+        }},
+      {name: 'add_note', description: 'Дописывает строку в заметки указанного дня.',
+        inputSchema: {type: 'object', properties: {date: D, text: {type: 'string'}}, required: ['date', 'text']},
+        async execute(inp){ const tx = String(inp.text || '').trim().slice(0, 500); if (!tx) throw new Error('пустая заметка'); await mutateDay(String(inp.date), d => { d.notes = (d.notes ? d.notes + '\n' : '') + tx; }); return 'Заметка добавлена на ' + inp.date; }},
+      {name: 'add_routine', description: 'Создаёт регулярное дело, которое повторяется каждую неделю в выбранные дни.',
+        inputSchema: {type: 'object', properties: {title: {type: 'string'}, days: {type: 'array', items: {type: 'number'}, description: 'дни недели числами: 1 понедельник … 7 воскресенье'}, start: T, dur: {type: 'number'}, pri: P}, required: ['title', 'days']},
+        async execute(inp){
+          const days = (Array.isArray(inp.days) ? inp.days : []).map(Number).filter(x => x >= 1 && x <= 7).map(x => x % 7), title = String(inp.title || '').trim().slice(0, 140);
+          if (!title || !days.length) throw new Error('нужны название и дни недели');
+          if (secUndo && secUndo.routines === null) secUndo.routines = JSON.stringify(state.settings.routines);
+          state.settings.routines.push({id: uid(), title, start: isTime(inp.start) ? inp.start : null, dur: Number(inp.dur) > 0 ? Math.round(Number(inp.dur)) : 60, pri: PRI.hasOwnProperty(inp.pri) ? inp.pri : 'mid', days});
+          saveSettings(); if (state.loaded) render();
+          return 'Регулярное дело создано: ' + title + ' — ' + daysText(days);
+        }}
+    ];
+  }
+  function secMsg(cls, text){ const c = $('#secChat'); c.hidden = false; const el = document.createElement('div'); el.className = 'msg ' + cls; el.textContent = text; c.appendChild(el); c.scrollTop = c.scrollHeight; return el; }
+  function secBusy(b){ $('#secSend').hidden = b; $('#secStop').hidden = !b; $('#secInput').disabled = b; document.querySelectorAll('#secChips .chip').forEach(c => { c.disabled = b; }); }
+  async function askSecretary(q){
+    q = String(q || '').trim(); if (!q || secCtl || aiBusy) return;
+    if (!needAi()) return;
+    secMsg('user', q); secTurns.push({role: 'user', content: q}); if (secTurns.length > 12) secTurns = secTurns.slice(-12);
+    const bubble = secMsg('bot think', 'Секретарь работает…');
+    secCtl = new AbortController(); secBusy(true); secUndo = {days: {}, routines: null}; $('#secUndo').hidden = true;
+    try {
+      const input = [{role: 'user', content: SEC_RULES + '\n\nДАННЫЕ\n' + await secContext()}].concat(secTurns);
+      const opts = {cache: false, signal: secCtl.signal, maxTokens: 2000, onText: u => { bubble.className = 'msg bot'; bubble.textContent = u.text; $('#secChat').scrollTop = $('#secChat').scrollHeight; }};
+      if (coachToolsOk) opts.tools = secTools();
+      const res = await sampleFn(input, opts);
+      bubble.className = 'msg bot'; bubble.textContent = res.text; secTurns.push({role: 'assistant', content: res.text});
+    } catch(e){
+      const code = e && e.code;
+      if (code === 'cancelled'){ if (e.text){ bubble.className = 'msg bot'; bubble.textContent = e.text; secTurns.push({role: 'assistant', content: e.text}); } else { bubble.remove(); secTurns.pop(); } }
+      else { secTurns.pop(); bubble.className = 'msg bot think'; bubble.textContent = (code !== 'refused' && e && e.text ? e.text + '\n\n' : '') + coachErrorText(code) + (e && e.message && String(e.message).length > 8 ? ' Подробности: ' + String(e.message).slice(0, 160) : ''); }
+    } finally {
+      const changed = secUndo && (Object.keys(secUndo.days).length || secUndo.routines !== null);
+      secLastUndo = changed ? secUndo : null; secUndo = null; $('#secUndo').hidden = !changed;
+      secBusy(false); secCtl = null; if (state.loaded) render(); $('#secChat').scrollTop = $('#secChat').scrollHeight;
+    }
+  }
+  async function undoSecretary(){
+    const u = secLastUndo; if (!u) return; secLastUndo = null; $('#secUndo').hidden = true;
+    try {
+      for (const k of Object.keys(u.days)){
+        const snap = JSON.parse(u.days[k]);
+        if (k === state.key && state.loaded) commit(d => { Object.keys(d).forEach(f => { delete d[f]; }); Object.assign(d, snap); }); else await writeDay(k, snap);
+      }
+      if (u.routines !== null){ state.settings.routines = normRoutines(JSON.parse(u.routines)); saveSettings(); }
+      secMsg('bot think', 'Изменения секретаря отменены.'); if (state.loaded) render();
+    } catch(e){ toast('Не удалось отменить изменения'); }
+  }
+  $('#secForm').addEventListener('submit', e => { e.preventDefault(); const v = $('#secInput').value; $('#secInput').value = ''; askSecretary(v); });
+  $('#secStop').onclick = () => { if (secCtl) secCtl.abort(); };
 
   // ---------- События новых разделов ----------
   document.addEventListener('change', e => {
     const t = e.target; if (!t || !t.getAttribute) return;
     if (t.id === 'briefAuto'){ state.settings.autoBrief = t.checked; saveSettings(); return; }
+    if (t.id === 'reviewAuto'){ state.settings.autoReview = t.checked; saveSettings(); return; }
+    if (t.id === 'reviewAt'){ if (isTime(t.value)){ state.settings.reviewAt = t.value; reviewTried = false; saveSettings(); renderReview(); } return; }
     const ex = t.getAttribute('data-ex');
     if (ex !== null && state.loaded){ const i = Number(ex), on = t.checked; commit(d => { const w = d.workout || {done: [], finished: false, feel: null, min: null, note: ''}; w.done = w.done.filter(x => x !== i); if (on) w.done.push(i); d.workout = w; }); return; }
     if (t.closest && t.closest('#sleepPanel')){ readSleep(t); return; }
@@ -2201,6 +2513,11 @@ textarea.notes{padding:8px 14px 14px;min-height:84px}
     if (t.closest('#reportBtn')){ coachReport(); return; }
     if (t.closest('#menuBtn')){ generateMenu($('#menuBtn')); return; }
     if (t.closest('#coachCtaBtn')){ needAi(); return; }
+    const sq = t.closest('[data-sq]'); if (sq && !sq.disabled){ askSecretary(sq.getAttribute('data-sq')); return; }
+    const gt = t.closest('[data-goto]'); if (gt){ openDay(gt.getAttribute('data-goto')); window.scrollTo({top: 0, behavior: 'smooth'}); return; }
+    if (t.closest('#secUndoBtn')){ undoSecretary(); return; }
+    if (t.closest('#plansCal')){ plansToCalendar(); return; }
+    if (t.closest('#reviewBtn')){ generateReview(false); return; }
     if (t.closest('#briefBtn')){ generateBrief(false); return; }
     const ba = t.closest('[data-brief-add]');
     if (ba && state.loaded && state.settings.brief){
