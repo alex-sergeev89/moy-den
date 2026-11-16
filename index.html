@@ -11,8 +11,8 @@
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="apple-mobile-web-app-title" content="Моя жиза">
-<link rel="apple-touch-icon" sizes="180x180" href="icons/apple-touch-icon.png?v=14">
-<link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png?v=14">
+<link rel="apple-touch-icon" sizes="180x180" href="icons/apple-touch-icon.png?v=15">
+<link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png?v=15">
 <script>window.MOYDEN_STANDALONE = true;</script>
 <style>html{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)} img{max-width:100%} [hidden]{display:none!important}</style>
 </head>
@@ -404,27 +404,124 @@ textarea.notes{padding:8px 14px 14px;min-height:84px}
 .brief-plan .bw{overflow-wrap:anywhere}
 .brief-state{font-size:14px;line-height:1.45;overflow-wrap:anywhere}
 .brief-focus{background:var(--accent-soft);border-radius:10px;padding:8px 10px;font-size:14px;overflow-wrap:anywhere}
+
+/* ---------- Redesign v15 ---------- */
+.app{padding-block:0 calc(150px + env(safe-area-inset-bottom,0px))}
+.panel{border-radius:16px;scroll-margin-top:76px}
+.panel-h h2{font-size:15px}
+.btn{min-height:40px}
+.link:disabled{opacity:.4;cursor:default}
+/* header */
+.top{position:sticky;top:env(safe-area-inset-top,0px);z-index:12;display:grid;grid-template-columns:42px minmax(0,1fr) 42px;align-items:center;gap:8px;margin:0 0 8px;padding:10px 0 8px;background:var(--bg);box-shadow:0 0 0 100vmax var(--bg);clip-path:inset(0 -100vmax)}
+.navbtn{width:42px;height:42px;border-radius:12px;border:1px solid var(--line);background:var(--surface);font-size:22px;line-height:1;display:grid;place-items:center;color:var(--fg);padding:0}
+.navbtn:active{transform:scale(.96)}
+.datebox{position:relative;display:grid;justify-items:center;text-align:center;line-height:1.15;cursor:pointer;min-width:0;padding:2px 0}
+.datebox .brand{font-size:10px;letter-spacing:.12em}
+.datebox .date-title{font-family:var(--font-display);font-weight:700;font-size:20px;margin:1px 0 0}
+.datebox .date-sub{font-size:12px;margin:1px 0 0;color:var(--muted)}
+.datebox input[type=date]{position:absolute;inset:0;opacity:0;width:100%;height:100%;border:0;padding:0;margin:0;cursor:pointer}
+.todaychip{position:absolute;right:52px;top:50%;transform:translateY(-50%);border:1px solid var(--accent);background:var(--accent-soft);color:var(--fg);border-radius:999px;padding:5px 10px;font-size:12px;font-weight:600;z-index:1}
+.week{gap:4px;margin-bottom:10px}
+.week button{padding:5px 2px 4px;border-radius:10px}
+.week .dn{font-size:14px}
+.week .cnt{font-size:10px;min-height:12px}
+/* day summary */
+#todayPanel{padding:10px;order:-10}
+.tiles4{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px}
+@media (max-width:520px){.tiles4{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.qt{position:relative;display:grid;align-content:start;gap:1px;text-align:left;background:var(--surface-2);border:0;border-radius:12px;padding:10px 12px;min-width:0;color:inherit;font:inherit;cursor:pointer}
+.qt:active{transform:scale(.985)}
+.qt .ql{font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+.qt b{font-family:var(--font-display);font-size:18px;font-weight:600;font-variant-numeric:tabular-nums;line-height:1.25;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.qt small{font-size:12px;color:var(--muted);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.qt .qbar{height:4px;border-radius:2px;background:var(--line);overflow:hidden;margin-top:6px}
+.qt .qbar i{display:block;height:100%;width:0;background:var(--accent);border-radius:2px}
+.qt.ok .qbar i{background:var(--ok)}
+.qt.warn .qbar i{background:var(--hi)}
+.qt .qplus{position:absolute;top:8px;right:8px;border:1px solid var(--accent);background:var(--accent-soft);color:var(--fg);border-radius:999px;font-size:12px;font-weight:600;padding:3px 9px}
+/* day order */
+#secPanel{order:-8}
+.layout .agenda{order:-7}
+#untimedPanel{order:-6}
+#plansPanel{order:-4}
+#notesPanel{order:-3}
+#secDigest{display:none}
+#secChips,#chips{flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none;-webkit-overflow-scrolling:touch;padding-bottom:2px}
+#secChips::-webkit-scrollbar,#chips::-webkit-scrollbar{display:none}
+#secChips .chip,#chips .chip{flex:none}
+.is-empty{display:none!important}
+/* training tab order */
+#programPanel{order:-3}
+#briefPanel{order:-2}
+#coachPanel{order:-1}
+/* agenda list */
+.agenda .summary .big{display:none}
+.agenda .summary{grid-template-columns:1fr;padding:8px 14px 0}
+.agenda .summary .load{text-align:left}
+.meta-row{display:flex;align-items:baseline;gap:12px}
+.aglist{list-style:none;margin:10px 0 0;padding:0 10px 4px;display:grid;gap:4px}
+.ag{display:grid;grid-template-columns:auto 48px minmax(0,1fr);gap:10px;align-items:center;padding:10px;border-radius:12px;cursor:pointer;border-left:4px solid var(--lo);background:var(--surface-2)}
+.ag.hi{border-left-color:var(--hi)} .ag.mid{border-left-color:var(--mid)}
+.ag.done{opacity:.6}
+.ag.done .ag-n{text-decoration:line-through;color:var(--muted)}
+.ag.cur{box-shadow:inset 0 0 0 1.5px var(--accent)}
+.ag .chk{margin:0}
+.ag-t{font-variant-numeric:tabular-nums;font-weight:600;font-size:14px;display:grid;line-height:1.2}
+.ag-t small{font-weight:400;color:var(--muted);font-size:12px}
+.ag-n{min-width:0;overflow-wrap:anywhere;font-weight:500;line-height:1.3}
+.ag-n .tag{margin-left:6px;vertical-align:1px}
+.ag-gap{font-size:12px;color:var(--muted);padding:0 10px 0 82px}
+.ag-now{display:flex;align-items:center;gap:8px;font-size:12px;color:var(--now);font-weight:600;padding:0 4px}
+.ag-now::after{content:"";flex:1;border-top:2px solid var(--now)}
+.agfoot{display:flex;flex-wrap:wrap;justify-content:space-between;gap:6px 14px;padding:8px 14px 14px}
+/* add sheet and «+» */
+.fab{position:fixed;right:max(16px,env(safe-area-inset-right,0px));bottom:calc(78px + env(safe-area-inset-bottom,0px));z-index:14;width:58px;height:58px;border-radius:20px;border:0;background:var(--accent);color:var(--accent-fg);font-size:30px;font-weight:400;line-height:1;display:grid;place-items:center;box-shadow:0 6px 18px rgba(0,0,0,.28)}
+.fab:active{transform:scale(.95)}
+.sheetwrap{position:fixed;inset:0;z-index:20;background:rgba(10,18,24,.45);display:grid;align-items:end;justify-items:center;padding:0 max(0px,env(safe-area-inset-right,0px)) 0 max(0px,env(safe-area-inset-left,0px))}
+@media (min-width:600px){.sheetwrap{align-items:center;padding:16px}}
+.sheetwrap .panel.form{width:min(560px,100%);border-radius:20px 20px 0 0;padding:14px 16px calc(16px + env(safe-area-inset-bottom,0px));box-shadow:0 -10px 30px rgba(0,0,0,.3)}
+@media (min-width:600px){.sheetwrap .panel.form{border-radius:20px}}
+.sheet-h{display:flex;justify-content:space-between;align-items:baseline;gap:12px}
+.sheet-h b{font-family:var(--font-display);font-weight:600;font-size:16px}
+/* collapsible panels */
+.panel.collapsible > .panel-h h2{cursor:pointer;display:flex;align-items:center;gap:8px;user-select:none;-webkit-user-select:none}
+.panel.collapsible > .panel-h h2::after{content:"";width:7px;height:7px;border-right:2px solid var(--muted);border-bottom:2px solid var(--muted);transform:translateY(-2px) rotate(45deg);transition:transform .2s;flex:none}
+.panel.collapsed > .panel-h h2::after{transform:rotate(-45deg)}
+.panel.collapsed > :not(.panel-h){display:none!important}
+.panel.collapsed > .panel-h{padding-bottom:12px}
+.panel.actions.collapsed > .panel-h{padding-bottom:0}
+@media (prefers-reduced-motion: reduce){.panel.collapsible > .panel-h h2::after{transition:none}}
+/* bottom tabs */
+.tabs{background:color-mix(in srgb,var(--surface) 92%,transparent);-webkit-backdrop-filter:saturate(1.4) blur(14px);backdrop-filter:saturate(1.4) blur(14px)}
+.tabs button{border-radius:12px}
+.tabs button.on{background:var(--accent-soft)}
 </style>
 
 <div class="app">
   <header class="top">
-    <div>
-      <div class="brand">Моя жиза</div>
-      <h1 class="date-title" id="dateTitle">—</h1>
-      <div class="date-sub" id="dateSub"></div>
-    </div>
-    <nav class="nav" aria-label="Переход по дням">
-      <button type="button" id="prevDay" aria-label="Предыдущий день">‹</button>
-      <button type="button" id="todayBtn">Сегодня</button>
-      <button type="button" id="nextDay" aria-label="Следующий день">›</button>
+    <button type="button" class="navbtn" id="prevDay" aria-label="Предыдущий день">‹</button>
+    <label class="datebox">
+      <span class="brand">Моя жиза</span>
+      <span class="date-title" id="dateTitle">—</span>
+      <span class="date-sub" id="dateSub"></span>
       <input type="date" id="datePick" aria-label="Выбрать дату">
-    </nav>
+    </label>
+    <button type="button" class="navbtn" id="nextDay" aria-label="Следующий день">›</button>
+    <button type="button" class="todaychip" id="todayBtn" hidden>Сегодня</button>
   </header>
 
   <div class="week" id="week" role="tablist" aria-label="Неделя"></div>
 
   <div class="layout">
     <div class="main">
+    <section class="panel" id="todayPanel" aria-label="Сводка дня">
+      <div class="tiles4">
+        <button type="button" class="qt" id="qtTasks" data-jump=".agenda"><span class="ql">Дела</span><b id="qtTasksV">—</b><small id="qtTasksS"></small><span class="qbar"><i id="qtTasksB"></i></span></button>
+        <div class="qt" id="qtWater" data-go-tab="food" role="button" tabindex="0"><span class="ql">Вода</span><b id="qtWaterV">—</b><small id="qtWaterS"></small><span class="qbar"><i id="qtWaterB"></i></span><button type="button" class="qplus" data-water="250" aria-label="Добавить стакан воды">+ стакан</button></div>
+        <button type="button" class="qt" id="qtFood" data-go-tab="food"><span class="ql">Еда</span><b id="qtFoodV">—</b><small id="qtFoodS"></small><span class="qbar"><i id="qtFoodB"></i></span></button>
+        <button type="button" class="qt" id="qtSleep" data-go-tab="sleep"><span class="ql">Сон</span><b id="qtSleepV">—</b><small id="qtSleepS"></small><span class="qbar"><i id="qtSleepB"></i></span></button>
+      </div>
+    </section>
     <section class="panel" id="secPanel">
       <div class="panel-h"><h2>Робот Секретарь</h2><span class="meta" id="secMeta"></span></div>
       <div class="pbody" style="gap:8px">
@@ -463,20 +560,21 @@ textarea.notes{padding:8px 14px 14px;min-height:84px}
     </section>
 
     <section class="panel agenda">
-      <div class="panel-h"><h2>Расписание</h2><span class="meta" id="agendaMeta"></span></div>
+      <div class="panel-h"><h2>Расписание</h2><span class="meta-row"><span class="meta" id="agendaMeta"></span><button type="button" class="link" id="viewToggle">Шкала</button></span></div>
       <div class="summary">
         <div class="big" id="doneBig">0 <small>из 0 выполнено</small></div>
         <div class="load" id="loadText"></div>
         <div class="bar"><i id="bar"></i></div>
       </div>
       <div id="timelineWrap"></div>
+      <div class="agfoot"><button type="button" class="link" id="carryBtn">Перенести невыполненные на завтра</button><button type="button" class="link" id="clearDoneBtn">Убрать выполненные</button></div>
     </section>
 
     <section class="panel" id="coachPanel">
       <div class="panel-h"><h2>Робот Тренер</h2><span style="display:flex;gap:10px;align-items:baseline"><button type="button" class="link" id="aiSetup">Настроить ИИ</button><span class="meta" id="coachMeta">ИИ-тренер</span></span></div>
       <div class="cta" id="coachCta" hidden><span>Тренер пока не подключён к нейросети. Без неё не работают чат, программа тренировок, меню и отчёты. Нажмите кнопку и введите код доступа.</span><button type="button" class="btn primary" id="coachCtaBtn">Подключить ИИ-тренера</button></div>
       <div class="chat" id="chat">
-        <div class="msg bot">Привет! Я Робот Тренер. Вижу ваше расписание, тренировки, воду и питание на выбранный день. Спросите про план на сегодня, разминку перед ММА, что съесть после зала или как выстроить неделю.</div>
+        <div class="msg bot">Я Робот Тренер. Спросите о тренировке, питании, сне или режиме: я вижу ваши данные за выбранный день.</div>
       </div>
       <div class="chips" id="chips">
         <button type="button" class="chip" data-q="Составь план на сегодня с учётом тренировки, подъёма и моих дел.">План на сегодня</button>
@@ -518,27 +616,8 @@ textarea.notes{padding:8px 14px 14px;min-height:84px}
     </div>
 
     <aside class="side">
-      <form class="panel form" id="addForm" autocomplete="off">
-        <input type="text" id="newTitle" placeholder="Новое дело, например «14:30 Созвон с командой»" aria-label="Название дела" maxlength="140" required>
-        <div class="row">
-          <label>Время <input type="time" id="newTime" step="300"></label>
-          <label>Длительность
-            <select id="newDur">
-              <option value="15">15 мин</option><option value="30" selected>30 мин</option><option value="45">45 мин</option>
-              <option value="60">1 ч</option><option value="90">1,5 ч</option><option value="120">2 ч</option><option value="180">3 ч</option>
-            </select>
-          </label>
-        </div>
-        <div class="seg" role="radiogroup" aria-label="Приоритет">
-          <label><input type="radio" name="pri" value="hi"><span><i class="dot hi"></i>Важно</span></label>
-          <label><input type="radio" name="pri" value="mid" checked><span><i class="dot mid"></i>Обычно</span></label>
-          <label><input type="radio" name="pri" value="lo"><span><i class="dot lo"></i>Потом</span></label>
-        </div>
-        <button class="btn primary" type="submit" id="addBtn">Добавить</button>
-        <div class="hint">Время можно не ставить: дело попадёт в список «Без времени».</div>
-      </form>
 
-      <section class="panel">
+      <section class="panel" id="untimedPanel">
         <div class="panel-h"><h2>Без времени</h2><span class="meta" id="untimedMeta"></span></div>
         <ul class="list" id="untimed"></ul>
       </section>
@@ -548,7 +627,7 @@ textarea.notes{padding:8px 14px 14px;min-height:84px}
         <ul class="plist" id="plansList"></ul>
       </section>
 
-      <section class="panel">
+      <section class="panel" id="foodPanel">
         <div class="panel-h"><h2>Питание и вода</h2><span style="display:flex;gap:10px;align-items:baseline"><button type="button" class="link" id="estimateBtn" hidden>Оценить ккал ИИ</button><span class="meta" id="foodMeta"></span></span></div>
         <div class="kcal" id="kcalBox"></div>
         <div class="water">
@@ -657,19 +736,18 @@ textarea.notes{padding:8px 14px 14px;min-height:84px}
         </form>
       </section>
 
-      <section class="panel">
+      <section class="panel" id="routinesPanel">
         <div class="panel-h"><h2>Каждую неделю</h2><button type="button" class="link" id="addRoutine">+ добавить</button></div>
         <ul class="list" id="routines"></ul>
       </section>
 
-      <section class="panel">
+      <section class="panel" id="notesPanel">
         <div class="panel-h"><h2>Заметки дня</h2></div>
         <textarea class="notes" id="notes" placeholder="Мысли, итоги, что не забыть…" aria-label="Заметки дня"></textarea>
       </section>
 
-      <section class="panel actions">
-        <button class="btn" type="button" id="carryBtn">Перенести невыполненные на завтра</button>
-        <button class="btn" type="button" id="clearDoneBtn">Убрать выполненные</button>
+      <section class="panel actions" id="aboutPanel">
+        <div class="panel-h" style="padding:0 0 4px"><h2>О приложении</h2></div>
         <div class="status" id="status"><span class="led"></span><span id="statusText">Подключение…</span></div>
       </section>
 
@@ -685,6 +763,29 @@ textarea.notes{padding:8px 14px 14px;min-height:84px}
   </div>
 </div>
 
+<div class="sheetwrap" id="addSheet" hidden>
+      <form class="panel form" id="addForm" autocomplete="off">
+        <div class="sheet-h"><b id="addSheetTitle">Новое дело</b><button type="button" class="link" id="addClose">Закрыть</button></div>
+        <input type="text" id="newTitle" placeholder="Новое дело, например «14:30 Созвон с командой»" aria-label="Название дела" maxlength="140" required>
+        <div class="row">
+          <label>Время <input type="time" id="newTime" step="300"></label>
+          <label>Длительность
+            <select id="newDur">
+              <option value="15">15 мин</option><option value="30" selected>30 мин</option><option value="45">45 мин</option>
+              <option value="60">1 ч</option><option value="90">1,5 ч</option><option value="120">2 ч</option><option value="180">3 ч</option>
+            </select>
+          </label>
+        </div>
+        <div class="seg" role="radiogroup" aria-label="Приоритет">
+          <label><input type="radio" name="pri" value="hi"><span><i class="dot hi"></i>Важно</span></label>
+          <label><input type="radio" name="pri" value="mid" checked><span><i class="dot mid"></i>Обычно</span></label>
+          <label><input type="radio" name="pri" value="lo"><span><i class="dot lo"></i>Потом</span></label>
+        </div>
+        <button class="btn primary" type="submit" id="addBtn">Добавить</button>
+        <div class="hint">Время можно не ставить: дело попадёт в список «Без времени».</div>
+      </form>
+</div>
+<button type="button" class="fab" id="fab" aria-label="Добавить">+</button>
 <nav class="tabs" id="tabs" aria-label="Разделы">
   <button type="button" data-go="day" class="on"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="3"/><path d="M3 10h18M8 3v4M16 3v4"/></svg><span>Дела</span></button>
   <button type="button" data-go="food"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3c3.5 4.5 6 7.6 6 11a6 6 0 0 1-12 0c0-3.4 2.5-6.5 6-11z"/></svg><span>Питание</span></button>
@@ -967,7 +1068,7 @@ textarea.notes{padding:8px 14px 14px;min-height:84px}
     state.mode = m;
     const st = $('#status'), txt = $('#statusText');
     st.className = 'status ok';
-    txt.textContent = 'Данные хранятся на этом устройстве. Раз в неделю сохраняйте резервную копию. Версия 14.';
+    txt.textContent = 'Данные хранятся на этом устройстве. Раз в неделю сохраняйте резервную копию. Версия 15.';
   }
 
   function openDay(k){
@@ -1080,6 +1181,8 @@ textarea.notes{padding:8px 14px 14px;min-height:84px}
     if (state.key === today) rel = 'сегодня'; else if (state.key === addDays(today,1)) rel = 'завтра'; else if (state.key === addDays(today,-1)) rel = 'вчера';
     const wd = WD[d.getDay()];
     $('#dateSub').textContent = rel ? wd.charAt(0).toUpperCase()+wd.slice(1)+', '+rel : wd.charAt(0).toUpperCase()+wd.slice(1);
+    $('#todayBtn').hidden = state.key === today;
+    const st = $('#addSheetTitle'); if (st) st.textContent = 'Новое дело' + (state.key === today ? ' на сегодня' : ' на ' + d.getDate() + ' ' + MONTHS[d.getMonth()]);
   }
   function renderWeek(){
     const keys = weekKeys(state.key), today = keyOf(new Date());
@@ -1115,9 +1218,11 @@ textarea.notes{padding:8px 14px 14px;min-height:84px}
 
     // Timeline
     if (!tasks.length){
-      wrap.innerHTML = '<div class="empty"><b>На этот день пока ничего нет</b>Добавьте первое дело в форме '+(window.matchMedia('(max-width:860px)').matches?'выше':'справа')+'. Укажите время, и оно встанет в расписание.</div>';
+      wrap.innerHTML = '<div class="empty"><b>На этот день пока ничего нет</b>Нажмите «+» внизу справа или напишите секретарю, например «в 15:00 встреча».</div>';
     } else if (!timed.length){
       wrap.innerHTML = '<div class="empty"><b>Все дела без времени</b>Нажмите на дело в списке «Без времени» и задайте час, чтобы увидеть его здесь.</div>';
+    } else if (agView() === 'list'){
+      wrap.innerHTML = agendaList(timed);
     } else {
       let hStart = Math.min(7, ...timed.map(x=>Math.floor(x.s/60)));
       let hEnd = Math.max(21, ...timed.map(x=>Math.ceil(x.e/60)));
@@ -1147,6 +1252,9 @@ textarea.notes{padding:8px 14px 14px;min-height:84px}
     // Untimed list
     const untimed = tasks.filter(t => t.start === null).sort((a,b) => (a.done-b.done) || PRI[a.pri]-PRI[b.pri] || a.title.localeCompare(b.title,'ru'));
     $('#untimedMeta').textContent = untimed.length ? untimed.filter(t=>!t.done).length+' открыто' : '';
+    $('#untimedPanel').classList.toggle('is-empty', !untimed.length);
+    $('#viewToggle').textContent = agView() === 'list' ? 'Шкала' : 'Список';
+    $('#viewToggle').hidden = !timed.length;
     ul.innerHTML = untimed.length ? untimed.map(t =>
       '<li class="item '+(t.done?'done':'')+'" data-id="'+t.id+'"><input type="checkbox" class="chk" data-toggle="'+t.id+'" '+(t.done?'checked':'')+' aria-label="Выполнено: '+esc(t.title)+'"><span class="pri dot '+t.pri+'"></span><span class="t">'+esc(t.title)+'</span><span class="dur">'+durText(t.dur)+'</span></li>'
     ).join('') : '<li class="list-empty">Пусто. Сюда попадают дела, у которых не указано время.</li>';
@@ -1161,6 +1269,7 @@ textarea.notes{padding:8px 14px 14px;min-height:84px}
     renderSecretary();
     renderReview();
     renderMail();
+    renderToday(day);
 
     const carry = day.tasks.filter(t => !t.done && !t.rid).length;
     $('#carryBtn').disabled = !carry; $('#carryBtn').textContent = carry ? 'Перенести невыполненные на завтра ('+carry+')' : 'Переносить нечего';
@@ -2207,18 +2316,97 @@ textarea.notes{padding:8px 14px 14px;min-height:84px}
     toast('Сон записан: ' + hm(m) + (m < c.goal - 45 ? '. Это меньше цели, сегодня нагрузку лучше снизить.' : '. Отметьте, как спалось.'));
   }
 
+  // ---------- Оформление: сводка дня, список дел, «+», сворачиваемые блоки ----------
+  function agView(){ try { return localStorage.getItem('ui:view') === 'grid' ? 'grid' : 'list'; } catch(e){ return 'list'; } }
+  function agendaList(timed){
+    const n = new Date(), nowM = state.key === keyOf(n) ? n.getHours() * 60 + n.getMinutes() : null;
+    const rows = []; let prevEnd = null, nowPlaced = nowM === null;
+    timed.forEach(x => {
+      if (!nowPlaced && nowM < x.s){ rows.push('<li class="ag-now">' + fromMin(nowM) + ' сейчас</li>'); nowPlaced = true; }
+      if (prevEnd !== null && x.s - prevEnd >= 60) rows.push('<li class="ag-gap">свободно ' + hm(x.s - prevEnd) + '</li>');
+      const clash = prevEnd !== null && x.s < prevEnd;
+      const cur = nowM !== null && nowM >= x.s && nowM < x.e && !x.t.done;
+      rows.push('<li class="ag ' + x.t.pri + (x.t.done ? ' done' : '') + (cur ? ' cur' : '') + '" data-id="' + x.t.id + '">'
+        + '<input type="checkbox" class="chk" data-toggle="' + x.t.id + '" ' + (x.t.done ? 'checked' : '') + ' aria-label="Выполнено: ' + esc(x.t.title) + '">'
+        + '<span class="ag-t">' + x.t.start + '<small>' + fromMin(x.e % 1440) + '</small></span>'
+        + '<span class="ag-n">' + esc(x.t.title) + (cur ? '<span class="tag ok">идёт</span>' : '') + (clash ? '<span class="tag miss">накладка</span>' : '') + (x.t.remind != null ? '<span class="tag">напомню</span>' : '') + '</span></li>');
+      prevEnd = Math.max(prevEnd || 0, x.e);
+    });
+    if (!nowPlaced) rows.push('<li class="ag-now">' + fromMin(nowM) + ' сейчас</li>');
+    return '<ul class="aglist">' + rows.join('') + '</ul>';
+  }
+  function setBar(id, frac){ const el = $('#' + id); if (el) el.style.width = Math.max(0, Math.min(100, Math.round(frac * 100))) + '%'; }
+  function renderToday(day){
+    const n = new Date(), isToday = state.key === keyOf(n), nowM = n.getHours() * 60 + n.getMinutes();
+    const t = effectiveTasks(day), done = t.filter(x => x.done).length;
+    const next = t.filter(x => !x.done && x.start && (!isToday || toMin(x.start) + x.dur > nowM)).sort((a, b) => toMin(a.start) - toMin(b.start))[0];
+    const late = isToday ? overdueTasks().length : 0;
+    $('#qtTasksV').textContent = t.length ? done + ' из ' + t.length : 'нет дел';
+    const left = t.length - done;
+    $('#qtTasksS').textContent = next ? next.start + ' ' + next.title : (late ? 'просрочено: ' + late : (t.length && !left ? 'всё сделано' : (left ? 'осталось ' + left : 'нажмите «+»')));
+    setBar('qtTasksB', t.length ? done / t.length : 0); $('#qtTasks').classList.toggle('ok', t.length > 0 && done === t.length);
+    const goalMl = (state.settings.waterGoal || 8) * GLASS_ML;
+    $('#qtWaterV').textContent = mlText(day.waterMl); $('#qtWaterS').textContent = 'из ' + mlText(goalMl);
+    setBar('qtWaterB', day.waterMl / goalMl); $('#qtWater').classList.toggle('ok', day.waterMl >= goalMl);
+    const nt = nutrition(state.settings.profile), kcal = day.meals.reduce((a, m) => a + (m.kcal || 0), 0);
+    $('#qtFoodV').textContent = kcal ? kcal.toLocaleString('ru-RU') + ' ккал' : (day.meals.length ? day.meals.length + ' ' + plural(day.meals.length, 'приём', 'приёма', 'приёмов') : '—');
+    $('#qtFoodS').textContent = nt ? 'из ' + nt.target.toLocaleString('ru-RU') + ' ккал' : 'заполните параметры';
+    setBar('qtFoodB', nt ? kcal / nt.target : 0); $('#qtFood').classList.toggle('warn', !!nt && kcal > nt.target * 1.05);
+    const sm = sleepMin(day.sleep), sc = sleepCfg();
+    $('#qtSleepV').textContent = sm ? Math.floor(sm / 60) + ' ч ' + pad(sm % 60) + ' м' : '—';
+    const gap = sc.goal - sm;
+    $('#qtSleepS').textContent = sm ? (gap <= 0 ? 'норма' : 'недосып ' + (gap < 60 ? gap + ' мин' : hm(gap))) : 'не записан';
+    setBar('qtSleepB', sm / sc.goal); $('#qtSleep').classList.toggle('warn', !!sm && sm < sc.goal - 45); $('#qtSleep').classList.toggle('ok', !!sm && sm >= sc.goal);
+  }
+  const COLLAPSIBLE = {plansPanel: false, notesPanel: true, journalPanel: true, briefPanel: false, routinesPanel: true, profilePanel: true, remPanel: true, mailPanel: true, backupPanel: true, aboutPanel: true};
+  let openMap = {}; try { openMap = JSON.parse(localStorage.getItem('ui:open') || '{}') || {}; } catch(e){ openMap = {}; }
+  function toggleCollapsed(p, open){
+    p.classList.toggle('collapsed', !open); openMap[p.id] = open;
+    try { localStorage.setItem('ui:open', JSON.stringify(openMap)); } catch(e){}
+  }
+  function initCollapsible(){
+    Object.keys(COLLAPSIBLE).forEach(id => {
+      const p = document.getElementById(id), h = p && p.querySelector(':scope > .panel-h h2'); if (!h) return;
+      p.classList.add('collapsible');
+      p.classList.toggle('collapsed', !(id in openMap ? openMap[id] : !COLLAPSIBLE[id]));
+      h.setAttribute('role', 'button'); h.tabIndex = 0;
+      const flip = () => toggleCollapsed(p, p.classList.contains('collapsed'));
+      h.addEventListener('click', flip);
+      h.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' '){ e.preventDefault(); flip(); } });
+    });
+  }
+  function openAddSheet(){ $('#addSheet').hidden = false; setTimeout(() => { const f = $('#newTitle'); if (f) f.focus(); }, 60); }
+  function closeAddSheet(){ $('#addSheet').hidden = true; }
+  $('#fab').addEventListener('click', () => {
+    if (state.tab === 'food'){ reveal('#mealForm'); setTimeout(() => { const f = $('#mealTitle'); if (f) f.focus(); }, 350); }
+    else openAddSheet();
+  });
+  $('#addSheet').addEventListener('click', e => { if (e.target.id === 'addSheet' || e.target.closest('#addClose')) closeAddSheet(); });
+  $('#addForm').addEventListener('submit', () => setTimeout(() => { if (!$('#newTitle').value) closeAddSheet(); }, 0));
+  document.addEventListener('keydown', e => { if (e.key === 'Escape' && !$('#addSheet').hidden) closeAddSheet(); });
+  $('#viewToggle').addEventListener('click', () => { try { localStorage.setItem('ui:view', agView() === 'list' ? 'grid' : 'list'); } catch(e){} if (state.loaded) render(); });
+  $('#todayPanel').addEventListener('click', e => {
+    if (e.target.closest('[data-water]')) return;
+    const j = e.target.closest('[data-jump]'); if (j){ reveal(j.getAttribute('data-jump')); return; }
+    const g = e.target.closest('[data-go-tab]'); if (g) showTab(g.getAttribute('data-go-tab'));
+  });
+
   // ---------- Разделы (вкладки) ----------
-  const TAB_OF = {mailPanel: 'more', secPanel: 'day', reviewPanel: 'day', plansPanel: 'day', briefPanel: 'coach', addForm: 'day', sleepPanel: 'sleep', profilePanel: 'more', remPanel: 'more', backupPanel: 'more', coachPanel: 'coach', programPanel: 'coach', journalPanel: 'coach'};
+  const TAB_OF = {todayPanel: 'day', untimedPanel: 'day', notesPanel: 'day', foodPanel: 'food', routinesPanel: 'more', aboutPanel: 'more', mailPanel: 'more', secPanel: 'day', reviewPanel: 'day', plansPanel: 'day', briefPanel: 'coach', addForm: 'day', sleepPanel: 'sleep', profilePanel: 'more', remPanel: 'more', backupPanel: 'more', coachPanel: 'coach', programPanel: 'coach', journalPanel: 'coach'};
   function showTab(name){
     if (['day', 'food', 'coach', 'sleep', 'more'].indexOf(name) < 0) name = 'day';
     document.querySelectorAll('.layout .panel').forEach(p => { p.hidden = p.dataset.tab !== name; });
     $('#week').hidden = name !== 'day';
     document.querySelectorAll('#tabs button').forEach(b => b.classList.toggle('on', b.dataset.go === name));
+    state.tab = name;
+    $('#fab').hidden = !(name === 'day' || name === 'food');
+    $('#fab').setAttribute('aria-label', name === 'food' ? 'Записать еду' : 'Новое дело');
     window.scrollTo(0, 0);
   }
   function reveal(sel){
     const el = $(sel); if (!el) return;
     const p = el.closest('.panel'); if (p && p.dataset.tab) showTab(p.dataset.tab);
+    if (p && p.classList.contains('collapsed')) toggleCollapsed(p, true);
     el.scrollIntoView({behavior: 'smooth', block: 'start'});
   }
   function initTabs(){
@@ -2228,6 +2416,7 @@ textarea.notes{padding:8px 14px 14px;min-height:84px}
       if (p.id === 'mailPanel' && !STANDALONE) t = 'none';
       p.dataset.tab = t;
     });
+    initCollapsible();
     showTab('day');
   }
   $('#tabs').addEventListener('click', e => { const b = e.target.closest('[data-go]'); if (b) showTab(b.dataset.go); });
@@ -2290,6 +2479,8 @@ textarea.notes{padding:8px 14px 14px;min-height:84px}
   }
   function renderReview(){
     const r = state.settings.review, today = keyOf(new Date()), body = $('#reviewBody'), at = state.settings.reviewAt;
+    const nowR = new Date(), evening = (r && r.date === today) || nowR.getHours() * 60 + nowR.getMinutes() >= toMin(at);
+    $('#reviewPanel').style.order = evening ? -9 : 2;
     $('#reviewAuto').checked = state.settings.autoReview !== false;
     const inp = $('#reviewAt'); if (document.activeElement !== inp && inp.value !== at) inp.value = at;
     if (reviewBusy) return;

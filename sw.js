@@ -1,6 +1,6 @@
 /* Моя жиза — service worker.
  * С интернетом всегда отдаёт свежую версию приложения, без интернета — сохранённую. */
-const VERSION = 'moy-den-v14';
+const VERSION = 'moy-den-v15';
 const SHELL = ['./', './index.html', './manifest.webmanifest'];
 
 self.addEventListener('install', e => {
