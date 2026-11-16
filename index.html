@@ -11,8 +11,8 @@
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="apple-mobile-web-app-title" content="Моя жиза">
-<link rel="apple-touch-icon" sizes="180x180" href="icons/apple-touch-icon.png?v=13">
-<link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png?v=13">
+<link rel="apple-touch-icon" sizes="180x180" href="icons/apple-touch-icon.png?v=14">
+<link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png?v=14">
 <script>window.MOYDEN_STANDALONE = true;</script>
 <style>html{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)} img{max-width:100%} [hidden]{display:none!important}</style>
 </head>
@@ -649,10 +649,10 @@ textarea.notes{padding:8px 14px 14px;min-height:84px}
           <label>Адрес почты <input type="email" id="mailUser" placeholder="name@mail.ru или name@yandex.ru" autocapitalize="none" autocorrect="off" autocomplete="off"></label>
           <label>Почтовый сервис <select id="mailProv"><option value="mailru">Mail.ru</option><option value="yandex">Яндекс Почта</option><option value="gmail">Gmail</option></select></label>
           <label>Пароль приложения <input type="password" id="mailPass" placeholder="отдельный пароль, не основной от почты" autocomplete="off"></label>
-          <div class="hint" id="mailHelp"></div>
+          <div class="hint" id="mailHelp" style="white-space:pre-line"></div>
           <label class="switch"><input type="checkbox" id="mailAuto"> проверять почту при открытии приложения, не чаще раза в 3 часа</label>
           <div class="btnrow"><button class="btn primary" type="submit" id="mailSave">Подключить ящик</button></div>
-          <div class="hint" id="mailMsg" hidden style="color:var(--hi);font-size:14px"></div>
+          <div class="hint" id="mailMsg" hidden style="color:var(--hi);font-size:14px;white-space:pre-line"></div>
           <div class="hint">Можно подключить несколько ящиков, например Mail.ru и Яндекс: секретарь проверит все и сведёт письма в один разбор. Секретарь открывает ящик только для чтения: письма не помечаются прочитанными и не удаляются. Адрес и пароль хранятся на этом устройстве и передаются только вашей функции в Yandex Cloud. Темы и начало текста новых писем отправляются в Алису AI для разбора.</div>
         </form>
       </section>
@@ -967,7 +967,7 @@ textarea.notes{padding:8px 14px 14px;min-height:84px}
     state.mode = m;
     const st = $('#status'), txt = $('#statusText');
     st.className = 'status ok';
-    txt.textContent = 'Данные хранятся на этом устройстве. Раз в неделю сохраняйте резервную копию. Версия 13.';
+    txt.textContent = 'Данные хранятся на этом устройстве. Раз в неделю сохраняйте резервную копию. Версия 14.';
   }
 
   function openDay(k){
@@ -2346,9 +2346,9 @@ textarea.notes{padding:8px 14px 14px;min-height:84px}
 
   // ---------- Проверка почты ----------
   const MAIL_HELP = {
-    gmail: 'Gmail: включите двухэтапную аутентификацию в аккаунте Google, затем откройте myaccount.google.com/apppasswords, создайте пароль приложения из 16 букв и вставьте его сюда.',
-    yandex: 'Яндекс Почта: в настройках почты, раздел «Почтовые программы», разрешите доступ по IMAP с паролем приложения. Затем в Яндекс ID, «Безопасность» → «Пароли приложений», создайте пароль для почты и вставьте его сюда.',
-    mailru: 'Mail.ru: откройте «Настройки» → «Безопасность» → «Пароли для внешних приложений», создайте пароль с доступом по IMAP и вставьте его сюда.'
+    mailru: 'Mail.ru не принимает обычный пароль от почты, нужен отдельный пароль приложения.\n1. Откройте id.mail.ru → «Безопасность» → «Пароли для внешних приложений» → «Добавить».\n2. Назовите его, например, «Моя жиза» и выберите доступ к Почте по IMAP.\n3. Скопируйте показанный пароль и вставьте сюда. Mail.ru показывает его один раз.',
+    yandex: 'Яндекс Почта, два обязательных шага.\n1. Включите доступ для почтовых программ: mail.yandex.ru → шестерёнка → «Все настройки» → «Почтовые программы». Отметьте доступ по протоколу IMAP и способ входа «Пароли приложений и OAuth-токены», сохраните.\n2. Создайте пароль приложения: id.yandex.ru → «Безопасность» → «Пароли приложений» → тип «Почта». Скопируйте пароль и вставьте сюда.',
+    gmail: 'Gmail: включите двухэтапную аутентификацию в аккаунте Google, затем откройте myaccount.google.com/apppasswords, создайте пароль приложения из 16 букв и вставьте его сюда.'
   };
   const mailStore = {
     get(k, d){ try { const v = JSON.parse(localStorage.getItem('mail:' + k) || 'null'); return v === null ? d : v; } catch(e){ return d; } },
@@ -2377,11 +2377,18 @@ textarea.notes{padding:8px 14px 14px;min-height:84px}
     if (!res.ok) throw {code: res.status === 401 ? 'auth' : 'fail', status: res.status, message: (j && (typeof j.error === 'string' ? j.error : j.error && j.error.message)) || ('ответ ' + res.status)};
     return j;
   }
-  function mailErrorText(e){
-    const m = String(e && e.message || '');
-    if (/Wrong access code/.test(m)) return 'Код доступа ИИ не принят. Подключите ИИ-тренера заново.';
+  function mailErrorText(e, provider){
+    const m = String(e && e.message || ''), raw = m.replace(/^Mail (login|read) failed: /, '').slice(0, 160);
+    const tail = raw ? '\nОтвет сервера: ' + raw : '';
+    if (/Wrong access code/.test(m)) return 'Код доступа ИИ не принят. Подключите ИИ-тренера заново во вкладке «Тренировки».';
     if (/Bad messages/.test(m)) return 'Функция в Yandex Cloud ещё не умеет читать почту. Нужна её новая версия.';
-    if (/Mail login failed/.test(m)) return 'Почта не приняла адрес или пароль приложения. Проверьте их и то, что доступ по IMAP включён. ' + m.replace('Mail login failed: ', '');
+    if (/timed out|timeout|ETIMEDOUT|ECONNRESET|ECONNREFUSED|ENOTFOUND|Mail read failed/i.test(m)) return 'Сервер почты не ответил вовремя. Попробуйте ещё раз через минуту.' + tail;
+    if (/Mail login failed/.test(m)){
+      if (provider === 'yandex' || /imap is disabled/i.test(m)) return 'Яндекс не пустил в ящик. Почти всегда причина в одном из двух: в настройках Яндекс Почты не включён доступ по IMAP или введён обычный пароль вместо пароля приложения. Выполните оба шага из подсказки и подключите ящик заново.' + tail;
+      if (provider === 'mailru' || /parol prilozheniya|application password/i.test(m)) return 'Mail.ru не принял пароль. Нужен пароль для внешнего приложения с доступом к Почте по IMAP, обычный пароль от почты не подходит. Создайте его по подсказке и введите заново, без пробелов.' + tail;
+      if (provider === 'gmail') return 'Gmail не принял пароль. Нужен пароль приложения из 16 букв, обычный пароль не подходит.' + tail;
+      return 'Почта не приняла адрес или пароль приложения.' + tail;
+    }
     return m || 'Не удалось проверить почту.';
   }
   function renderMail(){
@@ -2415,7 +2422,7 @@ textarea.notes{padding:8px 14px 14px;min-height:84px}
         try {
           const r = await relayPost({mail: {provider: c.provider, user: c.user, pass: c.pass, days: 3, limit: 15}});
           (r.messages || []).forEach(m => { const key = c.user + ':' + m.uid; if (seen.indexOf(key) < 0) fresh.push(Object.assign({}, m, {box: MAIL_NAME[c.provider], key})); });
-        } catch(e){ fails.push(MAIL_NAME[c.provider] + ' (' + c.user + '): ' + mailErrorText(e)); }
+        } catch(e){ fails.push(MAIL_NAME[c.provider] + ' (' + c.user + '): ' + mailErrorText(e, c.provider)); }
       }
       fresh = fresh.slice(-24);
       const failText = fails.length ? ' Не удалось проверить: ' + fails.join(' ') : '';
@@ -2447,10 +2454,13 @@ textarea.notes{padding:8px 14px 14px;min-height:84px}
     if (Date.now() - (Number(mailStore.get('at', 0)) || 0) < 3 * 3600000) return;
     checkMail(true);
   }
+  $('#mailUser').addEventListener('input', e => { const g = guessProvider(e.target.value.trim()); if (g && g !== $('#mailProv').value){ $('#mailProv').value = g; $('#mailHelp').textContent = MAIL_HELP[g]; } });
   $('#mailForm').addEventListener('submit', async e => {
     e.preventDefault();
     const msg = t => { const m = $('#mailMsg'); m.textContent = t; m.hidden = !t; };
-    const cfg = {provider: $('#mailProv').value, user: $('#mailUser').value.trim(), pass: $('#mailPass').value.replace(/\s+/g, '')};
+    const typed = $('#mailUser').value.trim().toLowerCase(), guessed = guessProvider(typed);
+    if (guessed && guessed !== $('#mailProv').value){ $('#mailProv').value = guessed; renderMail(); }
+    const cfg = {provider: $('#mailProv').value, user: typed, pass: $('#mailPass').value.replace(/\s+/g, '')};
     if (!/^\S+@\S+\.\S+$/.test(cfg.user)){ msg('Введите адрес почты полностью.'); return; }
     if (!cfg.pass){ msg('Введите пароль приложения.'); return; }
     const btn = $('#mailSave'); btn.disabled = true; btn.textContent = 'Проверяю подключение…'; msg('');
@@ -2460,7 +2470,7 @@ textarea.notes{padding:8px 14px 14px;min-height:84px}
       mailStore.set('accounts', mailAccounts().filter(a => a.user.toLowerCase() !== cfg.user.toLowerCase()).concat([cfg]).slice(-4)); mailStore.set('cfg', null);
       $('#mailPass').value = ''; $('#mailUser').value = ''; mailStore.set('at', 0);
       toast('Ящик ' + cfg.user + ' подключён. Можно добавить ещё один.');
-    } catch(err){ msg(mailErrorText(err)); }
+    } catch(err){ msg(mailErrorText(err, cfg.provider)); }
     finally { btn.disabled = false; renderMail(); }
   });
 
@@ -2658,7 +2668,7 @@ textarea.notes{padding:8px 14px 14px;min-height:84px}
     if (t.id === 'reviewAuto'){ state.settings.autoReview = t.checked; saveSettings(); return; }
     if (t.id === 'mailAuto'){ mailStore.set('auto', t.checked); return; }
     if (t.id === 'mailProv'){ renderMail(); return; }
-    if (t.id === 'mailUser'){ const g = guessProvider(t.value); if (g){ $('#mailProv').value = g; renderMail(); } return; }
+    if (t.id === 'mailUser'){ const g = guessProvider(t.value.trim()); if (g){ $('#mailProv').value = g; renderMail(); } return; }
     if (t.id === 'reviewAt'){ if (isTime(t.value)){ state.settings.reviewAt = t.value; reviewTried = false; saveSettings(); renderReview(); } return; }
     const ex = t.getAttribute('data-ex');
     if (ex !== null && state.loaded){ const i = Number(ex), on = t.checked; commit(d => { const w = d.workout || {done: [], finished: false, feel: null, min: null, note: ''}; w.done = w.done.filter(x => x !== i); if (on) w.done.push(i); d.workout = w; }); return; }
