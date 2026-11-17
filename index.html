@@ -164,7 +164,26 @@ textarea.notes:focus-visible{outline:none;box-shadow:inset 0 0 0 2px var(--accen
 .water-meta b{color:var(--fg);font-variant-numeric:tabular-nums;font-size:15px}
 .water-meta input{width:54px;padding:4px 6px;border:1px solid var(--line);border-radius:6px;background:var(--bg);text-align:center;font-variant-numeric:tabular-nums}
 .meal-form{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:6px;padding:10px 18px 4px;border-top:1px solid var(--line-soft)}
+.meal-form{position:relative}
 .meal-form .row2{grid-column:1/-1;display:grid;grid-template-columns:1.2fr 1fr .8fr;gap:6px}
+.mrow{display:flex;gap:6px}
+.mrow .btn{padding:8px 10px;display:grid;place-items:center}
+#dbSuggest{position:absolute;top:calc(100% - 8px);left:14px;right:14px;z-index:40;background:var(--surface);border:1px solid var(--line);border-radius:12px;box-shadow:var(--shadow);overflow:hidden;display:grid}
+#dbSuggest[hidden]{display:none}
+#dbSuggest button{display:flex;justify-content:space-between;gap:10px;align-items:baseline;text-align:left;padding:10px 12px;background:none;border:0;border-bottom:1px solid var(--line-soft);font-size:14px;color:var(--fg)}
+#dbSuggest button:last-child{border-bottom:0}
+#dbSuggest button:active{background:var(--surface-2)}
+#dbSuggest .kk{font-size:12px;color:var(--muted);white-space:nowrap;font-variant-numeric:tabular-nums}
+.qgrams{display:flex;gap:6px;flex-wrap:wrap}
+.qgrams button{padding:6px 11px;border:1px solid var(--line);border-radius:999px;background:var(--bg);font-size:13px;font-variant-numeric:tabular-nums}
+.qgrams button.on{border-color:var(--accent);color:var(--accent)}
+.kcalout{font-size:14px;font-variant-numeric:tabular-nums;color:var(--muted)}
+.kcalout b{color:var(--fg);font-size:17px}
+.dishrow{display:grid;grid-template-columns:minmax(0,1fr) 64px 64px 32px;gap:6px;align-items:center}
+.dishrow .nm{font-size:13px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.dishrow input{padding:8px;border:1px solid var(--line);border-radius:8px;background:var(--bg);width:100%;min-width:0;font-variant-numeric:tabular-nums}
+.dishrow .x{border:0;background:none;font-size:18px;color:var(--muted);padding:4px 2px}
+.foodhint{padding:2px 18px 0;font-size:12px;color:var(--muted)}
 .meal-form input,.meal-form select{padding:8px 10px;border:1px solid var(--line);border-radius:8px;background:var(--bg);width:100%;min-width:0;font-variant-numeric:tabular-nums}
 .meals{list-style:none;margin:0;padding:6px 10px 12px;display:grid;gap:2px}
 .meal{display:grid;grid-template-columns:42px minmax(0,1fr) auto;gap:2px 8px;align-items:baseline;padding:7px 8px;border-radius:8px}
@@ -588,7 +607,7 @@ textarea.notes{padding:8px 14px 14px;min-height:84px}
         <button class="btn primary" type="submit" id="askBtn">Спросить</button>
         <button class="btn" type="button" id="stopBtn" hidden>Стоп</button>
       </form>
-      <div class="hint" style="padding:0 18px 14px">Ответы ИИ — общие рекомендации, а не замена врачу. Тренер работает через Алису AI (Яндекс) или Claude: выберите нейросеть в «Настроить ИИ».</div>
+      <div class="hint" style="padding:0 18px 14px">Ответы ИИ — общие рекомендации, а не замена врачу. Тренер работает через Алису AI (Яндекс).</div>
     </section>
     <section class="panel" id="programPanel">
       <div class="panel-h"><h2>Программа тренировок</h2><span class="meta" id="programMeta"></span></div>
@@ -628,7 +647,7 @@ textarea.notes{padding:8px 14px 14px;min-height:84px}
       </section>
 
       <section class="panel" id="foodPanel">
-        <div class="panel-h"><h2>Питание и вода</h2><span style="display:flex;gap:10px;align-items:baseline"><button type="button" class="link" id="estimateBtn" hidden>Оценить ккал ИИ</button><span class="meta" id="foodMeta"></span></span></div>
+        <div class="panel-h"><h2>Питание и вода</h2><span style="display:flex;gap:10px;align-items:baseline"><button type="button" class="link" id="suggestBtn">Что поесть?</button><button type="button" class="link" id="estimateBtn" hidden>Оценить ккал ИИ</button><span class="meta" id="foodMeta"></span></span></div>
         <div class="kcal" id="kcalBox"></div>
         <div class="water">
           <div class="glasses" id="glasses" aria-label="Стаканы воды"></div>
@@ -646,13 +665,16 @@ textarea.notes{padding:8px 14px 14px;min-height:84px}
         <ul class="plan" id="menuList"></ul>
         <form class="meal-form" id="mealForm" autocomplete="off">
           <input type="text" id="mealTitle" placeholder="Что съели: овсянка с ягодами" maxlength="120" required aria-label="Что съели">
-          <button class="btn primary" type="submit" style="padding:8px 14px" aria-label="Добавить приём пищи">+</button>
+          <span class="mrow"><button class="btn primary" type="submit" style="padding:8px 14px" aria-label="Добавить приём пищи">+</button><button class="btn" type="button" id="mealPhotoBtn" aria-label="Распознать блюдо по фото" title="Распознать блюдо по фото через Алису AI"><svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg></button></span>
           <div class="row2">
             <select id="mealKind" aria-label="Приём пищи"><option>Завтрак</option><option>Обед</option><option>Ужин</option><option>Перекус</option></select>
             <input type="time" id="mealTime" step="300" aria-label="Время приёма">
             <input type="number" id="mealKcal" min="0" max="5000" placeholder="ккал" aria-label="Калории">
           </div>
         </form>
+        <input type="file" id="mealPhoto" accept="image/*" hidden>
+        <div id="dbSuggest" hidden></div>
+        <div class="foodhint">Начните вводить название — подскажем из базы: калории и КБЖУ посчитаются сами. Кнопка с камерой распознаёт блюдо по фото.</div>
         <div class="chips recent" id="recentMeals"></div>
         <ul class="meals" id="meals"></ul>
         <div class="weekfood" id="weekFood"></div>
@@ -834,6 +856,93 @@ textarea.notes{padding:8px 14px 14px;min-height:84px}
     const key = m.title.trim().toLowerCase();
     state.settings.recent = [{title: m.title, kind: m.kind, kcal: m.kcal, prot: m.prot, fat: m.fat, carb: m.carb}].concat(state.settings.recent.filter(r => r.title.trim().toLowerCase() !== key)).slice(0, 40);
     saveSettings();
+  }
+
+  // ---------- База продуктов (ккал, белки, жиры, углеводы на 100 г готового блюда) ----------
+  const FOOD_DB = [
+    // крупы и гарниры
+    ['гречка отварная',132,4.5,1.6,24],['рис белый отварной',130,2.7,0.3,28],['овсянка на воде',88,3,1.5,15],
+    ['овсянка на молоке',102,3.2,2.5,15],['овсянка с бананом',110,3.4,2.4,18],['пшено отварное',117,3,1,23],
+    ['булгур отварной',112,3.1,0.2,21],['кускус отварной',112,3.8,0.2,23],['перловка отварная',109,2.3,0.4,20],
+    ['макароны отварные',158,5.8,0.4,31],['макароны по-флотски',160,8,6,19],['картофель отварной',87,2,0.4,20],
+    ['картофельное пюре',106,2.2,4.2,15],['картофель жареный',192,2.8,9.5,23],['картофель фри',312,3.4,15,41],
+    // мясо и птица
+    ['куриная грудка запечённая',165,31,3.6,0],['куриная грудка отварная',150,29,3,0],['куриное бедро запечённое',209,26,11,0],
+    ['куриный окорочок жареный',245,27,14,0],['индейка грудка запечённая',150,29,3,0],['говядина отварная',254,26,15,0],
+    ['говяжий фарш жареный',260,26,16,0],['гуляш говяжий',180,12,12,7],['бефстроганов',160,14,10,5],
+    ['свинина запечённая',290,27,20,0],['свиной шашлык',210,24,12,1],['котлета куриная',190,18,12,6],
+    ['котлета говяжья',220,20,15,7],['котлета с пюре',180,10,9,15],['тефтели',170,14,10,8],
+    ['печень куриная жареная',140,20,6,1],['сердце куриное тушёное',140,21,5,1],['буженина',240,22,16,0],
+    ['колбаса докторская',160,13,12,1],['колбаса копчёная',240,16,19,1],['сосиски',260,12,23,1],
+    // рыба и морепродукты
+    ['треска запечённая',105,23,1,0],['минтай отварной',90,19,1,0],['горбуша запечённая',200,22,12,0],
+    ['сёмга запечённая',220,21,14,0],['скумбрия запечённая',200,19,13,0],['сайда отварная',95,19,1,0],
+    ['хек жареный',130,18,6,0],['креветки отварные',87,18,1,1],['тунец консервированный',110,26,1,0],
+    // яйца и молочка
+    ['яйцо варёное',155,13,11,1],['яичница',180,13,14,1],['омлет с молоком',154,10,12,2],
+    ['молоко 2,5%',52,2.8,2.5,4.7],['молоко 3,2%',59,3,3.2,4.7],['кефир 2,5%',51,3,2.5,4],
+    ['кефир 3,2%',56,2.9,3.2,4],['ряженка',53,2.9,2.5,4.2],['йогурт натуральный',66,5,3.2,4],
+    ['творог 5%',120,17,5,1.8],['творог 9%',159,16,9,2],['творожная запеканка',170,12,8,9],
+    ['сырники запечённые',180,14,8,10],['сырники со сметаной',240,13,13,18],['сырник классический',260,12,15,20],
+    ['сыр твёрдый',360,25,29,2],['сыр полутвёрдый',340,24,26,2],['сыр моцарелла',240,18,18,1],
+    ['сметана 15%',158,2.6,15,3.6],['сметана 20%',206,2.8,20,3.2],
+    // хлеб и выпечка
+    ['хлеб белый',265,8,3,49],['хлеб ржаной',210,5,1.5,41],['хлеб бородинский',207,5,1.3,41],
+    ['батон',310,8,3,57],['хлеб цельнозерновой',220,9,3,41],['лаваш',275,8,1.5,50],
+    ['сухари',330,11,2.5,66],['гренки',380,9,15,52],['блин с мясом',230,9,12,20],
+    ['блин с творогом',200,9,8,22],['блин с ветчиной и сыром',250,10,14,20],['пельмени отварные',275,11,15,26],
+    ['вареники с картошкой',170,5,4,30],['пирожок с капустой',220,5,10,28],['манник',320,6,12,46],
+    ['бутерброд с сыром',280,10,14,28],['бутерброд с колбасой',300,10,16,28],['бутерброд с творогом',190,9,7,21],
+    // овощи
+    ['огурец',15,0.8,0.1,2.8],['помидор',20,0.9,0.2,3.9],['капуста белокочанная',27,1.8,0.1,4.7],
+    ['капуста тушёная',50,1.5,2.5,5],['морковь по-корейски',120,1,7,12],['свёкла',42,1.5,0.1,8.8],
+    ['морковь',35,1.3,0.1,6.9],['перец болгарский',27,1,0.3,4.9],['салат овощной с маслом',110,1,10,5],
+    ['овощное рагу',60,1.5,3,7],['брокколи отварная',35,2.8,0.4,6.6],['цветная капуста',30,2.4,0.3,4.2],
+    ['кабачки тушёные',40,0.8,2,4],['баклажаны запечённые',49,1.2,3,5.1],['шпинат',23,2.9,0.4,3.6],
+    ['зелень',36,3.5,0.4,5],['кукуруза консервированная',103,3.4,1.5,18],['горошек зелёный',55,5,0.4,8],
+    ['фасоль стручковая',31,1.8,0.2,5.7],['солёный огурец',11,0.8,0.2,1.7],
+    // фрукты и ягоды
+    ['яблоко',52,0.3,0.2,13.8],['банан',96,1.5,0.3,21],['апельсин',47,0.9,0.1,11.8],
+    ['мандарин',53,0.8,0.3,13.3],['груша',57,0.4,0.1,15.2],['киви',61,1.1,0.5,14.7],
+    ['виноград',69,0.7,0.2,18],['арбуз',30,0.6,0.2,7.6],['дыня',34,0.8,0.2,8.2],
+    ['персик',39,0.9,0.3,9.5],['слива',42,0.8,0.3,9.6],['клубника',32,0.7,0.3,7.7],
+    ['черника',57,0.7,0.3,14.5],['малина',52,1.2,0.7,11.9],['вишня',52,1.1,0.4,10.6],
+    ['гранат',72,0.7,0.6,14],['хурма',67,0.5,0.4,15.3],
+    // бобовые
+    ['фасоль тушёная',110,5,2,18],['чечевица отварная',116,9,0.4,20],['хумус',166,8,10,14],['гороховый суп',60,3,2,8],
+    // орехи и сухофрукты
+    ['грецкие орехи',654,15.2,65.2,7],['миндаль',579,21,50,22],['арахис',567,26,49,16],
+    ['фисташки',560,20,45,27],['семечки подсолнечника',578,21,52,11],['кешью',553,18,44,30],
+    ['фундук',628,15,61,17],['изюм',299,3.1,0.5,79],['чернослив',240,2.2,0.7,57],
+    ['курага',241,5.2,0.5,51],['финики',282,2.5,0.4,66],['мёд',304,0.8,0,82],
+    // сладкое и напитки
+    ['сахар',398,0,0,100],['шоколад молочный',535,7.7,30,52],['шоколад тёмный',546,6,35,45],
+    ['зефир',326,0.8,0.1,79],['пастила',388,0.5,0.1,92],['мармелад',296,0,0.1,74],
+    ['халва подсолнечная',516,11,30,54],['печенье сдобное',450,7,20,65],['пирожное',380,5,20,48],
+    ['торт',350,5,20,40],['мороженое пломбир',220,4,15,20],['компот',60,0.2,0.1,15],
+    ['сок апельсиновый',45,0.7,0.2,10],['квас',27,0,0,6],['кофе с молоком',40,1,1.5,5],['какао с молоком',88,3,3,12],
+    // супы и готовые блюда
+    ['борщ',49,2.5,2.2,5],['щи',33,1.5,1.5,4],['куриный суп с лапшой',45,3,1.5,6],
+    ['окрошка на кефире',60,3,3,6],['плов с курицей',170,9,8,18],['плов со свининой',200,8,11,19],
+    ['рис с курицей',160,10,5,19],['гречка с котлетой',210,14,10,20],['пюре с котлетой',180,10,9,15],
+    ['лапша быстрого приготовления',440,8,17,65],['пицца маргарита',240,9,9,30],['пицца пепперони',280,12,13,30],
+    ['шаурма',230,10,10,25],['бургер',250,13,12,23],['наггетсы куриные',290,15,18,18],
+    ['чебурек',330,9,18,33],['кесадилья с курицей',260,15,13,20],
+    // соусы и добавки
+    ['майонез',630,1,67,2.5],['майонез лёгкий',370,1,30,10],['растительное масло',899,0,99.9,0],
+    ['оливковое масло',884,0,100,0],['кетчуп',100,1.5,0.2,23],['горчица',66,4,4,5],['аджика',50,2,1,8],['соевый соус',53,8,0,6]
+  ];
+  function foodSearch(q){
+    const s = q.trim().toLowerCase().replace(/ё/g, 'е');
+    if (s.length < 2) return [];
+    const words = s.split(/\s+/).filter(Boolean);
+    const hits = [];
+    for (const it of FOOD_DB){
+      const name = it[0].toLowerCase().replace(/ё/g, 'е');
+      if (!words.every(w => name.includes(w))) continue;
+      hits.push({it, r: name.startsWith(words[0]) ? 0 : 1});
+    }
+    return hits.sort((a, b) => a.r - b.r).slice(0, 6).map(x => x.it);
   }
   const ACT = {1:1.2, 2:1.375, 3:1.55, 4:1.725, 5:1.9};
   const GOAL_TEXT = {lose:'снизить вес', keep:'держать вес', gain:'набрать массу'};
@@ -1054,15 +1163,7 @@ textarea.notes{padding:8px 14px 14px;min-height:84px}
   };
 
   async function initStore(){
-    try {
-      if (window.claude && typeof window.claude.use === 'function'){
-        const [d, u] = await Promise.all([window.claude.use('db'), window.claude.use('user')]);
-        let canWrite = null;
-        if (u && typeof u.can === 'function'){ try { canWrite = await u.can('data.write'); } catch(e){ canWrite = null; } }
-        if (d && canWrite !== false) db = d;
-      }
-    } catch(e){ db = null; }
-    setMode(db ? 'db' : 'local');
+    setMode('local');
   }
   function setMode(m){
     state.mode = m;
@@ -1582,6 +1683,204 @@ textarea.notes{padding:8px 14px 14px;min-height:84px}
     const kcalRaw = Number($('#mealKcal').value);
     addMeal({title, time: $('#mealTime').value, kind: $('#mealKind').value, kcal: kcalRaw > 0 ? Math.round(kcalRaw) : null});
     $('#mealTitle').value = ''; $('#mealKcal').value = ''; $('#mealTime').value = ''; $('#mealKind').value = defaultKind(); $('#mealTitle').focus();
+    hideDbSuggest();
+  });
+
+  // ---------- Подсказки из базы продуктов ----------
+  let dbList = [];
+  function renderDbSuggest(){
+    const box = $('#dbSuggest'); if (!box) return;
+    dbList = foodSearch($('#mealTitle').value);
+    if (!dbList.length){ hideDbSuggest(); return; }
+    box.innerHTML = dbList.map((it, i) => '<button type="button" data-db="'+i+'"><span>'+esc(it[0])+'</span><span class="kk">'+it[1]+' ккал · Б'+it[2]+'/Ж'+it[3]+'/У'+it[4]+'</span></button>').join('');
+    box.hidden = false;
+  }
+  function hideDbSuggest(){ const b = $('#dbSuggest'); if (b){ b.hidden = true; b.innerHTML = ''; } dbList = []; }
+  $('#mealTitle').addEventListener('input', renderDbSuggest);
+  $('#mealTitle').addEventListener('keydown', e => { if (e.key === 'Escape') hideDbSuggest(); });
+  $('#dbSuggest').addEventListener('click', e => {
+    const b = e.target.closest('[data-db]'); if (!b) return;
+    const it = dbList[Number(b.dataset.db)]; if (it) openGramSheet(it);
+  });
+  document.addEventListener('click', e => {
+    if (!e.target.closest('#mealForm') && !e.target.closest('#dbSuggest')) hideDbSuggest();
+  });
+  function openGramSheet(it){
+    hideDbSuggest();
+    const ed = $('#editor');
+    const n = new Date(), tm = pad(n.getHours())+':'+pad(n.getMinutes());
+    ed.innerHTML = '<div class="overlay" id="ovl"><form class="sheet" id="gramForm">'
+      + '<h3>'+esc(it[0])+'</h3>'
+      + '<div class="kcalout" id="gOut"></div>'
+      + '<label>Граммы <input type="number" id="gGram" min="1" max="2000" value="150" inputmode="numeric"></label>'
+      + '<div class="qgrams" id="gQuick"></div>'
+      + '<div class="row"><label>Приём <select id="gKind">'+['Завтрак','Обед','Ужин','Перекус'].map(k => '<option'+(k === $('#mealKind').value ? ' selected' : '')+'>'+k+'</option>').join('')+'</select></label>'
+      + '<label>Время <input type="time" id="gTime" step="300" value="'+tm+'"></label></div>'
+      + '<div class="hint">КБЖУ на 100 г: '+it[1]+' ккал · Б '+it[2]+' · Ж '+it[3]+' · У '+it[4]+'</div>'
+      + '<div class="foot"><button type="button" class="btn" id="gCancel">Отмена</button><div><button type="submit" class="btn primary">Добавить</button></div></div>'
+      + '</form></div>';
+    ed.hidden = false;
+    const upd = () => {
+      const g = Math.min(2000, Math.max(1, Math.round(Number($('#gGram').value) || 100)));
+      const k = Math.round(it[1]*g/100), p = Math.round(it[2]*g/100), f = Math.round(it[3]*g/100), c = Math.round(it[4]*g/100);
+      $('#gOut').innerHTML = 'Порция <b>'+g+' г</b> — <b>'+k.toLocaleString('ru-RU')+'</b> ккал · Б '+p+' · Ж '+f+' · У '+c+' г';
+      document.querySelectorAll('#gQuick button').forEach(b => b.classList.toggle('on', Number(b.dataset.g) === g));
+    };
+    $('#gQuick').innerHTML = [50,100,150,200,250,300,400,500].map(g => '<button type="button" data-g="'+g+'">'+g+' г</button>').join('');
+    $('#gQuick').addEventListener('click', e => { const b = e.target.closest('[data-g]'); if (!b) return; $('#gGram').value = b.dataset.g; upd(); });
+    $('#gGram').addEventListener('input', upd);
+    upd();
+    const gi = $('#gGram'); gi.focus(); gi.select();
+    $('#gCancel').onclick = closeEditor;
+    $('#ovl').addEventListener('click', e => { if (e.target.id === 'ovl') closeEditor(); });
+    $('#gramForm').onsubmit = e => {
+      e.preventDefault();
+      const g = Math.min(2000, Math.max(1, Math.round(Number($('#gGram').value) || 100)));
+      addMeal({title: it[0] + (g !== 100 ? ', ' + g + ' г' : ''), kind: $('#gKind').value, time: $('#gTime').value,
+        kcal: Math.round(it[1]*g/100) || null, prot: Math.round(it[2]*g/100) || null, fat: Math.round(it[3]*g/100) || null, carb: Math.round(it[4]*g/100) || null});
+      closeEditor(); toast('Добавлено: ' + it[0]);
+    };
+  }
+
+  // ---------- Распознавание блюда по фото (Алиса AI) ----------
+  $('#mealPhotoBtn').addEventListener('click', () => $('#mealPhoto').click());
+  $('#mealPhoto').addEventListener('change', e => { const f = e.target.files && e.target.files[0]; e.target.value = ''; if (f) recognizeDish(f); });
+  function shrinkImage(file, maxSide, q){
+    return new Promise((res, rej) => {
+      const img = new Image(), url = URL.createObjectURL(file);
+      img.onload = () => {
+        const sc = Math.min(1, maxSide / Math.max(img.width, img.height));
+        const w = Math.max(1, Math.round(img.width * sc)), h = Math.max(1, Math.round(img.height * sc));
+        const cv = document.createElement('canvas'); cv.width = w; cv.height = h;
+        cv.getContext('2d').drawImage(img, 0, 0, w, h);
+        URL.revokeObjectURL(url);
+        res(cv.toDataURL('image/jpeg', q));
+      };
+      img.onerror = () => { URL.revokeObjectURL(url); rej(new Error('bad image')); };
+      img.src = url;
+    });
+  }
+  function normDish(j){
+    if (!j || typeof j !== 'object') return null;
+    const items = Array.isArray(j.items) ? j.items.filter(x => x && typeof x.n === 'string' && x.n.trim()).slice(0, 6).map(x => ({
+      n: x.n.trim().slice(0, 60),
+      g: Math.min(1000, Math.max(1, Math.round(Number(x.g) || 100))),
+      kcal: Math.min(3000, Math.max(0, Math.round(Number(x.kcal) || 0))),
+      p: Math.min(300, Math.max(0, Math.round(Number(x.p) || 0))),
+      f: Math.min(300, Math.max(0, Math.round(Number(x.f) || 0))),
+      c: Math.min(500, Math.max(0, Math.round(Number(x.c) || 0)))
+    })) : [];
+    if (!items.length) return null;
+    return {title: typeof j.title === 'string' && j.title.trim() ? j.title.trim().slice(0, 80) : items.map(x => x.n).join(', ').slice(0, 80), items};
+  }
+  async function recognizeDish(file){
+    if (!state.loaded) return;
+    if (!coachReady || !sampleFn){ openAiSetup(); return; }
+    const btn = $('#mealPhotoBtn'); btn.disabled = true;
+    toast('Готовлю фото…');
+    try {
+      const dataUrl = await shrinkImage(file, 1024, 0.72);
+      toast('Алиса распознаёт блюдо…');
+      const prompt = [{role: 'user', content: [
+        {type: 'text', text: 'На фотографии блюдо. Определи, что это, и оцени состав: основные ингредиенты с примерной массой в граммах для порции на фото и её калорийностью. Ответь строго одним JSON-объектом без пояснений: {"title":"короткое название блюда","items":[{"n":"ингредиент","g":граммы,"kcal":ккал на эти граммы,"p":белки г,"f":жиры г,"c":углеводы г}]} — не больше 6 ингредиентов, числа без единиц.'},
+        {type: 'image_url', image_url: {url: dataUrl}}
+      ]}];
+      const j = await sampleFn.json(prompt, {maxTokens: 2000});
+      const dish = normDish(j);
+      if (!dish) throw {code: 'invalid_json', message: 'no dish'};
+      openDishConfirm(dish);
+    } catch(e){
+      const code = e && e.code;
+      if (code === 'invalid_request') toast('Фото не дошло до модели: обновите функцию в Yandex Cloud, чтобы она передавала изображения Алисе. Пока опишите блюдо текстом.');
+      else if (code !== 'cancelled') toast(coachErrorText(code));
+    } finally { btn.disabled = false; }
+  }
+  function openDishConfirm(dish){
+    const ed = $('#editor');
+    const items = dish.items.map(x => Object.assign({}, x));
+    const rowHtml = (it, i) => '<div class="dishrow" data-i="'+i+'"><span class="nm" title="'+esc(it.n)+'">'+esc(it.n)+'</span>'
+      + '<input type="number" class="dg" min="1" max="1000" value="'+it.g+'" aria-label="Граммы">'
+      + '<input type="number" class="dk" min="0" max="3000" value="'+it.kcal+'" aria-label="Ккал">'
+      + '<button type="button" class="x" data-drm="'+i+'" aria-label="Убрать ингредиент">×</button></div>';
+    ed.innerHTML = '<div class="overlay" id="ovl"><form class="sheet" id="dishForm">'
+      + '<h3>Распознано по фото</h3>'
+      + '<label>Блюдо <input type="text" id="dTitle" value="'+esc(dish.title)+'" maxlength="120"></label>'
+      + '<div id="dRows">'+items.map(rowHtml).join('')+'</div>'
+      + '<div class="kcalout" id="dOut"></div>'
+      + '<div class="row"><label>Приём <select id="dKind">'+['Завтрак','Обед','Ужин','Перекус'].map(k => '<option'+(k === $('#mealKind').value ? ' selected' : '')+'>'+k+'</option>').join('')+'</select></label>'
+      + '<label>Время <input type="time" id="dTime" step="300"></label></div>'
+      + '<div class="hint">Проверьте граммовки и калории — ИИ оценивает приблизительно. Белки/жиры/углеводы масштабируются от граммовки.</div>'
+      + '<div class="foot"><button type="button" class="btn" id="dCancel">Отмена</button><div><button type="submit" class="btn primary">Добавить</button></div></div>'
+      + '</form></div>';
+    ed.hidden = false;
+    const live = () => {
+      let alive = 0;
+      document.querySelectorAll('#dRows .dishrow').forEach(r => { if (!r.hidden) alive++; });
+      $('#dishForm button[type=submit]').disabled = !alive;
+    };
+    const totals = () => {
+      let k = 0, p = 0, f = 0, c = 0, n = 0;
+      document.querySelectorAll('#dRows .dishrow').forEach(r => {
+        if (r.hidden) return;
+        const i = Number(r.dataset.i), it = items[i]; if (!it) return;
+        const g = Math.min(1000, Math.max(1, Math.round(Number(r.querySelector('.dg').value) || it.g)));
+        const sc = g / it.g;
+        k += Math.min(3000, Math.max(0, Math.round(Number(r.querySelector('.dk').value) || 0)));
+        p += Math.round(it.p * sc); f += Math.round(it.f * sc); c += Math.round(it.c * sc); n++;
+      });
+      $('#dOut').innerHTML = n ? 'Итого: <b>'+k.toLocaleString('ru-RU')+'</b> ккал · Б '+p+' · Ж '+f+' · У '+c+' г' : 'Уберите лишнее или отмените.';
+      return {k, p, f, c, n};
+    };
+    $('#dRows').addEventListener('input', e => {
+      const r = e.target.closest('.dishrow'); if (!r || !e.target.classList.contains('dg')) { totals(); return; }
+      const i = Number(r.dataset.i), it = items[i]; if (!it) return;
+      const g = Math.min(1000, Math.max(1, Math.round(Number(e.target.value) || it.g)));
+      const sc = g / it.g;
+      r.querySelector('.dk').value = Math.max(0, Math.round(it.kcal * sc));
+      totals();
+    });
+    $('#dRows').addEventListener('click', e => {
+      const b = e.target.closest('[data-drm]'); if (!b) return;
+      const r = b.closest('.dishrow'); r.hidden = true; totals(); live();
+    });
+    totals(); live();
+    $('#dCancel').onclick = closeEditor;
+    $('#ovl').addEventListener('click', e => { if (e.target.id === 'ovl') closeEditor(); });
+    $('#dishForm').onsubmit = e => {
+      e.preventDefault();
+      const t = totals();
+      if (!t.n) return;
+      const title = $('#dTitle').value.trim() || dish.title;
+      addMeal({title, kind: $('#dKind').value, time: $('#dTime').value, kcal: t.k || null, prot: t.p || null, fat: t.f || null, carb: t.c || null});
+      closeEditor(); toast('Добавлено: ' + title);
+    };
+  }
+
+  // ---------- «Что поесть?» — совет от Алисы AI ----------
+  $('#suggestBtn').addEventListener('click', async () => {
+    if (!state.loaded) return;
+    if (!coachReady || !sampleFn){ openAiSetup(); return; }
+    const btn = $('#suggestBtn'); btn.disabled = true; btn.textContent = 'Думаю…';
+    try {
+      const day = state.day, p = state.settings.profile, nt = nutrition(p);
+      const kcal = day.meals.reduce((s, m) => s + (m.kcal || 0), 0), prot = day.meals.reduce((s, m) => s + (m.prot || 0), 0);
+      const lines = ['Ты — мой тренер по питанию. Посоветуй, что поесть сейчас. Дай 3–4 конкретных варианта: блюдо, примерная порция в граммах, ккал и белок — одной строкой на вариант, каждый с тире в начале. Если дневной лимит уже израсходован, скажи прямо и предложи самый лёгкий вариант. Без markdown и пояснений, по-русски, не больше 8 строк.'];
+      lines.push('Сегодня съедено: '+kcal+' ккал, белков '+prot+' г' + (nt ? '; норма дня: '+nt.target+' ккал, белка '+nt.protein+' г (осталось примерно '+(nt.target - kcal)+' ккал и '+(nt.protein - prot)+' г белка)' : '; профиль не заполнен — считай по параметрам спортсмена 30 лет'));
+      lines.push('Приёмы пищи сегодня: ' + (day.meals.map(m => (m.time ? m.time + ' ' : '') + m.kind + ': ' + m.title + (m.kcal ? ' (' + m.kcal + ' ккал)' : '')).join('; ') || 'записей нет'));
+      if (nt) lines.push('Параметры: ' + (p.sex === 'f' ? 'женщина' : 'мужчина') + ', ' + p.age + ' лет, ' + p.height + ' см, ' + p.weight + ' кг, активность ' + p.activity + ' из 5, цель: ' + GOAL_TEXT[p.goal] + ', тренировки ММА/зал.');
+      const res = await sampleFn(lines.join('\n'), {maxTokens: 900});
+      const ed2 = $('#editor');
+      ed2.innerHTML = '<div class="overlay" id="ovl"><div class="sheet"><h3>Что поесть?</h3>'
+        + '<div style="white-space:pre-wrap;font-size:14px;line-height:1.55">'+esc(res.text)+'</div>'
+        + '<div class="foot"><span class="hint">Совет от Алисы AI · порции проверяйте по базе</span><div><button type="button" class="btn primary" id="sgOk">Понятно</button></div></div>'
+        + '</div></div>';
+      ed2.hidden = false;
+      $('#sgOk').onclick = closeEditor;
+      $('#ovl').addEventListener('click', e => { if (e.target.id === 'ovl') closeEditor(); });
+    } catch(e){
+      const code = e && e.code;
+      if (code !== 'cancelled') toast(coachErrorText(code));
+    } finally { btn.disabled = false; btn.textContent = 'Что поесть?'; }
   });
   let notesTimer = null;
   $('#notes').addEventListener('input', e => { if (!state.loaded) return; clearTimeout(notesTimer); const v = e.target.value; notesTimer = setTimeout(() => commit(d => { d.notes = v; }), 400); });
@@ -1673,7 +1972,7 @@ textarea.notes{padding:8px 14px 14px;min-height:84px}
   }
   const coachErrorText = code => ({
     rate_limited: 'Слишком много запросов или исчерпан лимит. Попробуйте чуть позже.',
-    session_expired: 'Нужно заново войти в аккаунт Claude.',
+    session_expired: 'Сессия истекла. Обновите код доступа в настройках ИИ.',
     refused: 'Тренер не может ответить на этот запрос. Переформулируйте вопрос.',
     empty_completion: 'Ответ пустой. Попробуйте задать вопрос иначе.',
     prompt_too_large: 'Слишком длинный разговор. Очистите чат и спросите снова.',
@@ -1682,92 +1981,9 @@ textarea.notes{padding:8px 14px 14px;min-height:84px}
     not_granted: 'Ключ или код доступа не принят. Проверьте настройки ИИ.',
     relay_unreachable: 'Нет связи с посредником Алисы AI. Проверьте адрес в настройках ИИ и интернет.'
   })[code] || 'Связь с тренером прервалась. Попробуйте ещё раз.';
-  // ---------- ИИ через Anthropic API (собственный ключ) ----------
-  const AI_MODELS = [
-    {id:'claude-opus-5-5', label:'Claude Opus 5.5 (по умолчанию)'},
-    {id:'claude-sonnet-5-5', label:'Claude Sonnet 5.5 (быстрее и дешевле)'},
-    {id:'claude-haiku-5-5', label:'Claude Haiku 5.5 (самый дешёвый)'}
-  ];
-  const aiKey = () => { try { return (localStorage.getItem('apiKey') || '').trim(); } catch(e){ return ''; } };
-  const aiModel = () => { try { const m = localStorage.getItem('apiModel'); return AI_MODELS.some(x => x.id === m) ? m : 'claude-opus-5-5'; } catch(e){ return 'claude-opus-5-5'; } };
-
-  function makeApiSampler(key, model){
-    const API = 'https://api.anthropic.com/v1/messages';
-    const headers = {
-      'content-type': 'application/json', 'x-api-key': key, 'anthropic-version': '2026-10-21',
-      'anthropic-dangerous-direct-browser-access': 'true', 'anthropic-beta': 'server-side-fallback-2026-07-01'
-    };
-    const codeFor = status => status === 401 || status === 403 ? 'bad_key' : status === 429 ? 'rate_limited' : status === 400 ? 'invalid_request' : 'upstream_error';
-    async function streamOnce(body, signal, onDelta){
-      let res;
-      try { res = await fetch(API, {method:'POST', headers, body: JSON.stringify(Object.assign({stream:true}, body)), signal}); }
-      catch(e){ if (e && e.name === 'AbortError') throw {code:'cancelled', message:''}; throw {code:'upstream_error', message: 'Нет связи с api.anthropic.com'}; }
-      if (!res.ok){ let msg = ''; try { const j = await res.json(); msg = (j.error && j.error.message) || ''; } catch(e){} throw {code: codeFor(res.status), message: msg || ('HTTP '+res.status)}; }
-      const reader = res.body.getReader(), dec = new TextDecoder(); let buf = '', stop = null; const content = [];
-      while (true){
-        let r; try { r = await reader.read(); } catch(e){ if (e && e.name === 'AbortError') throw {code:'cancelled', message:''}; throw {code:'upstream_error', message:'Поток прервался'}; }
-        if (r.done) break;
-        buf += dec.decode(r.value, {stream:true});
-        let idx;
-        while ((idx = buf.indexOf('\n\n')) >= 0){
-          const chunk = buf.slice(0, idx); buf = buf.slice(idx + 2);
-          const line = chunk.split('\n').find(l => l.indexOf('data:') === 0); if (!line) continue;
-          let ev; try { ev = JSON.parse(line.slice(5).trim()); } catch(e){ continue; }
-          if (ev.type === 'content_block_start'){ const c = Object.assign({}, ev.content_block); if (c.type === 'tool_use'){ c._json = ''; c.input = c.input || {}; } content[ev.index] = c; }
-          else if (ev.type === 'content_block_delta'){ const c = content[ev.index]; if (!c) continue; const d = ev.delta;
-            if (d.type === 'text_delta'){ c.text = (c.text || '') + d.text; onDelta(d.text); }
-            else if (d.type === 'input_json_delta'){ c._json += d.partial_json; }
-            else if (d.type === 'thinking_delta'){ c.thinking = (c.thinking || '') + d.thinking; }
-            else if (d.type === 'signature_delta'){ c.signature = (c.signature || '') + d.signature; } }
-          else if (ev.type === 'content_block_stop'){ const c = content[ev.index]; if (c && c.type === 'tool_use'){ try { c.input = c._json ? JSON.parse(c._json) : {}; } catch(e){ c.input = {}; } delete c._json; } }
-          else if (ev.type === 'message_delta'){ stop = ev.delta && ev.delta.stop_reason; }
-          else if (ev.type === 'error'){ throw {code: 'upstream_error', message: (ev.error && ev.error.message) || 'Ошибка потока'}; }
-        }
-      }
-      return {content: content.filter(Boolean), stop};
-    }
-    async function sample(input, opts){
-      opts = opts || {};
-      const msgs = typeof input === 'string' ? [{role:'user', content: input}] : input.map(m => ({role: m.role, content: m.content}));
-      const toolDefs = (opts.tools || []).map(t => ({name: t.name, description: t.description, input_schema: t.inputSchema || {type:'object', properties:{}}}));
-      const body = {model, max_tokens: 8000, messages: msgs, fallbacks: 'default'}; if (toolDefs.length) body.tools = toolDefs;
-      let text = '', truncated = false;
-      const emit = d => { text += d; if (opts.onText && text.trim()) opts.onText({text, delta: d}); };
-      try {
-        for (let round = 0; round < 6; round++){
-          const r = await streamOnce(body, opts.signal, emit);
-          if (r.stop === 'refusal') throw {code:'refused', message:'refused'};
-          if (r.stop === 'max_tokens') truncated = true;
-          const uses = r.content.filter(c => c.type === 'tool_use');
-          if (r.stop !== 'tool_use' || !uses.length) break;
-          body.messages = body.messages.concat([{role:'assistant', content: r.content}]);
-          const results = [];
-          for (const u of uses){
-            const t = (opts.tools || []).find(x => x.name === u.name); let out;
-            try { out = t ? await t.execute(u.input || {}, {signal: opts.signal}) : 'Error: unknown tool'; out = typeof out === 'string' ? out : JSON.stringify(out); }
-            catch(e){ out = 'Error: ' + ((e && e.message) || e); }
-            results.push({type:'tool_result', tool_use_id: u.id, content: String(out)});
-          }
-          body.messages = body.messages.concat([{role:'user', content: results}]);
-          if (text && !/\n\n$/.test(text)) emit('\n\n');
-        }
-      } catch(e){ if (e && e.code){ if (text) e.text = text; throw e; } throw {code:'upstream_error', message: String(e && e.message || e), text}; }
-      if (!text.trim()) throw {code:'empty_completion', message:'empty'};
-      return {text, truncated, modelTierApplied: 'default'};
-    }
-    sample.json = async (input, opts) => {
-      const r = await sample(input, opts); let t = r.text.trim();
-      const m = t.match(/```(?:json)?\s*([\s\S]*?)```/); if (m) t = m[1];
-      const a = t.search(/[\[{]/), b = Math.max(t.lastIndexOf(']'), t.lastIndexOf('}'));
-      if (a < 0 || b < a) throw {code:'invalid_json', message:'no json', text: r.text};
-      try { return JSON.parse(t.slice(a, b + 1)); } catch(e){ throw {code:'invalid_json', message:'bad json', text: r.text}; }
-    };
-    sample.limits = async () => ({maxPromptBytes: 262144, tools: {maxCount: 16}, modelTiers: ['default']});
-    return sample;
-  }
   // ---------- Алиса AI (Яндекс) через функцию-посредника в Yandex Cloud ----------
   const lsGet = k => { try { return (localStorage.getItem(k) || '').trim(); } catch(e){ return ''; } };
-  const aiProvider = () => lsGet('aiProvider') === 'claude' ? 'claude' : 'alice';
+  const aiProvider = () => 'alice';
   const ALICE_DEFAULT_URL = 'https://functions.yandexcloud.net/d4ektg01hgjndru4i1j4';
   function aliceUrl(){ return lsGet('aliceUrl') || ALICE_DEFAULT_URL; }
   function makeAliceSampler(url, secret){
@@ -1842,45 +2058,33 @@ textarea.notes{padding:8px 14px 14px;min-height:84px}
       if (!/^https?:\/\//.test(url) || !secret){ off(); return; }
       sampleFn = makeAliceSampler(url, secret); enableCoach('готов · Алиса AI'); return;
     }
-    const key = aiKey();
-    if (!key){ off(); return; }
-    sampleFn = makeApiSampler(key, aiModel());
-    enableCoach('готов · ' + (AI_MODELS.find(x => x.id === aiModel()) || {}).label.split(' (')[0]);
+    off();
   }
   function openAiSetup(){
-    const ed = $('#editor'); const prov = aiProvider(), key = aiKey(), model = aiModel();
-    const hasAny = !!(key || lsGet('aliceUrl') || lsGet('aliceSecret'));
-    setTimeout(() => { const f = aiProvider() === 'alice' ? $('#aliceSecretInput') : $('#aiKeyInput'); if (f) f.focus(); }, 50);
+    const ed = $('#editor');
+    const hasAny = !!(lsGet('aliceUrl') || lsGet('aliceSecret'));
+    setTimeout(() => { const f = $('#aliceSecretInput'); if (f) f.focus(); }, 50);
     ed.innerHTML = '<div class="overlay" id="ovl"><form class="sheet" id="aiForm">'
       + '<h3>Настройка ИИ-тренера</h3>'
-      + '<label>Нейросеть <select id="aiProv"><option value="alice"'+(prov === 'alice' ? ' selected' : '')+'>Алиса AI (Яндекс)</option><option value="claude"'+(prov === 'claude' ? ' selected' : '')+'>Claude (Anthropic)</option></select></label>'
       + '<div id="aiAlice" style="display:grid;gap:12px">'
-      +   '<div class="hint">Алиса AI подключена через вашу функцию в Yandex Cloud. Адрес уже указан, введите только код доступа. Запросы оплачиваются с вашего платёжного аккаунта Yandex Cloud.</div>'
+      +   '<div class="hint">Тренер работает через Алису AI — вашу функцию в Yandex Cloud. Адрес уже указан, введите только код доступа. Запросы оплачиваются с вашего платёжного аккаунта Yandex Cloud.</div>'
       +   '<label>Адрес функции <input type="url" id="aliceUrlInput" value="'+esc(aliceUrl())+'" placeholder="https://functions.yandexcloud.net/…" autocomplete="off" spellcheck="false"></label>'
       +   '<label>Код доступа <input type="text" id="aliceSecretInput" value="'+esc(lsGet('aliceSecret'))+'" placeholder="20 букв и цифр" autocomplete="off" autocapitalize="none" autocorrect="off" spellcheck="false" inputmode="text"></label>'
       +   '<div class="hint">В коде 20 латинских букв и цифр. Большие или маленькие буквы и дефисы значения не имеют. Букв i, l, o и цифр 0, 1 в коде нет.</div>'
       + '</div>'
-      + '<div id="aiClaude" style="display:grid;gap:12px">'
-      +   '<div class="hint">Claude работает через Anthropic API с вашим ключом. Ключ создаётся на console.anthropic.com в разделе API Keys. Запросы оплачиваются с вашего аккаунта Anthropic.</div>'
-      +   '<label>Ключ API <input type="password" id="aiKeyInput" value="'+esc(key)+'" placeholder="sk-ant-…" autocomplete="off" spellcheck="false"></label>'
-      +   '<label>Модель <select id="aiModelSel">'+AI_MODELS.map(m => '<option value="'+m.id+'"'+(m.id === model ? ' selected' : '')+'>'+m.label+'</option>').join('')+'</select></label>'
-      + '</div>'
-      + '<div class="hint">Ключи и коды хранятся только на этом устройстве.</div>'
+      + '<div class="hint">Код хранится только на этом устройстве.</div>'
       + '<div class="hint" id="aiMsg" hidden style="color:var(--hi);font-size:14px"></div>'
       + '<div class="foot">'+(hasAny ? '<button type="button" class="btn danger" id="aiForget">Сбросить</button>' : '<span></span>')+'<div><button type="button" class="btn" id="aiCancel">Отмена</button><button type="submit" class="btn primary" id="aiSave">Сохранить</button></div></div>'
       + '</form></div>';
     ed.hidden = false;
-    const sync = () => { const p = $('#aiProv').value; $('#aiAlice').hidden = p !== 'alice'; $('#aiClaude').hidden = p !== 'claude'; };
-    $('#aiProv').addEventListener('change', sync); sync();
     $('#aiCancel').onclick = closeEditor;
     $('#ovl').addEventListener('click', e => { if (e.target.id === 'ovl') closeEditor(); });
-    if (hasAny){ $('#aiForget').onclick = () => { try { ['apiKey','aliceUrl','aliceSecret'].forEach(k => localStorage.removeItem(k)); } catch(e){} closeEditor(); initCoach(); toast('Настройки ИИ сброшены'); }; }
+    if (hasAny){ $('#aiForget').onclick = () => { try { ['aliceUrl','aliceSecret'].forEach(k => localStorage.removeItem(k)); } catch(e){} closeEditor(); initCoach(); toast('Настройки ИИ сброшены'); }; }
     const msg = t => { const m = $('#aiMsg'); m.textContent = t; m.hidden = !t; };
     $('#aiForm').onsubmit = async e => {
       e.preventDefault();
-      const p = $('#aiProv').value;
-      const put = (k, v) => { if (v) localStorage.setItem(k, v); else localStorage.removeItem(k); };
-      if (p === 'alice'){
+      const put = (k, v) => { if (v) localStorage.setItem(k, v); else localStorage.removeItem(k); }
+      {
         const u = $('#aliceUrlInput').value.trim() || ALICE_DEFAULT_URL, raw = $('#aliceSecretInput').value;
         if (!/^https?:\/\//.test(u)){ msg('Адрес функции должен начинаться с https://'); return; }
         if (/[а-яё]/i.test(raw)){ msg('В коде есть русские буквы. Переключите клавиатуру на английскую и введите код заново.'); return; }
@@ -1896,9 +2100,7 @@ textarea.notes{padding:8px 14px 14px;min-height:84px}
         btn.disabled = false; btn.textContent = 'Сохранить';
         if (verdict === 'bad'){ msg('Код не подошёл (введено символов: ' + t.length + ' из 20). Проверьте его и попробуйте ещё раз.'); return; }
         if (verdict !== 'ok'){ msg('Не удалось связаться с функцией Яндекса: ' + detail + '. Проверьте интернет и попробуйте ещё раз.'); return; }
-        try { localStorage.setItem('aiProvider', p); put('aliceUrl', u === ALICE_DEFAULT_URL ? '' : u); put('aliceSecret', sc); } catch(err){ msg('Не удалось сохранить: хранилище недоступно.'); return; }
-      } else {
-        try { localStorage.setItem('aiProvider', p); put('apiKey', $('#aiKeyInput').value.trim()); localStorage.setItem('apiModel', $('#aiModelSel').value); } catch(err){ msg('Не удалось сохранить: хранилище недоступно.'); return; }
+        try { localStorage.setItem('aiProvider', 'alice'); put('aliceUrl', u === ALICE_DEFAULT_URL ? '' : u); put('aliceSecret', sc); } catch(err){ msg('Не удалось сохранить: хранилище недоступно.'); return; }
       }
       closeEditor(); initCoach(); toast(coachReady ? 'Код принят, ИИ-тренер подключён' : 'Заполните поля, чтобы включить тренера');
     };
